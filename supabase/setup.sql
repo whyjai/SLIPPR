@@ -1,4 +1,4 @@
--- ParlayGuard full schema — run once in Supabase SQL Editor
+-- SLIPPR full schema — run once in Supabase SQL Editor
 -- Dashboard → SQL → New query → paste → Run
 
 create extension if not exists "uuid-ossp";

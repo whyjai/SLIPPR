@@ -12,16 +12,16 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://parlayguard.com';
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://slippr.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'ParlayGuard — AI Parlay Protection & Sharp Betting Tools',
-    template: '%s | ParlayGuard',
+    default: 'SLIPPR — AI Parlay Protection & Sharp Betting Tools',
+    template: '%s | SLIPPR',
   },
   description:
-    'ParlayGuard uses a 10-model AI council to generate consensus parlay slips, detect predatory lines, and deliver sharp vs public insights — refreshed 8x daily.',
+    'SLIPPR uses a 10-model AI council to generate consensus parlay slips, detect predatory lines, and deliver sharp vs public insights — refreshed 8x daily.',
   keywords: [
     'parlay picks',
     'sports betting AI',
@@ -34,14 +34,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
-    siteName: 'ParlayGuard',
-    title: 'ParlayGuard — AI Parlay Protection',
+    siteName: 'SLIPPR',
+    title: 'SLIPPR — AI Parlay Protection',
     description:
       'Consensus parlay slips from a 10-model AI council. Avoid high-juice traps. Refreshed every 3 hours.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ParlayGuard — AI Parlay Protection',
+    title: 'SLIPPR — AI Parlay Protection',
     description:
       'Consensus parlay slips from a 10-model AI council. Avoid high-juice traps.',
   },

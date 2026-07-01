@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://parlayguard.com';
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://slippr.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

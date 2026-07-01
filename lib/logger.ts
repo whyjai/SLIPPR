@@ -7,7 +7,7 @@ function log(level: LogLevel, message: string, context?: LogContext) {
     level,
     message,
     timestamp: new Date().toISOString(),
-    service: 'parlayguard',
+    service: 'slippr',
     ...context,
   };
 

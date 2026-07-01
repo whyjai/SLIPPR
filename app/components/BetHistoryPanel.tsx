@@ -35,7 +35,7 @@ function exportToCSV(history: BetHistoryEntry[]) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'parlay-history.csv';
+  a.download = 'slippr-history.csv';
   a.click();
   URL.revokeObjectURL(url);
 }

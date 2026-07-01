@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 const PREMIUM_DAYS = 7;
 
 export function generateReferralCode(userId: string): string {
-  return `PG-${userId.slice(0, 8).toUpperCase()}`;
+  return `SLIPPR-${userId.slice(0, 8).toUpperCase()}`;
 }
 
 async function awardPremiumDays(userId: string) {

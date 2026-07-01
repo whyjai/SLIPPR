@@ -13,9 +13,9 @@ export async function sendDailySlip(userEmail: string, slips: TieredSlip[]) {
   const resend = getResend();
 
   await resend.emails.send({
-    from: 'ParlayGuard <picks@parlayguard.com>',
+    from: 'SLIPPR <onboarding@resend.dev>',
     to: userEmail,
-    subject: `Your Daily ParlayGuard Slips - ${new Date().toLocaleDateString()}`,
+    subject: `Your Daily SLIPPR Slips - ${new Date().toLocaleDateString()}`,
     html: `
       <h2>Today's Protected Slips</h2>
       ${slips

@@ -8,7 +8,7 @@ export default function Landing() {
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="pt-24 pb-16 text-center px-6">
         <div className="inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full mb-6">
-          <Shield className="text-emerald-500" /> AI-Powered Protection
+          <Shield className="text-emerald-500" /> SLIPPR · AI-Powered Protection
         </div>
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tighter mb-6">
           Beat the Books.

@@ -97,7 +97,7 @@ export default function ParlayGuard() {
           <div className="flex items-center gap-4">
             <Shield className="w-10 h-10 text-emerald-500" />
             <div>
-              <h1 className="text-4xl font-bold">ParlayGuard</h1>
+              <h1 className="text-4xl font-bold">SLIPPR</h1>
               <p className="text-zinc-400">
                 Fresh Data • AI Council • Protection First
                 {lastRefresh && (
