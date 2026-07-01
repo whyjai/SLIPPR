@@ -41,8 +41,8 @@ export class ParlayEngine {
   async generateDailySlips(): Promise<DailySlipsResult> {
     const rawData = await this.fetchFreshData();
     const { council, slips } = await this.runAICouncil(rawData);
-    const warnings = this.detectPredatoryLines(rawData);
-    const sharpPublic = this.getSharpPublicView(rawData);
+    const warnings = this.detectPredatoryLines();
+    const sharpPublic = this.getSharpPublicView();
 
     return {
       date: new Date().toISOString(),
@@ -99,19 +99,19 @@ export class ParlayEngine {
     );
   }
 
-  private detectPredatoryLines(data: SportsData): string[] {
-    const lines = this.extractLines(data);
-    const marketData = this.extractMarketData(data);
+  private detectPredatoryLines(): string[] {
+    const lines = this.extractLines();
+    const marketData = this.extractMarketData();
     return PredatoryDetector.analyze(lines, marketData);
   }
 
-  private getSharpPublicView(data: SportsData): SharpPublicData {
-    const lines = this.extractLines(data);
-    const marketData = this.extractMarketData(data);
+  private getSharpPublicView(): SharpPublicData {
+    const lines = this.extractLines();
+    const marketData = this.extractMarketData();
     return getSharpPublicData(lines, marketData);
   }
 
-  private extractLines(_data: SportsData): BettingLine[] {
+  private extractLines(): BettingLine[] {
     // Replace with parsed odds from real API responses
     return [
       {
@@ -145,7 +145,7 @@ export class ParlayEngine {
     ];
   }
 
-  private extractMarketData(_data: SportsData): MarketData {
+  private extractMarketData(): MarketData {
     return { fairProb: 52, publicPct: 72 };
   }
 

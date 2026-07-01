@@ -1,4 +1,4 @@
-import type { LegGrade, SportsData } from '@/lib/types';
+import type { LegGrade } from '@/lib/types';
 
 const BASE_LEGS: LegGrade[] = [
   { leg: 'Phillies ML', confidence: 73, reasoning: 'Strong home pitching + lineup' },
@@ -20,7 +20,7 @@ const MODEL_BIAS: Record<string, number> = {
   falcon: -2,
 };
 
-export function gradeLegsForModel(model: string, _data: SportsData | unknown): LegGrade[] {
+export function gradeLegsForModel(model: string): LegGrade[] {
   const bias = MODEL_BIAS[model] ?? 0;
 
   return BASE_LEGS.map((leg) => ({
@@ -30,7 +30,7 @@ export function gradeLegsForModel(model: string, _data: SportsData | unknown): L
   }));
 }
 
-export function defaultGrading(_data: unknown): LegGrade[] {
+export function defaultGrading(): LegGrade[] {
   return [
     { leg: 'Sample Leg 1', confidence: 72, reasoning: 'Strong matchup variables' },
     { leg: 'Sample Leg 2', confidence: 68, reasoning: 'Good rest + park factor' },

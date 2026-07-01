@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 
 export type BetHistorySlip = {
@@ -43,17 +43,26 @@ function exportToCSV(history: BetHistoryEntry[]) {
 export default function BetHistoryPanel({ userId, onHistoryLoaded }: BetHistoryPanelProps) {
   const [history, setHistory] = useState<BetHistoryEntry[]>([]);
 
-  const loadHistory = useCallback(async (id: string) => {
-    const res = await fetch(`/api/bet-history?user_id=${encodeURIComponent(id)}`);
-    if (!res.ok) return;
-    const data: BetHistoryEntry[] = await res.json();
-    setHistory(data);
-    onHistoryLoaded?.(data);
-  }, [onHistoryLoaded]);
-
   useEffect(() => {
-    if (userId) loadHistory(userId);
-  }, [userId, loadHistory]);
+    if (!userId) return;
+
+    let cancelled = false;
+
+    void (async () => {
+      const res = await fetch(`/api/bet-history?user_id=${encodeURIComponent(userId)}`);
+      if (!res.ok || cancelled) return;
+
+      const data: BetHistoryEntry[] = await res.json();
+      if (cancelled) return;
+
+      setHistory(data);
+      onHistoryLoaded?.(data);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, onHistoryLoaded]);
 
   return (
     <div className="card bg-zinc-900 border border-zinc-800 rounded-3xl p-6">

@@ -54,13 +54,13 @@ export class AICouncil {
           return {
             model: model.name,
             weight: model.weight,
-            grades: response.data.grades || defaultGrading(rawData),
+            grades: response.data.grades || defaultGrading(),
           };
         } catch {
           return {
             model: model.name,
             weight: model.weight,
-            grades: defaultGrading(rawData),
+            grades: defaultGrading(),
           };
         }
       }),
