@@ -53,7 +53,7 @@ export type LegBoardResult = {
 const BOARD_SIZE = 50;
 const ANCHOR_COUNT = 35; // high-probability legs (fair >= 55%)
 const COUNCIL_SIZE = 10;
-const COUNCIL_CANDIDATES = 60;
+const COUNCIL_CANDIDATES = 30;
 
 // The Odds API free tier is 500 credits/month; a multi-sport scan costs ~6.
 // Default cadence of 12h (2 scans/day) fits the free tier; set SCAN_HOURS=3

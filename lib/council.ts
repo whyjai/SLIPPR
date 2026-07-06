@@ -12,21 +12,22 @@ import axios from 'axios';
  * comma-separated COUNCIL_MODELS env var if any free model id rotates.
  */
 
-// Verified against OpenRouter's live free-model list (slugs rotate; these were
-// current as of 2026-07). Free variants need a small credit balance on the
-// account to be reliable — with $0 credits most return "Provider returned
-// error". Override with a comma-separated COUNCIL_MODELS env var if any rotate.
+// Hybrid council: 7 cheap paid models across 7 vendors (reliable structured
+// output, ~$1/mo at 8 boards/day) + 3 reliable free models. OpenRouter's `:free`
+// endpoints are chronically flaky and the capable ones (nemotron etc.) are
+// reasoning models that break the JSON grading format — verified 2026-07 that
+// only these produce clean votes. Slugs rotate; override with COUNCIL_MODELS.
 const DEFAULT_MODELS = [
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'openai/gpt-oss-120b:free',
+  'openai/gpt-4o-mini',
+  'deepseek/deepseek-chat',
+  'meta-llama/llama-3.3-70b-instruct',
+  'mistralai/mistral-small-24b-instruct-2501',
+  'google/gemini-2.5-flash-lite',
+  'anthropic/claude-3-haiku',
+  'amazon/nova-lite-v1',
   'openai/gpt-oss-20b:free',
-  'qwen/qwen3-next-80b-a3b-instruct:free',
-  'google/gemma-4-31b-it:free',
-  'google/gemma-4-26b-a4b-it:free',
-  'nousresearch/hermes-3-llama-3.1-405b:free',
-  'nvidia/nemotron-3-super-120b-a12b:free',
-  'nvidia/nemotron-nano-9b-v2:free',
-  'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+  'tencent/hy3:free',
+  'poolside/laguna-xs-2.1:free',
 ];
 
 export type CouncilCandidate = {
@@ -114,7 +115,7 @@ async function askModel(
       {
         model,
         temperature: 0.2,
-        max_tokens: 4000,
+        max_tokens: 2500,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: JSON.stringify(candidates) },
@@ -126,7 +127,7 @@ async function askModel(
           'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL ?? 'https://slippr.vercel.app',
           'X-Title': 'SLIPPR Council',
         },
-        timeout: 20000,
+        timeout: 45000,
       },
     );
 
@@ -157,7 +158,7 @@ export async function runCouncil(candidates: CouncilCandidate[]): Promise<Counci
   // to fire on hung keep-alive connections (e.g. free-tier models with no
   // credit), which would otherwise block board generation for minutes. Any seat
   // that hasn't answered by the deadline is counted as a non-response.
-  const COUNCIL_DEADLINE_MS = 25000;
+  const COUNCIL_DEADLINE_MS = 50000;
   const results = await Promise.all(
     models.map((model) =>
       Promise.race([
