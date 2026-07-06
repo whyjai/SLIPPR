@@ -78,7 +78,7 @@ export default function LegBoardView() {
         <PageHeader
           eyebrow="Today's Board"
           title={board ? `${board.legs.length} legs · today only` : "Today's slate"}
-          description="Real sportsbook lines for games tipping off today (US Eastern) — moneylines and totals from DraftKings, FanDuel, and peers, devigged and ranked by the council."
+          description="Scout researches today's slate → council votes on the shortlist. Real sportsbook lines only (US Eastern), devigged and graded."
           actions={
             <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-sm text-zinc-400">
               <RefreshCw className="h-3.5 w-3.5 text-emerald-400" />
@@ -100,6 +100,11 @@ export default function LegBoardView() {
               <span className="live-dot" />
               {board.legs.length} legs graded · {board.refreshWindow}
             </span>
+            {board.scout?.responded && (
+              <span>
+                Scout researched {board.scout.eventsResearched} events → {board.scout.shortlisted} to council
+              </span>
+            )}
             {board.council.enabled && (
               <span>
                 Council: {board.council.responded}/{board.council.seats.length || 10} models voted

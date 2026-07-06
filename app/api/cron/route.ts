@@ -38,6 +38,7 @@ export async function GET(req: Request) {
     const info = {
       source: board.source,
       legs: board.legs.length,
+      scoutResponded: board.scout?.responded ?? false,
       councilResponded: board.council.responded,
     };
     summary.board = info;

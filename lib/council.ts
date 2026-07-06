@@ -40,6 +40,10 @@ export type CouncilCandidate = {
   impliedProb: number;
   fairProb: number;
   edge: number;
+  /** Scout research thesis — council should weigh this alongside market data. */
+  scoutNote?: string;
+  conviction?: number;
+  factors?: string[];
 };
 
 export type CouncilSeat = {
@@ -61,10 +65,11 @@ export type CouncilResult = {
 };
 
 const SYSTEM_PROMPT = `You are one independent seat on a 10-model sports betting analysis council.
-You receive candidate parlay legs with market-derived probabilities (devigged multi-book consensus).
-For each leg, judge whether it belongs on a board of the day's highest-probability, highest-value picks.
-Consider: the market consensus probability, the edge vs the best available price, market type risk
-(player props are noisier than moneylines), and whether the implied probability looks miscalibrated.
+You receive candidate parlay legs pre-screened by SLIPPR Scout (a research agent) from today's real sportsbook lines.
+Each leg includes devigged multi-book consensus, best available price, edge vs market, and optional Scout research (thesis, factors).
+Judge whether it belongs on a board of the day's highest-probability, highest-value picks.
+Consider: Scout's thesis and risk flags, market consensus probability, edge vs best price, market type risk
+(player props are noisier than moneylines), and whether the line looks miscalibrated.
 Respond with ONLY a JSON array, no prose, one entry per leg:
 [{"id":"<leg id>","confidence":<0-100 integer>,"approve":<true|false>}]
 Approve a leg only if you believe its true win probability is at least its stated fair probability minus 3 points.`;

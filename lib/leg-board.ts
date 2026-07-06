@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { getSupabaseAdmin } from './supabase-admin';
 import { runCouncil, passesCouncil, type CouncilCandidate, type CouncilSeat } from './council';
+import {
+  runScout,
+  enrichLegsWithScout,
+  type ScoutMeta,
+  type ScoutResult,
+} from './scout';
 
 export type MarketType = 'moneyline' | 'spread' | 'total' | 'player_prop';
 
@@ -40,19 +46,21 @@ export type CouncilMeta = {
   seats: CouncilSeat[];
 };
 
+export type { ScoutMeta };
+
 export type LegBoardResult = {
   generatedAt: string;
   source: 'live' | 'simulated' | 'pending';
   refreshWindow: string;
   legs: BoardLeg[];
   warnings: string[];
+  scout?: ScoutMeta;
   council: CouncilMeta;
 };
 
 const BOARD_SIZE = 50;
 const ANCHOR_COUNT = 35; // high-probability legs (fair >= 55%)
 const COUNCIL_SIZE = 10;
-const COUNCIL_CANDIDATES = 50;
 const MIN_LIVE_LEGS = 3;
 
 /** US Eastern calendar day — how bettors mean "today's slate". */
@@ -706,13 +714,39 @@ async function acquireLiveLegs(apiKey: string, scanKey: string, rand: () => numb
 
 async function applyCouncil(
   legs: BoardLeg[],
+  scout: ScoutResult,
 ): Promise<{ legs: BoardLeg[]; council: CouncilMeta; warnings: string[] }> {
-  const candidates: CouncilCandidate[] = [...legs]
-    .sort((a, b) => legScore(b) - legScore(a))
-    .slice(0, COUNCIL_CANDIDATES)
-    .map(({ id, sport, market, event, pick, americanOdds, impliedProb, fairProb, edge }) => ({
-      id, sport, market, event, pick, americanOdds, impliedProb, fairProb, edge,
-    }));
+  const debatePool: BoardLeg[] = scout.shortlistedIds
+    .map((id) => legs.find((l) => l.id === id))
+    .filter((l): l is BoardLeg => !!l);
+
+  if (debatePool.length < MIN_LIVE_LEGS) {
+    return {
+      legs: debatePool,
+      council: { enabled: false, responded: 0, seats: [] },
+      warnings: ['Scout shortlist too thin for council review.'],
+    };
+  }
+
+  const candidates: CouncilCandidate[] = debatePool.map(
+    ({ id, sport, market, event, pick, americanOdds, impliedProb, fairProb, edge }) => {
+      const brief = scout.briefs[id];
+      return {
+        id,
+        sport,
+        market,
+        event,
+        pick,
+        americanOdds,
+        impliedProb,
+        fairProb,
+        edge,
+        scoutNote: brief?.thesis,
+        conviction: brief?.conviction,
+        factors: brief?.factors,
+      };
+    },
+  );
 
   const result = await runCouncil(candidates);
   const council: CouncilMeta = {
@@ -732,18 +766,16 @@ async function applyCouncil(
   };
 
   if (result.responded === 0) {
-    for (const leg of legs) applyVerdict(leg);
-    return { legs, council, warnings };
+    for (const leg of debatePool) applyVerdict(leg);
+    return { legs: debatePool, council, warnings };
   }
 
-  let surviving = legs.filter((leg) => passesCouncil(result.byLeg[leg.id], result.responded));
+  let surviving = debatePool.filter((leg) => passesCouncil(result.byLeg[leg.id], result.responded));
 
   if (surviving.length < MIN_LIVE_LEGS) {
-    surviving = [...legs]
-      .sort((a, b) => legScore(b) - legScore(a))
-      .slice(0, BOARD_SIZE);
+    surviving = debatePool.slice(0, BOARD_SIZE);
     warnings.push(
-      'Council did not reach 70% agreement on any line; grades reflect consensus win probability.',
+      'Council did not reach 70% agreement; publishing Scout-ranked lines with market grades.',
     );
   }
 
@@ -866,11 +898,18 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
     seats: [],
   };
   let legs = quantLegs;
+  let scoutMeta: ScoutMeta | undefined;
   if (source === 'live') {
-    const judged = await applyCouncil(quantLegs);
+    const scout = await runScout(quantLegs);
+    scoutMeta = scout.meta;
+    quantLegs = enrichLegsWithScout(quantLegs, scout);
+    const judged = await applyCouncil(quantLegs, scout);
     legs = judged.legs;
     council = judged.council;
     warnings = [...judged.warnings, ...warnings];
+    if (scout.meta.responded && scout.meta.slateSummary) {
+      warnings = [`Scout: ${scout.meta.slateSummary}`, ...warnings];
+    }
   }
 
   const result: LegBoardResult = {
@@ -879,6 +918,7 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
     refreshWindow,
     legs: composeBoard(legs),
     warnings: warnings.slice(0, 8),
+    scout: scoutMeta,
     council,
   };
 
