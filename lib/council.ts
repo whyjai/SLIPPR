@@ -197,9 +197,9 @@ export async function runCouncil(candidates: CouncilCandidate[]): Promise<Counci
   };
 }
 
-/** A leg passes council when at least 70% of responding seats approve. */
+/** A leg passes council when at least 70% of seats that voted on it approve. */
 export function passesCouncil(verdict: CouncilLegVerdict | undefined, responded: number): boolean {
-  if (!verdict || responded === 0) return true; // council offline -> quant board stands
-  if (verdict.votes === 0) return false;
+  if (responded === 0) return true; // council offline -> quant board stands
+  if (!verdict || verdict.votes === 0) return false;
   return verdict.approvals >= Math.ceil(verdict.votes * 0.7);
 }

@@ -52,7 +52,7 @@ export type LegBoardResult = {
 const BOARD_SIZE = 50;
 const ANCHOR_COUNT = 35; // high-probability legs (fair >= 55%)
 const COUNCIL_SIZE = 10;
-const COUNCIL_CANDIDATES = 30;
+const COUNCIL_CANDIDATES = 50;
 const MIN_LIVE_LEGS = 3;
 
 /** US Eastern calendar day — how bettors mean "today's slate". */
@@ -126,21 +126,30 @@ export function americanToDecimal(odds: number): number {
 }
 
 function legScore(leg: BoardLeg): number {
-  return leg.confidence + leg.edge * 3;
+  return (
+    leg.confidence * 0.35 +
+    leg.fairProb * 0.45 +
+    Math.max(0, leg.edge) * 2.5 +
+    (leg.agreement ?? 0) * 1.5
+  );
 }
 
-function gradeFor(confidence: number, edge: number): LegGradeLetter {
-  const score = confidence + edge * 3;
-  if (score >= 82) return 'A+';
-  if (score >= 76) return 'A';
-  if (score >= 70) return 'B+';
-  if (score >= 64) return 'B';
+/** Grades anchor picks on win probability; rewards +EV, lightly taxes juice. */
+function gradeFor(confidence: number, edge: number, fairProb: number): LegGradeLetter {
+  const probScore = confidence * 0.4 + fairProb * 0.6;
+  const valueBonus = Math.max(0, edge) * 2.5;
+  const juiceTax = Math.min(0, edge) * 0.3;
+  const score = probScore + valueBonus + juiceTax;
+  if (score >= 80) return 'A+';
+  if (score >= 74) return 'A';
+  if (score >= 68) return 'B+';
+  if (score >= 62) return 'B';
   return 'C';
 }
 
 function councilFields(fairProb: number, edge: number, rand: () => number) {
   const confidence = Math.round(
-    Math.min(92, Math.max(50, fairProb + edge * 2 + (rand() - 0.5) * 4)),
+    Math.min(92, Math.max(50, fairProb * 0.9 + Math.max(0, edge) * 3 + (rand() - 0.5) * 3)),
   );
   const agreement = Math.round(
     Math.min(COUNCIL_SIZE, Math.max(6, 6 + (confidence - 55) / 9 + edge / 2)),
@@ -347,7 +356,7 @@ async function fetchLiveLegs(apiKey: string, rand: () => number): Promise<BoardL
         edge: round1(edge),
         confidence,
         agreement: 0, // set by the real council
-        grade: gradeFor(confidence, edge),
+        grade: gradeFor(confidence, edge, fairProb),
         reasoning: `Devigged consensus across ${fairs.length} books prices this at ${round1(fairProb)}%; ${best.book} offers it at ${round1(impliedProb)}% implied (${edge >= 0 ? '+' : ''}${round1(edge)} pts vs market).`,
         startTime: event.commence_time,
       });
@@ -505,7 +514,7 @@ function simulatedLegs(seedKey: string): BoardLeg[] {
       edge: round1(fairProbPct - impliedPct),
       confidence,
       agreement,
-      grade: gradeFor(confidence, fairProbPct - impliedPct),
+      grade: gradeFor(confidence, fairProbPct - impliedPct, fairProbPct),
       reasoning: reasoningFor(market, fairProbPct, impliedPct, rand),
       startTime: start.toISOString(),
     });
@@ -697,7 +706,7 @@ async function acquireLiveLegs(apiKey: string, scanKey: string, rand: () => numb
 
 async function applyCouncil(
   legs: BoardLeg[],
-): Promise<{ legs: BoardLeg[]; council: CouncilMeta }> {
+): Promise<{ legs: BoardLeg[]; council: CouncilMeta; warnings: string[] }> {
   const candidates: CouncilCandidate[] = [...legs]
     .sort((a, b) => legScore(b) - legScore(a))
     .slice(0, COUNCIL_CANDIDATES)
@@ -711,23 +720,36 @@ async function applyCouncil(
     responded: result.responded,
     seats: result.seats,
   };
+  const warnings: string[] = [];
 
-  if (result.responded === 0) return { legs, council };
-
-  const surviving = legs.filter((leg) =>
-    passesCouncil(result.byLeg[leg.id], result.responded),
-  );
-
-  for (const leg of surviving) {
+  const applyVerdict = (leg: BoardLeg) => {
     const verdict = result.byLeg[leg.id];
     if (verdict && verdict.votes > 0) {
       leg.agreement = verdict.approvals;
       leg.confidence = Math.round((leg.confidence + verdict.avgConfidence) / 2);
-      leg.grade = gradeFor(leg.confidence, leg.edge);
     }
+    leg.grade = gradeFor(leg.confidence, leg.edge, leg.fairProb);
+  };
+
+  if (result.responded === 0) {
+    for (const leg of legs) applyVerdict(leg);
+    return { legs, council, warnings };
   }
 
-  return { legs: surviving, council };
+  let surviving = legs.filter((leg) => passesCouncil(result.byLeg[leg.id], result.responded));
+
+  if (surviving.length < MIN_LIVE_LEGS) {
+    surviving = [...legs]
+      .sort((a, b) => legScore(b) - legScore(a))
+      .slice(0, BOARD_SIZE);
+    warnings.push(
+      'Council did not reach 70% agreement on any line; grades reflect consensus win probability.',
+    );
+  }
+
+  for (const leg of surviving) applyVerdict(leg);
+
+  return { legs: surviving, council, warnings };
 }
 
 // ---------------------------------------------------------------------------
@@ -838,6 +860,7 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
     const judged = await applyCouncil(quantLegs);
     legs = judged.legs;
     council = judged.council;
+    warnings = [...judged.warnings, ...warnings];
   }
 
   const result: LegBoardResult = {
