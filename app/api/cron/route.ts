@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server';
 import { runDailyCron } from '@/lib/daily-cron';
 import { verifyCronRequest } from '@/lib/cron-auth';
-import { getLegBoard } from '@/lib/leg-board';
+import { generateLegBoard } from '@/lib/leg-board';
 import { runSettlement } from '@/lib/settle';
 import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
+function errMessage(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  try {
+    return JSON.stringify(e);
+  } catch {
+    return String(e);
+  }
+}
+
+/**
+ * The single scheduled job (vercel.json: every 3h = 8×/day). Each phase is
+ * isolated so a failure in settlement or the email digest can never prevent the
+ * board — the core product — from being generated and persisted. Always returns
+ * 200 with a per-phase status so a partial failure doesn't mark the cron failed.
+ */
 export async function GET(req: Request) {
   const authError = verifyCronRequest(req);
   if (authError) {
@@ -15,45 +30,48 @@ export async function GET(req: Request) {
     return authError;
   }
 
-  try {
-    // Generate this window's board first: odds scan -> DFS scan -> council
-    // vote -> persisted, so every visitor in the window gets instant, real,
-    // pre-agreed legs (vercel.json fires this every 3h = 8x/day).
-    const board = await getLegBoard();
+  const summary: Record<string, unknown> = {};
 
-    logger.info('Board generated', {
+  // 1. Board generation — the critical phase (odds scan → council → persist).
+  try {
+    const board = await generateLegBoard();
+    const info = {
       source: board.source,
       legs: board.legs.length,
       councilResponded: board.council.responded,
-      warnings: board.warnings.length,
-    });
+    };
+    summary.board = info;
+    logger.info('Board generated', info);
+  } catch (error) {
+    summary.board = { error: errMessage(error) };
+    logger.error('Board generation failed', { error: errMessage(error) });
+  }
 
-    // Capture closing lines + grade settled picks for the verified track record.
+  // 2. Settlement — capture closing lines + grade settled picks (best-effort).
+  try {
     const settlement = await runSettlement();
+    summary.settlement = settlement;
     logger.info('Settlement pass', settlement);
+  } catch (error) {
+    summary.settlement = { error: errMessage(error) };
+    logger.error('Settlement failed', { error: errMessage(error) });
+  }
 
+  // 3. Daily digest / saved-slip emails (best-effort).
+  try {
     const result = await runDailyCron();
-
-    logger.info('Daily cron completed', {
+    const info = {
       slipsGenerated: result.slipsGenerated,
       usersSaved: result.usersSaved,
       emailsSent: result.emails.sent,
       emailsFailed: result.emails.failed,
-    });
-
-    return NextResponse.json({
-      ...result,
-      board: {
-        source: board.source,
-        legs: board.legs.length,
-        councilResponded: board.council.responded,
-      },
-      settlement,
-    });
+    };
+    summary.daily = info;
+    logger.info('Daily cron completed', info);
   } catch (error) {
-    logger.error('Cron failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
-    return NextResponse.json({ status: 'error' }, { status: 500 });
+    summary.daily = { error: errMessage(error) };
+    logger.error('Daily cron failed', { error: errMessage(error) });
   }
+
+  return NextResponse.json({ ok: true, ...summary });
 }

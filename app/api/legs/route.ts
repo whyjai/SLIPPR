@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getLegBoard } from '@/lib/leg-board';
+import { getPublishedBoard } from '@/lib/leg-board';
 
-// Cold generation runs the council (up to ~50s) + odds scan; keep the function
-// alive past Vercel's 60s default. The CDN cache (below) means most requests
-// never trigger a cold generation.
-export const maxDuration = 120;
-
+// Read-only: returns the latest cron-generated board. Never scans odds or runs
+// the council, so it's fast and users can't trigger a refresh.
 export async function GET() {
-  const board = await getLegBoard();
+  const board = await getPublishedBoard();
 
   return NextResponse.json(board, {
     headers: {
-      'Cache-Control': 's-maxage=900, stale-while-revalidate=300',
+      'Cache-Control': 's-maxage=300, stale-while-revalidate=600',
     },
   });
 }

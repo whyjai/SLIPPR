@@ -43,7 +43,7 @@ export type CouncilMeta = {
 
 export type LegBoardResult = {
   generatedAt: string;
-  source: 'live' | 'simulated';
+  source: 'live' | 'simulated' | 'pending';
   refreshWindow: string;
   legs: BoardLeg[];
   warnings: string[];
@@ -131,7 +131,12 @@ function composeBoard(legs: BoardLeg[]): BoardLeg[] {
     );
   }
 
-  return chosen.sort((a, b) => legScore(b) - legScore(a)).slice(0, BOARD_SIZE);
+  // Surface the council's endorsed picks first (more approvals = higher), then
+  // fall back to quant score. Legs the council declined (agreement 0) sink below
+  // its consensus picks instead of burying them under no-edge favorites.
+  return chosen
+    .sort((a, b) => (b.agreement ?? 0) - (a.agreement ?? 0) || legScore(b) - legScore(a))
+    .slice(0, BOARD_SIZE);
 }
 
 // ---------------------------------------------------------------------------
@@ -549,6 +554,23 @@ async function loadStoredBoard(windowKey: string): Promise<LegBoardResult | null
   }
 }
 
+/** Most recently generated board, regardless of window (the read path). */
+async function loadLatestBoard(): Promise<LegBoardResult | null> {
+  const db = supabaseOrNull();
+  if (!db) return null;
+  try {
+    const { data } = await db
+      .from('leg_boards')
+      .select('payload')
+      .order('generated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return (data?.payload as LegBoardResult) ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function storeBoard(windowKey: string, board: LegBoardResult): Promise<void> {
   const db = supabaseOrNull();
   if (!db) return;
@@ -709,7 +731,33 @@ async function applyCouncil(
 let memoryCache: { key: string; at: number; result: LegBoardResult } | null = null;
 const MEMORY_TTL_MS = 15 * 60 * 1000;
 
-export async function getLegBoard(): Promise<LegBoardResult> {
+/**
+ * Reads the most recently published board. This is the ONLY path user requests
+ * hit — it never scans odds or convenes the council. Generation is done solely
+ * by the cron (8×/day at fixed times) so visitors can't trigger a refresh.
+ */
+export async function getPublishedBoard(): Promise<LegBoardResult> {
+  const latest = await loadLatestBoard();
+  if (latest) return latest;
+
+  // No board has been generated yet (cron hasn't run since setup). Return a
+  // labelled placeholder rather than generating on a user request.
+  return {
+    generatedAt: new Date().toISOString(),
+    source: 'pending',
+    refreshWindow: 'Board warming up — the council convenes shortly',
+    legs: [],
+    warnings: [],
+    council: { enabled: false, responded: 0, seats: [] },
+  };
+}
+
+/**
+ * Generates a fresh board (odds scan → DFS → council) and persists it.
+ * CRON-ONLY. Runs once per 3-hour window; the window key dedupes accidental
+ * double-runs within a window.
+ */
+export async function generateLegBoard(): Promise<LegBoardResult> {
   const now = new Date();
   const window = Math.floor(now.getUTCHours() / 3);
   const windowKey = `${now.toISOString().slice(0, 10)}-w${window}`;

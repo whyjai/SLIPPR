@@ -80,10 +80,10 @@ export default function LegBoardView() {
           title="50 sharpest legs"
           description="Every in-season sport scanned — moneylines, spreads, totals, and player props — graded by the council and ranked by confidence and market edge."
           actions={
-            <button onClick={load} disabled={loading} className="btn-ghost px-6 py-3">
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh Board
-            </button>
+            <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-sm text-zinc-400">
+              <RefreshCw className="h-3.5 w-3.5 text-emerald-400" />
+              Auto-refreshes 8×/day
+            </div>
           }
         />
 
@@ -91,6 +91,8 @@ export default function LegBoardView() {
           <div className="animate-fade-up mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-500">
             {board.source === 'live' ? (
               <Badge>Live Odds</Badge>
+            ) : board.source === 'pending' ? (
+              <Badge tone="amber">Warming up</Badge>
             ) : (
               <Badge tone="amber">Demo Data — awaiting API keys</Badge>
             )}
@@ -170,6 +172,15 @@ export default function LegBoardView() {
               <div key={i} className="skeleton h-16" />
             ))}
           </div>
+        ) : board?.source === 'pending' ? (
+          <Card className="animate-fade-up delay-150 p-12 text-center">
+            <RefreshCw className="mx-auto mb-4 h-8 w-8 animate-spin text-emerald-400" />
+            <p className="mb-1 font-medium text-zinc-300">The council is convening</p>
+            <p className="mx-auto max-w-md text-sm text-zinc-600">
+              Fresh legs are scanned and graded 8×/day at set times. The first board will
+              appear here shortly.
+            </p>
+          </Card>
         ) : (
           <Card className="animate-fade-up delay-150 overflow-hidden">
             <div className="hidden grid-cols-12 gap-3 border-b border-white/[0.06] px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500 md:grid">
