@@ -1,4 +1,4 @@
-import ParlayGuard from '../components/ParlayGuard';
+import { redirect } from 'next/navigation';
 
 export const metadata = {
   title: 'Dashboard',
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function DashboardPage() {
-  return <ParlayGuard />;
+  redirect('/?tab=dashboard');
 }

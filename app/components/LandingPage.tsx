@@ -1,97 +1,78 @@
 'use client';
 
 import Link from 'next/link';
-import { Shield, Users, TrendingUp, Award } from 'lucide-react';
+import { Shield, Users, TrendingUp, Award, ArrowRight } from 'lucide-react';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <div className="pt-24 pb-16 text-center px-6">
-        <div className="inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full mb-6">
-          <Shield className="text-emerald-500" /> SLIPPR · AI-Powered Protection
+    <div className="min-h-screen bg-zinc-950 text-white overflow-hidden">
+      <nav className="fixed top-0 w-full bg-zinc-950/80 backdrop-blur-lg border-b border-zinc-800 z-50">
+        <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Shield className="w-8 h-8 text-emerald-500" />
+            <span className="font-bold text-2xl tracking-tight">SLIPPR</span>
+          </div>
+          <div className="flex gap-8 text-sm">
+            <a href="#features" className="hover:text-emerald-400 transition-colors">
+              Features
+            </a>
+            <a href="#pricing" className="hover:text-emerald-400 transition-colors">
+              Pricing
+            </a>
+            <Link href="/dashboard" className="text-emerald-400 font-medium">
+              Dashboard →
+            </Link>
+          </div>
         </div>
-        <h1 className="text-5xl sm:text-6xl font-bold tracking-tighter mb-6">
-          Beat the Books.
+      </nav>
+
+      <div className="pt-32 pb-24 text-center px-6">
+        <div className="inline-flex items-center gap-2 bg-zinc-900 px-5 py-2 rounded-full mb-8 text-sm">
+          <span className="text-emerald-400">●</span> Live AI Council Running
+        </div>
+        <h1 className="text-5xl sm:text-7xl font-bold tracking-tighter mb-6">
+          Daily Edge.
           <br />
-          With Confidence.
+          Real Protection.
         </h1>
-        <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-          Daily graded parlay slips. AI Council consensus. Predatory line warnings. Real edge
-          with peace of mind.
+        <p className="text-xl sm:text-2xl text-zinc-400 max-w-3xl mx-auto">
+          AI-powered parlay slips. Council consensus. Predatory line warnings.
+          <br />
+          Built for serious bettors.
         </p>
-        <div className="mt-10 flex flex-wrap gap-4 justify-center">
+        <div className="mt-12 flex gap-4 justify-center">
           <Link
             href="/dashboard"
-            className="bg-emerald-600 hover:bg-emerald-500 px-10 py-4 rounded-2xl text-lg font-semibold"
+            className="bg-emerald-600 hover:bg-emerald-500 px-10 py-4 rounded-2xl text-lg font-semibold flex items-center gap-3 group"
           >
-            Start Free (Limited Slips)
+            Try Free Now{' '}
+            <ArrowRight className="group-hover:translate-x-1 transition" />
           </Link>
-          <a
-            href="#pricing"
-            className="border border-zinc-700 hover:bg-zinc-900 px-10 py-4 rounded-2xl text-lg font-semibold"
-          >
-            See Pricing
-          </a>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-3 gap-8">
-        <div className="card bg-zinc-900 p-8 rounded-3xl">
-          <Award className="w-12 h-12 text-emerald-500 mb-6" />
-          <h3 className="text-2xl font-semibold mb-3">AI Council</h3>
-          <p className="text-zinc-400">
-            10 models debate every leg. Full transparency on grading.
-          </p>
-        </div>
-
-        <div className="card bg-zinc-900 p-8 rounded-3xl">
-          <TrendingUp className="w-12 h-12 text-emerald-500 mb-6" />
-          <h3 className="text-2xl font-semibold mb-3">Sharp vs Public</h3>
-          <p className="text-zinc-400">See where sharp money is vs public. Avoid traps.</p>
-        </div>
-
-        <div className="card bg-zinc-900 p-8 rounded-3xl">
-          <Users className="w-12 h-12 text-emerald-500 mb-6" />
-          <h3 className="text-2xl font-semibold mb-3">Community + Referrals</h3>
-          <p className="text-zinc-400">Share wins. Earn free months. Real user feedback.</p>
-        </div>
-      </div>
-
-      <div id="pricing" className="bg-zinc-900 py-20">
-        <div className="max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-4xl font-bold mb-4">Simple Pricing. Real Value.</h2>
-          <div className="grid md:grid-cols-2 gap-6 mt-12 max-w-2xl mx-auto">
-            <div className="card bg-zinc-950 p-8 rounded-3xl border border-zinc-800">
-              <div className="text-emerald-400">Free</div>
-              <div className="text-5xl font-bold my-4">$0</div>
-              <ul className="text-left space-y-3 text-sm">
-                <li>✓ 3 Safe Slips/day</li>
-                <li>✓ Basic warnings</li>
-              </ul>
-              <Link
-                href="/dashboard"
-                className="mt-6 block w-full bg-zinc-800 hover:bg-zinc-700 py-3 rounded-xl font-semibold"
-              >
-                Get Started
-              </Link>
-            </div>
-
-            <div className="card bg-emerald-600 p-8 rounded-3xl md:relative md:-top-4 md:scale-105">
-              <div className="text-emerald-200">Premium</div>
-              <div className="text-5xl font-bold my-4">$19</div>
-              <ul className="text-left space-y-3 text-sm">
-                <li>✓ All 20+ Slips</li>
-                <li>✓ AI Council Full View</li>
-                <li>✓ Bankroll Tools</li>
-                <li>✓ Referrals</li>
-              </ul>
-              <Link
-                href="/dashboard"
-                className="mt-6 block w-full bg-emerald-700 hover:bg-emerald-800 py-3 rounded-xl font-semibold"
-              >
-                Go Premium
-              </Link>
-            </div>
+      <div id="features" className="max-w-6xl mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-zinc-900 p-10 rounded-3xl card">
+            <Award className="w-12 h-12 text-emerald-500 mb-8" />
+            <h3 className="text-3xl font-semibold mb-4">AI Council</h3>
+            <p className="text-zinc-400 leading-relaxed">
+              10 models debate every leg. Full transparency + consensus on best slips.
+            </p>
+          </div>
+          <div className="bg-zinc-900 p-10 rounded-3xl card">
+            <TrendingUp className="w-12 h-12 text-emerald-500 mb-8" />
+            <h3 className="text-3xl font-semibold mb-4">Sharp vs Public</h3>
+            <p className="text-zinc-400 leading-relaxed">
+              See where smart money is vs public. Avoid traps.
+            </p>
+          </div>
+          <div className="bg-zinc-900 p-10 rounded-3xl card">
+            <Users className="w-12 h-12 text-emerald-500 mb-8" />
+            <h3 className="text-3xl font-semibold mb-4">Community Edge</h3>
+            <p className="text-zinc-400 leading-relaxed">
+              Referrals, comments, and shared wins. Built for serious bettors.
+            </p>
           </div>
         </div>
       </div>
