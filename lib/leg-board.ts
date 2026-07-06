@@ -764,11 +764,21 @@ const MEMORY_TTL_MS = 15 * 60 * 1000;
  * hit — it never scans odds or convenes the council. Generation is done solely
  * by the cron (8×/day at fixed times) so visitors can't trigger a refresh.
  */
+function withRefreshedGrades(board: LegBoardResult): LegBoardResult {
+  return {
+    ...board,
+    legs: board.legs.map((leg) => ({
+      ...leg,
+      grade: gradeFor(leg.confidence, leg.edge, leg.fairProb),
+    })),
+  };
+}
+
 export async function getPublishedBoard(): Promise<LegBoardResult> {
   const latest = await loadLatestBoard();
   if (latest) {
     const sanitized = sanitizeBoardForToday(latest);
-    if (sanitized.legs.length > 0) return sanitized;
+    if (sanitized.legs.length > 0) return withRefreshedGrades(sanitized);
   }
 
   // No board has been generated yet (cron hasn't run since setup). Return a
