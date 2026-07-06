@@ -77,8 +77,8 @@ export default function LegBoardView() {
       <div className="mx-auto max-w-6xl">
         <PageHeader
           eyebrow="Today's Board"
-          title="50 sharpest legs"
-          description="Every in-season sport scanned — moneylines, spreads, totals, and player props — graded by the council and ranked by confidence and market edge."
+          title={board ? `${board.legs.length} legs · today only` : "Today's slate"}
+          description="Real sportsbook lines for games tipping off today (US Eastern) — moneylines and totals from DraftKings, FanDuel, and peers, devigged and ranked by the council."
           actions={
             <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-sm text-zinc-400">
               <RefreshCw className="h-3.5 w-3.5 text-emerald-400" />

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { getSupabaseAdmin } from './supabase-admin';
 import { runCouncil, passesCouncil, type CouncilCandidate, type CouncilSeat } from './council';
-import { scanDfsSites } from './dfs-scan';
 
 export type MarketType = 'moneyline' | 'spread' | 'total' | 'player_prop';
 
@@ -54,6 +53,55 @@ const BOARD_SIZE = 50;
 const ANCHOR_COUNT = 35; // high-probability legs (fair >= 55%)
 const COUNCIL_SIZE = 10;
 const COUNCIL_CANDIDATES = 30;
+const MIN_LIVE_LEGS = 3;
+
+/** US Eastern calendar day — how bettors mean "today's slate". */
+const BOARD_TZ = 'America/New_York';
+
+/** Prefer in-season books; never lump NCAAF/CFL into NFL. */
+const PREFERRED_SPORT_KEYS = [
+  'baseball_mlb',
+  'basketball_wnba',
+  'basketball_nba',
+  'icehockey_nhl',
+  'americanfootball_nfl',
+  'soccer_usa_mls',
+  'soccer_epl',
+  'soccer_uefa_champs_league',
+  'tennis_atp',
+  'tennis_wta',
+  'mma_mixed_martial_arts',
+];
+
+function boardDayKey(date: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: BOARD_TZ }).format(date);
+}
+
+/** Event tips today (ET) and hasn't been over for hours. */
+export function isOnTodaysSlate(startTimeIso: string, now = new Date()): boolean {
+  const start = new Date(startTimeIso);
+  if (Number.isNaN(start.getTime())) return false;
+  if (start.getTime() < now.getTime() - 6 * 3600_000) return false;
+  return boardDayKey(start) === boardDayKey(now);
+}
+
+function filterLegsForToday(legs: BoardLeg[], now = new Date()): BoardLeg[] {
+  return legs.filter((l) => isOnTodaysSlate(l.startTime, now));
+}
+
+function sanitizeBoardForToday(board: LegBoardResult, now = new Date()): LegBoardResult {
+  const legs = filterLegsForToday(board.legs, now);
+  if (legs.length === board.legs.length) return board;
+  const dropped = board.legs.length - legs.length;
+  return {
+    ...board,
+    legs,
+    warnings: [
+      `Excluded ${dropped} line(s) outside today's slate (US Eastern).`,
+      ...board.warnings,
+    ].slice(0, 8),
+  };
+}
 
 // The Odds API free tier is 500 credits/month; a multi-sport scan costs ~6.
 // Default cadence of 12h (2 scans/day) fits the free tier; set SCAN_HOURS=3
@@ -183,32 +231,17 @@ type OddsApiEvent = {
   bookmakers: OddsApiBookmaker[];
 };
 
-const SPORT_KEY_MAP: Array<{ prefix: string; sport: Sport }> = [
-  { prefix: 'baseball_mlb', sport: 'MLB' },
-  { prefix: 'basketball_wnba', sport: 'WNBA' },
-  { prefix: 'basketball_nba', sport: 'NBA' },
-  { prefix: 'americanfootball', sport: 'NFL' },
-  { prefix: 'icehockey', sport: 'NHL' },
-  { prefix: 'soccer', sport: 'Soccer' },
-  { prefix: 'tennis', sport: 'Tennis' },
-  { prefix: 'mma', sport: 'MMA' },
-];
-
 function mapSport(sportKey: string): Sport | null {
-  return SPORT_KEY_MAP.find((m) => sportKey.startsWith(m.prefix))?.sport ?? null;
+  if (sportKey.startsWith('baseball_mlb')) return 'MLB';
+  if (sportKey.startsWith('basketball_wnba')) return 'WNBA';
+  if (sportKey.startsWith('basketball_nba')) return 'NBA';
+  if (sportKey.startsWith('americanfootball_nfl')) return 'NFL';
+  if (sportKey.startsWith('icehockey_nhl')) return 'NHL';
+  if (sportKey.startsWith('soccer')) return 'Soccer';
+  if (sportKey.startsWith('tennis')) return 'Tennis';
+  if (sportKey.startsWith('mma')) return 'MMA';
+  return null;
 }
-
-const LEAGUE_MAP: Record<string, Sport> = {
-  MLB: 'MLB',
-  NBA: 'NBA',
-  WNBA: 'WNBA',
-  NFL: 'NFL',
-  NHL: 'NHL',
-  SOCCER: 'Soccer',
-  TENNIS: 'Tennis',
-  MMA: 'MMA',
-  UFC: 'MMA',
-};
 
 function marketTypeFor(key: string): MarketType {
   if (key === 'spreads') return 'spread';
@@ -233,10 +266,11 @@ async function fetchLiveLegs(apiKey: string, rand: () => number): Promise<BoardL
     { params: { apiKey }, timeout: 10000 },
   );
 
-  const sportKeys = sports
-    .filter((s) => s.active && mapSport(s.key))
-    .map((s) => s.key)
-    .slice(0, 4);
+  const active = new Set(sports.filter((s) => s.active && mapSport(s.key)).map((s) => s.key));
+  const sportKeys = [
+    ...PREFERRED_SPORT_KEYS.filter((k) => active.has(k)),
+    ...[...active].filter((k) => !PREFERRED_SPORT_KEYS.includes(k)),
+  ].slice(0, 10);
 
   const eventLists = await Promise.all(
     sportKeys.map(async (key) => {
@@ -257,9 +291,11 @@ async function fetchLiveLegs(apiKey: string, rand: () => number): Promise<BoardL
 
   const legs: BoardLeg[] = [];
 
+  const now = new Date();
   for (const event of eventLists.flat()) {
     const sport = mapSport(event.sport_key);
     if (!sport) continue;
+    if (!isOnTodaysSlate(event.commence_time, now)) continue;
 
     const outcomes = new Map<
       string,
@@ -636,12 +672,16 @@ async function storeScan(scanKey: string, legs: BoardLeg[]): Promise<void> {
 // ---------------------------------------------------------------------------
 
 async function acquireLiveLegs(apiKey: string, scanKey: string, rand: () => number): Promise<BoardLeg[] | null> {
+  const now = new Date();
   const stored = await loadStoredScan(scanKey);
-  if (stored && stored.length >= 10) return stored;
+  if (stored) {
+    const today = filterLegsForToday(stored, now);
+    if (today.length >= MIN_LIVE_LEGS) return today;
+  }
 
   try {
     const fresh = await fetchLiveLegs(apiKey, rand);
-    if (fresh.length >= 10) {
+    if (fresh.length >= MIN_LIVE_LEGS) {
       await storeScan(scanKey, fresh);
       return fresh;
     }
@@ -649,44 +689,10 @@ async function acquireLiveLegs(apiKey: string, scanKey: string, rand: () => numb
     // fall through to last known scan
   }
 
-  // Scan failed (quota, outage): a stale-but-real board beats a fake one.
-  return loadLatestScan();
-}
-
-async function collectDfsLegs(rand: () => number): Promise<{ legs: BoardLeg[]; warnings: string[] }> {
-  const dfs = await scanDfsSites();
-  const legs: BoardLeg[] = [];
-
-  for (const edge of dfs.edgeLegs) {
-    const sport = LEAGUE_MAP[edge.league.toUpperCase()];
-    if (!sport) continue;
-
-    // Pick'em entries price both sides near -119; a softer line vs the rival
-    // site's market shifts true hit probability above breakeven.
-    const fairProb = Math.min(64, 54.3 + edge.gapPct * 1.2);
-    const impliedProb = 54.3;
-    const { confidence } = councilFields(fairProb, fairProb - impliedProb, rand);
-
-    legs.push({
-      id: edge.id,
-      sport,
-      market: 'player_prop',
-      event: `${edge.player} — DFS pick'em`,
-      pick: edge.pick,
-      book: edge.site,
-      americanOdds: -119,
-      impliedProb: round1(impliedProb),
-      fairProb: round1(fairProb),
-      edge: round1(fairProb - impliedProb),
-      confidence,
-      agreement: 0,
-      grade: gradeFor(confidence, fairProb - impliedProb),
-      reasoning: `${edge.site} posts ${edge.line} while ${edge.otherSite} posts ${edge.otherLine} (${edge.gapPct}% apart) — the soft line side of a cross-site discrepancy historically clears at an elevated rate.`,
-      startTime: new Date(Date.now() + 4 * 3600_000).toISOString(),
-    });
-  }
-
-  return { legs, warnings: dfs.warnings };
+  const fallback = await loadLatestScan();
+  if (!fallback) return null;
+  const today = filterLegsForToday(fallback, now);
+  return today.length >= MIN_LIVE_LEGS ? today : null;
 }
 
 async function applyCouncil(
@@ -738,7 +744,10 @@ const MEMORY_TTL_MS = 15 * 60 * 1000;
  */
 export async function getPublishedBoard(): Promise<LegBoardResult> {
   const latest = await loadLatestBoard();
-  if (latest) return latest;
+  if (latest) {
+    const sanitized = sanitizeBoardForToday(latest);
+    if (sanitized.legs.length > 0) return sanitized;
+  }
 
   // No board has been generated yet (cron hasn't run since setup). Return a
   // labelled placeholder rather than generating on a user request.
@@ -770,8 +779,11 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
 
   const stored = await loadStoredBoard(windowKey);
   if (stored) {
-    memoryCache = { key: windowKey, at: Date.now(), result: stored };
-    return stored;
+    const sanitized = sanitizeBoardForToday(stored, now);
+    if (sanitized.source === 'live' && sanitized.legs.length >= MIN_LIVE_LEGS) {
+      memoryCache = { key: windowKey, at: Date.now(), result: sanitized };
+      return sanitized;
+    }
   }
 
   const rand = mulberry32(hashString(windowKey));
@@ -783,15 +795,30 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
 
   if (apiKey) {
     quantLegs = await acquireLiveLegs(apiKey, scanKey, rand);
-    if (quantLegs && quantLegs.length >= 10) {
+    if (quantLegs && quantLegs.length >= MIN_LIVE_LEGS) {
       source = 'live';
-      const dfs = await collectDfsLegs(rand);
-      quantLegs = [...quantLegs, ...dfs.legs];
-      warnings = dfs.warnings;
+    } else {
+      quantLegs = null;
     }
   }
 
-  if (!quantLegs || quantLegs.length < 10) {
+  if (!quantLegs || quantLegs.length < MIN_LIVE_LEGS) {
+    if (apiKey) {
+      const pending: LegBoardResult = {
+        generatedAt: now.toISOString(),
+        source: 'pending',
+        refreshWindow: "Today's slate only — no live lines yet",
+        legs: [],
+        warnings: [
+          'Only games tipping off today (US Eastern) are published.',
+          'Check back closer to first pitch; futures and tomorrow\'s lines are excluded.',
+        ],
+        council: { enabled: false, responded: 0, seats: [] },
+      };
+      memoryCache = { key: windowKey, at: Date.now(), result: pending };
+      await storeBoard(windowKey, pending);
+      return pending;
+    }
     quantLegs = simulatedLegs(windowKey);
     source = 'simulated';
     warnings = [];
