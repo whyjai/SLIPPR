@@ -17,17 +17,21 @@ import axios from 'axios';
 // endpoints are chronically flaky and the capable ones (nemotron etc.) are
 // reasoning models that break the JSON grading format — verified 2026-07 that
 // only these produce clean votes. Slugs rotate; override with COUNCIL_MODELS.
+// All-paid, 9-vendor council chosen for RELIABILITY (each verified to answer +
+// return parseable JSON across repeated pings). Free OpenRouter models were
+// dropped — they error too often to sustain a full council. Cost is ~$1-2/mo at
+// 8 sessions/day. Slugs rotate; override with COUNCIL_MODELS.
 const DEFAULT_MODELS = [
   'openai/gpt-4o-mini',
-  'deepseek/deepseek-chat',
-  'meta-llama/llama-3.3-70b-instruct',
-  'mistralai/mistral-small-24b-instruct-2501',
-  'google/gemini-2.5-flash-lite',
+  'openai/gpt-4.1-mini',
   'anthropic/claude-3-haiku',
   'amazon/nova-lite-v1',
-  'openai/gpt-oss-20b:free',
-  'tencent/hy3:free',
-  'poolside/laguna-xs-2.1:free',
+  'google/gemini-2.5-flash',
+  'google/gemini-2.5-flash-lite',
+  'meta-llama/llama-3.3-70b-instruct',
+  'mistralai/mistral-small-24b-instruct-2501',
+  'cohere/command-r-08-2024',
+  'qwen/qwen-2.5-72b-instruct',
 ];
 
 export type CouncilCandidate = {
@@ -44,6 +48,8 @@ export type CouncilCandidate = {
   scoutNote?: string;
   conviction?: number;
   factors?: string[];
+  /** Scout blended EV research score — higher = stronger pre-council signal. */
+  scoutQuality?: number;
 };
 
 export type CouncilSeat = {
@@ -67,9 +73,9 @@ export type CouncilResult = {
 const SYSTEM_PROMPT = `You are one independent seat on a 10-model council of SHARP professional sports bettors.
 You live and die by EXPECTED VALUE, not by picking favorites. A -2000 favorite with no edge is a bad bet; a +140 underdog priced too long is a great one.
 
-You receive candidate legs from today's real sportsbook lines. Each includes: the devigged multi-book consensus win probability (fairProb %), the best available price (americanOdds) and its implied probability, and the edge (fairProb minus implied, in points).
+You receive candidate legs from today's real sportsbook lines. Each includes: the devigged multi-book consensus win probability (fairProb %), the best available price (americanOdds) and its implied probability, the edge (fairProb minus implied, in points), and optional Scout research (thesis, conviction, scoutQuality).
 
-For each leg, decide whether it is a genuinely +EV bet worthy of a board of the day's BEST VALUE plays. Think like a sharp:
+Scout has already pre-filtered for +EV angles. Trust scoutQuality and edge together — low scoutQuality with negative edge should be rejected even if it "feels" like a safe favorite.
 - Reward legs where the offered price pays MORE than the true probability warrants (positive edge / +EV). Punish no-payout favorites and lottery longshots.
 - Player props and totals are noisier than moneylines/spreads — demand more edge before approving them.
 - Be suspicious of edges that look too good (>6-7 points usually means stale or bad data) and of legs with thin book consensus.
@@ -113,7 +119,7 @@ function parseVotes(raw: string, validIds: Set<string>): Map<string, Vote> | nul
   }
 }
 
-async function askModel(
+async function askModelOnce(
   apiKey: string,
   model: string,
   candidates: CouncilCandidate[],
@@ -126,6 +132,8 @@ async function askModel(
         model,
         temperature: 0.2,
         max_tokens: 2500,
+        // Let OpenRouter route around a failing upstream provider.
+        provider: { allow_fallbacks: true },
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: JSON.stringify(candidates) },
@@ -137,7 +145,7 @@ async function askModel(
           'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL ?? 'https://slippr.vercel.app',
           'X-Title': 'SLIPPR Council',
         },
-        timeout: 45000,
+        timeout: 40000,
       },
     );
 
@@ -147,6 +155,23 @@ async function askModel(
   } catch {
     return null;
   }
+}
+
+/**
+ * Ask a model for its votes, retrying once on a transient failure. OpenRouter's
+ * "Provider returned error" is usually transient, so a single quick retry pushes
+ * the council's response rate close to 100%.
+ */
+async function askModel(
+  apiKey: string,
+  model: string,
+  candidates: CouncilCandidate[],
+  validIds: Set<string>,
+): Promise<Map<string, Vote> | null> {
+  const first = await askModelOnce(apiKey, model, candidates, validIds);
+  if (first) return first;
+  await new Promise((r) => setTimeout(r, 600));
+  return askModelOnce(apiKey, model, candidates, validIds);
 }
 
 export async function runCouncil(candidates: CouncilCandidate[]): Promise<CouncilResult> {
@@ -168,7 +193,9 @@ export async function runCouncil(candidates: CouncilCandidate[]): Promise<Counci
   // to fire on hung keep-alive connections (e.g. free-tier models with no
   // credit), which would otherwise block board generation for minutes. Any seat
   // that hasn't answered by the deadline is counted as a non-response.
-  const COUNCIL_DEADLINE_MS = 50000;
+  // Generous enough for a first attempt + one retry on the slow seats. Only the
+  // cron pays this cost (maxDuration 300s); users read the cached board.
+  const COUNCIL_DEADLINE_MS = 95000;
   const results = await Promise.all(
     models.map((model) =>
       Promise.race([

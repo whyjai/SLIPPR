@@ -7,6 +7,14 @@ import {
   type ScoutMeta,
   type ScoutResult,
 } from './scout';
+import {
+  assessLegRisk,
+  capacityAdvisory,
+  COMPLIANCE_DISCLAIMER,
+  councilSessionMeta,
+  partitionLegsForPublication,
+  type FadeAlert,
+} from './leg-compliance';
 
 export type MarketType = 'moneyline' | 'spread' | 'total' | 'player_prop';
 
@@ -40,6 +48,8 @@ export type BoardLeg = {
   startTime: string;
 };
 
+export type { FadeAlert } from './leg-compliance';
+
 export type CouncilMeta = {
   enabled: boolean;
   responded: number;
@@ -52,8 +62,15 @@ export type LegBoardResult = {
   generatedAt: string;
   source: 'live' | 'simulated' | 'pending';
   refreshWindow: string;
+  /** Council session 1–8 for the UTC day (every 3h). */
+  sessionIndex: number;
+  sessionsPerDay: number;
   legs: BoardLeg[];
+  /** Lines flagged as likely overpriced / poor plays — informational research only. */
+  fadeAlerts: FadeAlert[];
   warnings: string[];
+  capacityAdvisory: string;
+  complianceDisclaimer: string;
   scout?: ScoutMeta;
   council: CouncilMeta;
 };
@@ -763,16 +780,35 @@ async function acquireLiveLegs(apiKey: string, scanKey: string, rand: () => numb
 async function applyCouncil(
   legs: BoardLeg[],
   scout: ScoutResult,
-): Promise<{ legs: BoardLeg[]; council: CouncilMeta; warnings: string[] }> {
+): Promise<{
+  legs: BoardLeg[];
+  fadeAlerts: FadeAlert[];
+  council: CouncilMeta;
+  warnings: string[];
+  excludedAvoid: number;
+}> {
   const debatePool: BoardLeg[] = scout.shortlistedIds
     .map((id) => legs.find((l) => l.id === id))
     .filter((l): l is BoardLeg => !!l);
 
   if (debatePool.length < MIN_LIVE_LEGS) {
+    const assessments = new Map(
+      debatePool.map((leg) => [
+        leg.id,
+        assessLegRisk(leg, { scoutBrief: scout.briefs[leg.id] }),
+      ]),
+    );
+    const partitioned = partitionLegsForPublication(
+      debatePool,
+      assessments,
+      (leg) => gradeFor(leg.fairProb, leg.edge, leg.americanOdds),
+    );
     return {
-      legs: debatePool,
+      legs: partitioned.picks,
+      fadeAlerts: partitioned.fadeAlerts,
       council: { enabled: false, responded: 0, seats: [] },
       warnings: ['Scout shortlist too thin for council review.'],
+      excludedAvoid: partitioned.excludedAvoid,
     };
   }
 
@@ -792,6 +828,7 @@ async function applyCouncil(
         scoutNote: brief?.thesis,
         conviction: brief?.conviction,
         factors: brief?.factors,
+        scoutQuality: brief?.qualityScore,
       };
     },
   );
@@ -815,26 +852,103 @@ async function applyCouncil(
 
   if (result.responded === 0) {
     for (const leg of debatePool) applyVerdict(leg);
-    return { legs: debatePool, council, warnings };
+  } else {
+    let surviving = debatePool.filter((leg) =>
+      passesCouncil(result.byLeg[leg.id], result.responded),
+    );
+
+    if (surviving.length < MIN_LIVE_LEGS) {
+      surviving = debatePool.slice(0, BOARD_SIZE);
+      warnings.push(
+        'Council did not reach 70% agreement; publishing Scout-ranked lines with market grades.',
+      );
+    }
+
+    for (const leg of surviving) applyVerdict(leg);
+    debatePool.length = 0;
+    debatePool.push(...surviving);
   }
 
-  let surviving = debatePool.filter((leg) => passesCouncil(result.byLeg[leg.id], result.responded));
+  const assessments = new Map(
+    debatePool.map((leg) => [
+      leg.id,
+      assessLegRisk(leg, {
+        scoutBrief: scout.briefs[leg.id],
+        councilVerdict: result.byLeg[leg.id],
+        councilResponded: result.responded,
+      }),
+    ]),
+  );
 
-  if (surviving.length < MIN_LIVE_LEGS) {
-    surviving = debatePool.slice(0, BOARD_SIZE);
+  const rejectedByCouncil = legs.filter((leg) => {
+    const v = result.byLeg[leg.id];
+    return v && result.responded > 0 && v.votes > 0 && !passesCouncil(v, result.responded);
+  });
+
+  for (const leg of rejectedByCouncil) {
+    if (!assessments.has(leg.id)) {
+      assessments.set(
+        leg.id,
+        assessLegRisk(leg, {
+          scoutBrief: scout.briefs[leg.id],
+          councilVerdict: result.byLeg[leg.id],
+          councilResponded: result.responded,
+        }),
+      );
+    }
+  }
+
+  const partitionPool = [...debatePool, ...rejectedByCouncil.filter((l) => !debatePool.some((d) => d.id === l.id))];
+  const partitioned = partitionLegsForPublication(
+    partitionPool,
+    assessments,
+    (leg) => gradeFor(leg.fairProb, leg.edge, leg.americanOdds),
+  );
+
+  if (partitioned.excludedAvoid > 0) {
     warnings.push(
-      'Council did not reach 70% agreement; publishing Scout-ranked lines with market grades.',
+      `${partitioned.excludedAvoid} avoid-flagged leg(s) removed from the picks board (compliance filter).`,
     );
   }
 
-  for (const leg of surviving) applyVerdict(leg);
-
-  return { legs: surviving, council, warnings };
+  return {
+    legs: partitioned.picks,
+    fadeAlerts: partitioned.fadeAlerts,
+    council,
+    warnings,
+    excludedAvoid: partitioned.excludedAvoid,
+  };
 }
 
-// ---------------------------------------------------------------------------
-// Entry point
-// ---------------------------------------------------------------------------
+function boardMeta(now: Date, pickCount: number, fadeCount: number) {
+  const session = councilSessionMeta(now);
+  return {
+    sessionIndex: session.sessionIndex,
+    sessionsPerDay: session.sessionsPerDay,
+    refreshWindow: session.refreshWindow,
+    capacityAdvisory: capacityAdvisory(pickCount, fadeCount),
+    complianceDisclaimer: COMPLIANCE_DISCLAIMER,
+  };
+}
+
+function emptyBoardShell(
+  now: Date,
+  partial: Omit<
+    LegBoardResult,
+    'fadeAlerts' | 'sessionIndex' | 'sessionsPerDay' | 'capacityAdvisory' | 'complianceDisclaimer'
+  > & { fadeAlerts?: FadeAlert[] },
+): LegBoardResult {
+  const fadeAlerts = partial.fadeAlerts ?? [];
+  const meta = boardMeta(now, partial.legs.length, fadeAlerts.length);
+  return {
+    ...partial,
+    sessionIndex: meta.sessionIndex,
+    sessionsPerDay: meta.sessionsPerDay,
+    capacityAdvisory: meta.capacityAdvisory,
+    complianceDisclaimer: meta.complianceDisclaimer,
+    fadeAlerts,
+  };
+}
 
 let memoryCache: { key: string; at: number; result: LegBoardResult } | null = null;
 const MEMORY_TTL_MS = 15 * 60 * 1000;
@@ -845,12 +959,20 @@ const MEMORY_TTL_MS = 15 * 60 * 1000;
  * by the cron (8×/day at fixed times) so visitors can't trigger a refresh.
  */
 function withRefreshedGrades(board: LegBoardResult): LegBoardResult {
+  const legs = board.legs.map((leg) => ({
+    ...leg,
+    grade: gradeFor(leg.fairProb, leg.edge, leg.americanOdds),
+  }));
+  const fadeAlerts = board.fadeAlerts ?? [];
   return {
     ...board,
-    legs: board.legs.map((leg) => ({
-      ...leg,
-      grade: gradeFor(leg.fairProb, leg.edge, leg.americanOdds),
-    })),
+    legs,
+    fadeAlerts,
+    complianceDisclaimer: board.complianceDisclaimer ?? COMPLIANCE_DISCLAIMER,
+    sessionIndex: board.sessionIndex ?? councilSessionMeta().sessionIndex,
+    sessionsPerDay: board.sessionsPerDay ?? 8,
+    capacityAdvisory:
+      board.capacityAdvisory ?? capacityAdvisory(legs.length, fadeAlerts.length),
   };
 }
 
@@ -863,14 +985,15 @@ export async function getPublishedBoard(): Promise<LegBoardResult> {
 
   // No board has been generated yet (cron hasn't run since setup). Return a
   // labelled placeholder rather than generating on a user request.
-  return {
-    generatedAt: new Date().toISOString(),
+  const now = new Date();
+  return emptyBoardShell(now, {
+    generatedAt: now.toISOString(),
     source: 'pending',
     refreshWindow: 'Board warming up — the council convenes shortly',
     legs: [],
     warnings: [],
     council: { enabled: false, responded: 0, seats: [] },
-  };
+  });
 }
 
 /**
@@ -883,7 +1006,6 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
   const window = Math.floor(now.getUTCHours() / 3);
   const windowKey = `${now.toISOString().slice(0, 10)}-w${window}`;
   const scanKey = `${now.toISOString().slice(0, 10)}-s${Math.floor(now.getUTCHours() / SCAN_HOURS)}`;
-  const refreshWindow = `Window ${window + 1}/8 · refreshes every 3h`;
 
   if (memoryCache && memoryCache.key === windowKey && Date.now() - memoryCache.at < MEMORY_TTL_MS) {
     return memoryCache.result;
@@ -916,7 +1038,7 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
 
   if (!quantLegs || quantLegs.length < MIN_LIVE_LEGS) {
     if (apiKey) {
-      const pending: LegBoardResult = {
+      const pending = emptyBoardShell(now, {
         generatedAt: now.toISOString(),
         source: 'pending',
         refreshWindow: "Today's slate only — no live lines yet",
@@ -926,7 +1048,7 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
           'Check back closer to first pitch; futures and tomorrow\'s lines are excluded.',
         ],
         council: { enabled: false, responded: 0, seats: [] },
-      };
+      });
       memoryCache = { key: windowKey, at: Date.now(), result: pending };
       await storeBoard(windowKey, pending);
       return pending;
@@ -946,6 +1068,7 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
     seats: [],
   };
   let legs = quantLegs;
+  let fadeAlerts: FadeAlert[] = [];
   let scoutMeta: ScoutMeta | undefined;
   if (source === 'live') {
     const scout = await runScout(quantLegs);
@@ -953,22 +1076,41 @@ export async function generateLegBoard(): Promise<LegBoardResult> {
     quantLegs = enrichLegsWithScout(quantLegs, scout);
     const judged = await applyCouncil(quantLegs, scout);
     legs = judged.legs;
+    fadeAlerts = judged.fadeAlerts;
     council = judged.council;
     warnings = [...judged.warnings, ...warnings];
     if (scout.meta.responded && scout.meta.slateSummary) {
       warnings = [`Scout: ${scout.meta.slateSummary}`, ...warnings];
     }
+  } else {
+    const assessments = new Map(
+      quantLegs.map((leg) => [leg.id, assessLegRisk(leg)]),
+    );
+    const partitioned = partitionLegsForPublication(
+      quantLegs,
+      assessments,
+      (leg) => gradeFor(leg.fairProb, leg.edge, leg.americanOdds),
+    );
+    legs = partitioned.picks;
+    fadeAlerts = partitioned.fadeAlerts;
+    if (partitioned.excludedAvoid > 0) {
+      warnings.push(
+        `${partitioned.excludedAvoid} avoid-flagged leg(s) removed from the picks board (compliance filter).`,
+      );
+    }
   }
 
-  const result: LegBoardResult = {
+  const composed = composeBoard(legs);
+  const result = emptyBoardShell(now, {
     generatedAt: now.toISOString(),
     source,
-    refreshWindow,
-    legs: composeBoard(legs),
+    refreshWindow: councilSessionMeta(now).refreshWindow,
+    legs: composed,
+    fadeAlerts,
     warnings: warnings.slice(0, 8),
     scout: scoutMeta,
     council,
-  };
+  });
 
   memoryCache = { key: windowKey, at: Date.now(), result };
   await storeBoard(windowKey, result);

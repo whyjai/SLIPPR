@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Bell, Loader2, Shield, Wallet } from 'lucide-react';
 import { Card, IconTile, PageHeader, Toggle } from './ui';
 import { useAuth } from '../AuthProvider';
@@ -167,6 +168,24 @@ export default function SettingsView() {
               </SettingRow>
             </div>
             {billingError && <p className="mt-4 text-xs text-rose-400">{billingError}</p>}
+          </Card>
+
+          <Card className="animate-fade-up delay-300 p-7 sm:p-8">
+            <h2 className="mb-2 font-semibold">Legal & compliance</h2>
+            <p className="mb-5 text-sm text-zinc-500">
+              SLIPPR is an analytics platform. Review terms and responsible play resources.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/legal" className="btn-ghost px-4 py-2 text-sm">
+                Legal center
+              </Link>
+              <Link href="/legal/terms" className="btn-ghost px-4 py-2 text-sm">
+                Terms
+              </Link>
+              <Link href="/legal/responsible-play" className="btn-ghost px-4 py-2 text-sm">
+                Responsible play
+              </Link>
+            </div>
           </Card>
         </div>
       </div>

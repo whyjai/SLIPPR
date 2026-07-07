@@ -84,7 +84,7 @@ export default function LegBoardView() {
         <PageHeader
           eyebrow="Today's Board"
           title={board ? `${board.legs.length} legs · today only` : "Today's slate"}
-          description="Scout researches today's slate → council votes on the shortlist. Real sportsbook lines only (US Eastern), devigged and graded."
+          description="Scout researches today's slate for +EV angles → council votes on the quality shortlist. Real sportsbook lines only (US Eastern), devigged and graded."
           actions={
             <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-sm text-zinc-400">
               <RefreshCw className="h-3.5 w-3.5 text-emerald-400" />
@@ -108,7 +108,14 @@ export default function LegBoardView() {
             </span>
             {board.scout?.responded && (
               <span>
-                Scout researched {board.scout.eventsResearched} events → {board.scout.shortlisted} to council
+                Scout: {board.scout.candidatesReviewed ?? board.scout.eventsResearched} reviewed →{' '}
+                {board.scout.shortlisted} shortlisted
+                {(board.scout.avgShortlistEdge ?? 0) > 0 && (
+                  <> · avg edge +{board.scout.avgShortlistEdge}</>
+                )}
+                {(board.scout.qualityFiltered ?? 0) > 0 && (
+                  <> · {board.scout.qualityFiltered} filtered</>
+                )}
               </span>
             )}
             {board.council.enabled && (
@@ -116,10 +123,51 @@ export default function LegBoardView() {
                 Council: {board.council.responded}/{board.council.seats.length || 10} models voted
               </span>
             )}
+            {board.sessionIndex && (
+              <span>
+                Session {board.sessionIndex}/{board.sessionsPerDay ?? 8}
+              </span>
+            )}
             <span className="font-mono">
               Updated {new Date(board.generatedAt).toLocaleTimeString()}
             </span>
           </div>
+        )}
+
+        {board && board.fadeAlerts && board.fadeAlerts.length > 0 && (
+          <Card className="animate-fade-up mb-6 border-rose-500/20 bg-rose-500/[0.04] p-5">
+            <div className="mb-2 flex items-center gap-2.5">
+              <AlertTriangle className="h-4 w-4 text-rose-400" />
+              <h2 className="text-sm font-semibold text-rose-300">
+                Fade Alerts — informational research only
+              </h2>
+            </div>
+            <p className="mb-4 text-xs leading-relaxed text-zinc-500">
+              Lines our models flag as overpriced or likely poor plays. These are not standard
+              picks and are separated for compliance. Past analysis does not guarantee future
+              results.
+            </p>
+            <ul className="space-y-3">
+              {board.fadeAlerts.map((fade) => (
+                <li
+                  key={fade.id}
+                  className="rounded-xl border border-white/[0.05] bg-black/25 px-4 py-3"
+                >
+                  <div className="mb-1 flex flex-wrap items-center gap-2">
+                    <Badge tone="zinc" className="!px-2 !text-[10px]">
+                      {fade.sport}
+                    </Badge>
+                    <span className="text-sm font-medium text-zinc-200">{fade.pick}</span>
+                    <span className="ml-auto font-mono text-xs text-rose-300">
+                      {fade.fadeConfidence}% fade conf
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-500">{fade.event}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{fade.thesis}</p>
+                </li>
+              ))}
+            </ul>
+          </Card>
         )}
 
         {board && board.warnings.length > 0 && (
@@ -243,7 +291,8 @@ export default function LegBoardView() {
         )}
 
         <p className="mt-6 text-center text-[11px] leading-relaxed text-zinc-600">
-          Council grades are probabilistic estimates, not guarantees. 21+. Bet responsibly — 1-800-GAMBLER.
+          {board?.complianceDisclaimer ??
+            'Council grades are probabilistic estimates, not guarantees. 21+. Bet responsibly — 1-800-GAMBLER.'}
         </p>
       </div>
     </div>

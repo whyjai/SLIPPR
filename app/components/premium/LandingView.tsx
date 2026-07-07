@@ -282,6 +282,26 @@ export default function LandingView({ onOpenDashboard, onOpenBoard }: LandingVie
           </button>
         </Card>
       </section>
+
+      <footer className="border-t border-white/[0.05] px-6 py-10 text-center lg:px-10">
+        <p className="mb-4 text-xs leading-relaxed text-zinc-600">
+          SLIPPR is a sports analytics platform — not a sportsbook. Informational research only.
+        </p>
+        <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-zinc-500">
+          <a href="/legal" className="hover:text-zinc-300 transition">
+            Legal
+          </a>
+          <a href="/legal/terms" className="hover:text-zinc-300 transition">
+            Terms
+          </a>
+          <a href="/legal/responsible-play" className="hover:text-zinc-300 transition">
+            Responsible Play
+          </a>
+          <a href="tel:1-800-426-2537" className="hover:text-zinc-300 transition">
+            1-800-GAMBLER
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
