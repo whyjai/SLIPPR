@@ -26,7 +26,7 @@ const GRADE_TONES: Record<string, 'emerald' | 'amber' | 'zinc' | 'violet'> = {
   C: 'amber',
 };
 
-type SortKey = 'confidence' | 'edge' | 'odds';
+type SortKey = 'value' | 'edge' | 'confidence' | 'odds';
 
 export default function LegBoardView() {
   const { isPro } = useAuth();
@@ -35,7 +35,7 @@ export default function LegBoardView() {
   const [loading, setLoading] = useState(true);
   const [sportFilter, setSportFilter] = useState<Sport | null>(null);
   const [marketFilter, setMarketFilter] = useState<MarketType | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>('confidence');
+  const [sortKey, setSortKey] = useState<SortKey>('value');
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = () => {
@@ -63,6 +63,12 @@ export default function LegBoardView() {
         (!marketFilter || l.market === marketFilter),
     );
     return legs.sort((a, b) => {
+      // 'value' preserves the server's ranking: council-endorsed picks first,
+      // then expected value — the whole point of the researcher. Other keys are
+      // opt-in re-sorts.
+      if (sortKey === 'value') {
+        return (b.agreement ?? 0) - (a.agreement ?? 0);
+      }
       if (sortKey === 'edge') return b.edge - a.edge;
       if (sortKey === 'odds') return b.americanOdds - a.americanOdds;
       return b.confidence - a.confidence;
@@ -163,8 +169,9 @@ export default function LegBoardView() {
               onChange={(e) => setSortKey(e.target.value as SortKey)}
               className="rounded-lg border border-white/10 bg-black/40 px-2.5 py-1.5 text-xs text-zinc-300 focus:outline-none"
             >
-              <option value="confidence">Confidence</option>
+              <option value="value">Best value</option>
               <option value="edge">Edge</option>
+              <option value="confidence">Win probability</option>
               <option value="odds">Payout</option>
             </select>
           </span>
