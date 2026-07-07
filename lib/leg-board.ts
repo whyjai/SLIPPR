@@ -59,7 +59,6 @@ export type LegBoardResult = {
 };
 
 const BOARD_SIZE = 50;
-const ANCHOR_COUNT = 35; // high-probability legs (fair >= 55%)
 const COUNCIL_SIZE = 10;
 const MIN_LIVE_LEGS = 3;
 
@@ -133,26 +132,54 @@ export function americanToDecimal(odds: number): number {
   return odds < 0 ? 1 + 100 / -odds : 1 + odds / 100;
 }
 
+/**
+ * Expected value per 1 unit staked, given the devigged fair win probability and
+ * the actual offered American odds. Positive = a +EV bet (the price pays more
+ * than the true probability warrants). This is what a sharp bettor optimizes —
+ * NOT raw win probability, which just surfaces no-payout favorites.
+ */
+export function evPerUnit(fairProbPct: number, americanOdds: number): number {
+  const p = Math.min(1, Math.max(0, fairProbPct / 100));
+  const dec = americanToDecimal(americanOdds);
+  return p * (dec - 1) - (1 - p);
+}
+
+/** Reward the parlay sweet spot (~ -200..+200); taper for shorter/longer prices. */
+function oddsBandBonus(odds: number): number {
+  if (odds >= -200 && odds <= 200) return 6;
+  if (odds >= -300 && odds <= 300) return 3;
+  return 0;
+}
+
+/**
+ * The researcher's ranking function. Value-first: expected value is the spine,
+ * reinforced by line-shopping edge, council endorsement, and a bias toward
+ * parlayable prices. Win probability is deliberately NOT a primary term.
+ */
 function legScore(leg: BoardLeg): number {
+  const evPct = evPerUnit(leg.fairProb, leg.americanOdds) * 100;
   return (
-    leg.confidence * 0.35 +
-    leg.fairProb * 0.45 +
-    Math.max(0, leg.edge) * 2.5 +
-    (leg.agreement ?? 0) * 1.5
+    evPct * 6 +
+    Math.max(0, leg.edge) * 2 +
+    (leg.agreement ?? 0) * 2 +
+    oddsBandBonus(leg.americanOdds)
   );
 }
 
-/** Grades anchor picks on win probability; rewards +EV, lightly taxes juice. */
-function gradeFor(confidence: number, edge: number, fairProb: number): LegGradeLetter {
-  const probScore = confidence * 0.4 + fairProb * 0.6;
-  const valueBonus = Math.max(0, edge) * 2.5;
-  const juiceTax = Math.min(0, edge) * 0.3;
-  const score = probScore + valueBonus + juiceTax;
-  if (score >= 80) return 'A+';
-  if (score >= 74) return 'A';
-  if (score >= 68) return 'B+';
-  if (score >= 62) return 'B';
-  return 'C';
+/**
+ * Grades a leg on VALUE relative to a fair price. A/A+ are reserved for legs
+ * that genuinely BEAT the market (positive EV / line-shopping edge) — a pro
+ * grinds out 1-3% ROI, so those are rare and elite. B/B+ are fairly-priced,
+ * playable legs. C is reserved for legs priced clearly worse than fair.
+ */
+function gradeFor(fairProb: number, edge: number, americanOdds: number): LegGradeLetter {
+  const evPct = evPerUnit(fairProb, americanOdds) * 100;
+  const score = evPct + Math.max(0, edge) * 0.4;
+  if (score >= 1.5) return 'A+'; // clearly beats the market
+  if (score >= 0.3) return 'A'; //  genuine positive value
+  if (score >= -0.8) return 'B+'; // essentially fair
+  if (score >= -2.2) return 'B'; //  fairly priced, playable
+  return 'C'; //                     priced worse than fair — avoid
 }
 
 function councilFields(fairProb: number, edge: number, rand: () => number) {
@@ -170,35 +197,51 @@ function round1(n: number): number {
 }
 
 // ---------------------------------------------------------------------------
-// Board composition: the user mandate is high probability AND high
-// multiplier potential. 35 anchor legs (fair >= 55%) carry the win rate;
-// 15 value legs (fair 33-55%, best edge first) give the slip builder the
-// payout range to reach 25x-50x targets.
+// Board composition: an expert bettor's board — the BEST VALUE legs, not the
+// biggest favorites. Legs must clear a value bar and sit in a parlayable odds
+// range; no single game can dominate; ranking is by expected value.
 // ---------------------------------------------------------------------------
+
+const MIN_ODDS = -300; // shorter than this = no payout; excluded unless nothing else
+const MAX_ODDS = 320; // longer than this = lottery noise
+const MIN_EV = -0.03; // allow near-neutral; the sort still floats +EV to the top
+
+function isParlayable(l: BoardLeg): boolean {
+  return (
+    l.americanOdds >= MIN_ODDS &&
+    l.americanOdds <= MAX_ODDS &&
+    l.fairProb >= 35 &&
+    l.fairProb <= 82 &&
+    evPerUnit(l.fairProb, l.americanOdds) > MIN_EV
+  );
+}
 
 function composeBoard(legs: BoardLeg[]): BoardLeg[] {
   const deduped = [...new Map(legs.map((l) => [l.id, l])).values()];
-  const sorted = deduped.sort((a, b) => legScore(b) - legScore(a));
 
-  const anchors = sorted.filter((l) => l.fairProb >= 55).slice(0, ANCHOR_COUNT);
-  const anchorIds = new Set(anchors.map((l) => l.id));
+  // Prefer genuinely parlayable value legs; fall back to the full pool only if
+  // the slate is too thin to fill a board.
+  const eligible = deduped.filter(isParlayable);
+  const pool = eligible.length >= 20 ? eligible : deduped;
+  const ranked = [...pool].sort((a, b) => legScore(b) - legScore(a));
 
-  const multipliers = sorted
-    .filter((l) => !anchorIds.has(l.id) && l.fairProb >= 33 && l.fairProb < 55)
-    .sort((a, b) => b.edge - a.edge || legScore(b) - legScore(a))
-    .slice(0, BOARD_SIZE - anchors.length);
-
-  const chosen = [...anchors, ...multipliers];
+  // Diversify: at most 2 legs per game, so one blowout can't flood the board and
+  // slips built from it aren't secretly correlated.
+  const perEvent = new Map<string, number>();
+  const chosen: BoardLeg[] = [];
+  for (const leg of ranked) {
+    const n = perEvent.get(leg.event) ?? 0;
+    if (n >= 2) continue;
+    perEvent.set(leg.event, n + 1);
+    chosen.push(leg);
+    if (chosen.length >= BOARD_SIZE) break;
+  }
   if (chosen.length < BOARD_SIZE) {
-    const chosenIds = new Set(chosen.map((l) => l.id));
-    chosen.push(
-      ...sorted.filter((l) => !chosenIds.has(l.id)).slice(0, BOARD_SIZE - chosen.length),
-    );
+    const ids = new Set(chosen.map((l) => l.id));
+    chosen.push(...ranked.filter((l) => !ids.has(l.id)).slice(0, BOARD_SIZE - chosen.length));
   }
 
-  // Surface the council's endorsed picks first (more approvals = higher), then
-  // fall back to quant score. Legs the council declined (agreement 0) sink below
-  // its consensus picks instead of burying them under no-edge favorites.
+  // Council-endorsed picks first (more approvals = higher), then value score.
   return chosen
     .sort((a, b) => (b.agreement ?? 0) - (a.agreement ?? 0) || legScore(b) - legScore(a))
     .slice(0, BOARD_SIZE);
@@ -295,7 +338,12 @@ async function fetchLiveLegs(apiKey: string, rand: () => number): Promise<BoardL
         const { data } = await axios.get<OddsApiEvent[]>(
           `https://api.the-odds-api.com/v4/sports/${key}/odds`,
           {
-            params: { apiKey, regions: 'us', markets: 'h2h,totals', oddsFormat: 'american' },
+            params: {
+              apiKey,
+              regions: 'us',
+              markets: 'h2h,spreads,totals',
+              oddsFormat: 'american',
+            },
             timeout: 12000,
           },
         );
@@ -364,7 +412,7 @@ async function fetchLiveLegs(apiKey: string, rand: () => number): Promise<BoardL
         edge: round1(edge),
         confidence,
         agreement: 0, // set by the real council
-        grade: gradeFor(confidence, edge, fairProb),
+        grade: gradeFor(fairProb, edge, best.odds),
         reasoning: `Devigged consensus across ${fairs.length} books prices this at ${round1(fairProb)}%; ${best.book} offers it at ${round1(impliedProb)}% implied (${edge >= 0 ? '+' : ''}${round1(edge)} pts vs market).`,
         startTime: event.commence_time,
       });
@@ -522,7 +570,7 @@ function simulatedLegs(seedKey: string): BoardLeg[] {
       edge: round1(fairProbPct - impliedPct),
       confidence,
       agreement,
-      grade: gradeFor(confidence, fairProbPct - impliedPct, fairProbPct),
+      grade: gradeFor(fairProbPct, fairProbPct - impliedPct, odds),
       reasoning: reasoningFor(market, fairProbPct, impliedPct, rand),
       startTime: start.toISOString(),
     });
@@ -762,7 +810,7 @@ async function applyCouncil(
       leg.agreement = verdict.approvals;
       leg.confidence = Math.round((leg.confidence + verdict.avgConfidence) / 2);
     }
-    leg.grade = gradeFor(leg.confidence, leg.edge, leg.fairProb);
+    leg.grade = gradeFor(leg.fairProb, leg.edge, leg.americanOdds);
   };
 
   if (result.responded === 0) {
@@ -801,7 +849,7 @@ function withRefreshedGrades(board: LegBoardResult): LegBoardResult {
     ...board,
     legs: board.legs.map((leg) => ({
       ...leg,
-      grade: gradeFor(leg.confidence, leg.edge, leg.fairProb),
+      grade: gradeFor(leg.fairProb, leg.edge, leg.americanOdds),
     })),
   };
 }
