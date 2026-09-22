@@ -2,7 +2,7 @@
 -- SLIPPR — one-shot database setup.
 -- Paste this whole file into Supabase → SQL Editor → Run.
 -- Safe to run more than once (every statement is idempotent).
--- Covers migrations 004–007 + the constraints the app code requires.
+-- Covers migrations 004–008 + the constraints the app code requires.
 -- ============================================================================
 
 create extension if not exists "uuid-ossp";
@@ -114,3 +114,13 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 -- Done. Tables: profiles, subscriptions, leg_boards, odds_scans, pick_results.
+
+-- ---- prop_edge_scans (migration 008) ---------------------------------------
+create table if not exists public.prop_edge_scans (
+  scan_key text primary key,
+  generated_at timestamptz not null default now(),
+  payload jsonb not null
+);
+create index if not exists prop_edge_scans_generated_at_idx
+  on public.prop_edge_scans (generated_at desc);
+alter table public.prop_edge_scans enable row level security;

@@ -4,6 +4,7 @@ import { useEffect, useState, type ComponentType } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   BadgeCheck,
+  Crosshair,
   History,
   Home,
   LayoutDashboard,
@@ -23,6 +24,7 @@ import LegBoardView from './premium/LegBoardView';
 import SlipBuilderView from './premium/SlipBuilderView';
 import HistoryView from './premium/HistoryView';
 import SharpView from './premium/SharpView';
+import PropEdgesView from './premium/PropEdgesView';
 import SettingsView from './premium/SettingsView';
 import TrackRecordView from './premium/TrackRecordView';
 import { UpgradeProvider, useUpgrade } from './UpgradeProvider';
@@ -32,6 +34,7 @@ type Tab =
   | 'home'
   | 'dashboard'
   | 'board'
+  | 'props'
   | 'builder'
   | 'track'
   | 'history'
@@ -42,6 +45,7 @@ const TAB_PARAM_MAP: Record<string, Tab> = {
   home: 'home',
   dashboard: 'dashboard',
   board: 'board',
+  props: 'props',
   builder: 'builder',
   track: 'track',
   history: 'history',
@@ -59,6 +63,7 @@ const platformNav: NavEntry[] = [
   { tab: 'home', label: 'Home', icon: Home },
   { tab: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { tab: 'board', label: 'Leg Board', icon: ListOrdered },
+  { tab: 'props', label: 'Prop Edges', icon: Crosshair },
   { tab: 'builder', label: 'Slip Builder', icon: SlidersHorizontal },
 ];
 
@@ -196,6 +201,7 @@ function ShellInner() {
           )}
           {activeTab === 'dashboard' && <DashboardView embedded />}
           {activeTab === 'board' && <LegBoardView />}
+          {activeTab === 'props' && <PropEdgesView />}
           {activeTab === 'builder' && <SlipBuilderView />}
           {activeTab === 'track' && <TrackRecordView />}
           {activeTab === 'history' && <HistoryView />}
