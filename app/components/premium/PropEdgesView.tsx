@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, ChevronUp, Crosshair, Loader2, Lock, RefreshCw } from 'lucide-react';
+import { AlertTriangle, ChevronDown, ChevronUp, Crosshair, Loader2, Lock, RefreshCw } from 'lucide-react';
 import { Badge, Card, PageHeader, Toggle, cn } from './ui';
 import { useAuth } from '../AuthProvider';
 import { useUpgrade } from '../UpgradeProvider';
@@ -62,7 +62,7 @@ export default function PropEdgesView() {
     for (const e of data.edges) {
       if (platforms.size > 0 && !platforms.has(e.platform)) continue;
       if (sport && e.sport !== sport) continue;
-      if (exactOnly && e.lineMatch !== 'exact') continue;
+      if (exactOnly && data.source === 'live' && e.lineMatch !== 'exact') continue;
       const k = `${e.event}|${e.player}|${e.market}|${e.side}`;
       byPlay.set(k, [...(byPlay.get(k) ?? []), e]);
     }
@@ -103,12 +103,26 @@ export default function PropEdgesView() {
           }
         />
 
-        {data && data.source === 'live' && (
+        {data && (data.source === 'live' || data.source === 'sharp-only') && (
           <div className="animate-fade-up mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-500">
-            <Badge>Live Lines</Badge>
+            {data.source === 'live' ? <Badge>Live Lines</Badge> : <Badge tone="amber">Sharp Only</Badge>}
             <span>Sharp: {data.sharpBooksSeen.join(', ') || '—'}</span>
             <span className="font-mono">Updated {new Date(data.generatedAt).toLocaleTimeString()}</span>
           </div>
+        )}
+
+        {data?.source === 'sharp-only' && (
+          <Card className="animate-fade-up mb-6 border-amber-500/20 bg-amber-500/[0.04] p-4">
+            <div className="flex gap-3">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+              <p className="text-xs leading-relaxed text-amber-200/80">
+                Pick&apos;em lines are unavailable right now, so these are Pinnacle&apos;s strongest sides priced
+                against the best pick&apos;em breakeven. Before entering, confirm your app posts the{' '}
+                <strong>same line</strong> as a <strong>standard</strong>{' '}
+                pick (not a goblin/demon or reduced multiplier) — if it doesn&apos;t, the edge isn&apos;t there.
+              </p>
+            </div>
+          </Card>
         )}
 
         {/* Breakeven legend */}
@@ -143,10 +157,12 @@ export default function PropEdgesView() {
               <FilterChip key={s} label={s} active={sport === s} onClick={() => setSport(sport === s ? null : s)} />
             ))}
             <span className="ml-auto flex items-center gap-4 text-xs text-zinc-500">
-              <span className="flex items-center gap-2">
-                Same line only
-                <Toggle checked={exactOnly} onChange={setExactOnly} label="Only show plays where the sharp line matches" />
-              </span>
+              {data.source === 'live' && (
+                <span className="flex items-center gap-2">
+                  Same line only
+                  <Toggle checked={exactOnly} onChange={setExactOnly} label="Only show plays where the sharp line matches" />
+                </span>
+              )}
               <span className="flex items-center gap-2">
                 Sort
                 <select
@@ -250,9 +266,12 @@ function PlayRow({
             {best.lineMatch === 'estimated' && (
               <span className="ml-2 text-[10px] font-normal uppercase tracking-wider text-amber-400/80">est.</span>
             )}
+            {best.lineMatch === 'unverified' && (
+              <span className="ml-2 text-[10px] font-normal uppercase tracking-wider text-amber-400/80">verify line</span>
+            )}
           </p>
           <p className="truncate text-xs text-zinc-500">
-            {best.sport} · {best.event} · {start}
+            {[best.sport, best.event, start].filter(Boolean).join(' · ')}
           </p>
         </div>
 

@@ -16,6 +16,11 @@ import { boardDayKey, filterLegsForToday, isOnTodaysSlate } from './slate';
  * Data: The Odds API per-event odds endpoint. Props are billed per market per
  * 10-book group per event, so this scan is opt-in (PROP_SCAN=on), capped by
  * PROPS_MAX_EVENTS, and cached on its own cadence (PROPS_SCAN_HOURS).
+ *
+ * Fallback: when the Odds API is off, unconfigured, or out of credits, we read
+ * Pinnacle's public guest feed (free). It has sharp prices but no pick'em
+ * lines, so those plays are "sharp-only": ranked against the best pick'em
+ * breakeven, with the app line marked unverified.
  */
 
 export type PropSide = 'over' | 'under';
@@ -36,13 +41,13 @@ export type PropEdge = {
   breakeven: number; // % needed on this platform
   breakevenBasis: 'entry' | 'price';
   edge: number; // winProb − breakeven, in points
-  lineMatch: 'exact' | 'estimated';
+  lineMatch: 'exact' | 'estimated' | 'unverified'; // unverified = sharp-only, app line not seen
   sharpLines: Array<{ book: string; line: number; overProb: number }>;
 };
 
 export type PropEdgesResult = {
   generatedAt: string;
-  source: 'live' | 'disabled' | 'unconfigured' | 'empty';
+  source: 'live' | 'sharp-only' | 'disabled' | 'unconfigured' | 'empty';
   message?: string;
   platformsSeen: string[];
   sharpBooksSeen: string[];
@@ -347,6 +352,7 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
   const edges: PropEdge[] = [];
   const platformsSeen = new Set<string>();
   const sharpSeen = new Set<string>();
+  let quotaErrors = 0;
 
   for (const ev of events.slice(0, maxEvents)) {
     const cfg = SPORT_MARKETS[ev.sport_key];
@@ -356,7 +362,9 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
         params: { apiKey, bookmakers: books.join(','), markets: cfg.markets.join(','), oddsFormat: 'american' },
         timeout: 15000,
       }));
-    } catch {
+    } catch (error) {
+      const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+      if (status === 401 || status === 429) quotaErrors++;
       continue;
     }
 
@@ -398,6 +406,8 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
     }
   }
 
+  if (edges.length === 0 && quotaErrors > 0) throw new OddsQuotaError();
+
   edges.sort((a, b) => b.edge - a.edge);
 
   return {
@@ -412,6 +422,182 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
     platformsSeen: [...platformsSeen].sort(),
     sharpBooksSeen: [...sharpSeen].sort(),
     edges: edges.slice(0, MAX_EDGES),
+    breakevens: Object.fromEntries(
+      targetBooks().map((k) => [PLATFORMS[k].name, PLATFORMS[k].breakeven == null ? null : PLATFORMS[k].breakeven! * 100]),
+    ),
+  };
+}
+
+class OddsQuotaError extends Error {
+  constructor() {
+    super('Odds API rejected prop requests (out of credits or invalid key)');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pinnacle fallback (public guest feed, no key, no credits)
+// ---------------------------------------------------------------------------
+
+const PINNACLE_API = 'https://guest.api.arcadia.pinnacle.com/0.1';
+
+/** Pinnacle sport id → leagues we surface (label shown in the UI). */
+const PINNACLE_SPORTS: Record<number, Record<string, string>> = {
+  3: { MLB: 'MLB' },
+  4: { NBA: 'NBA', WNBA: 'WNBA' },
+  15: { NFL: 'NFL', NCAA: 'NCAAF' },
+  19: { NHL: 'NHL' },
+};
+
+// Pick'em apps don't post these as standard two-way picks (0.5 HR / anytime
+// TD unders only exist as discounted entries), so they'd show fake edges.
+const PINNACLE_SKIP_UNITS = new Set(['Home Runs', 'Touchdowns']);
+
+// A side priced past ~-235 is almost never a standard pick'em pick; apps move
+// the line or discount it. Listing it would overstate the edge.
+const MAX_SHARP_ONLY_PROB = 0.7;
+
+// Per-sport cap so one deep slate (MLB total bases) can't crowd out the rest.
+const MAX_SHARP_ONLY_PER_SPORT = 50;
+
+type PinnacleMatchup = {
+  id: number;
+  type: string;
+  startTime: string;
+  units?: string;
+  league?: { name?: string };
+  special?: { category?: string; description?: string };
+  participants?: Array<{ id: number; name: string; alignment?: string }>;
+  parent?: { participants?: Array<{ name: string; alignment?: string }> };
+};
+
+type PinnacleMarket = {
+  matchupId: number;
+  type: string;
+  period: number;
+  prices: Array<{ participantId: number; price: number; points?: number }>;
+};
+
+/**
+ * The guest feed occasionally 401s a request that succeeds on retry; back off
+ * briefly. (Only public query params: e.g. primaryOnly on /matchups needs an
+ * auth token, so it must not be sent there.)
+ */
+async function pinnacleGet<T>(path: string, params: Record<string, boolean>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const { data } = await axios.get<T>(`${PINNACLE_API}${path}`, { params, timeout: 15000 });
+      return data;
+    } catch (error) {
+      const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+      const retryable = status === 401 || status === 429 || (status != null && status >= 500);
+      if (!retryable || attempt >= 2) throw error;
+      await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+    }
+  }
+}
+
+function bestPickemBreakeven(): { name: string; be: number } {
+  let best = { name: 'Pick’em', be: 1 };
+  for (const k of targetBooks()) {
+    const be = PLATFORMS[k].breakeven;
+    if (be != null && be < best.be) best = { name: PLATFORMS[k].name, be };
+  }
+  return best;
+}
+
+export async function fetchPinnacleEdges(): Promise<PropEdgesResult> {
+  const now = new Date();
+  const best = bestPickemBreakeven();
+  const edges: PropEdge[] = [];
+
+  // Sequential per sport: bursts of parallel requests trip the feed's rate limit.
+  for (const [sportId, leagues] of Object.entries(PINNACLE_SPORTS)) {
+    let matchups: PinnacleMatchup[];
+    let markets: PinnacleMarket[];
+    try {
+      matchups = await pinnacleGet<PinnacleMatchup[]>(`/sports/${sportId}/matchups`, { withSpecials: true });
+      markets = await pinnacleGet<PinnacleMarket[]>(`/sports/${sportId}/markets/straight`, {
+        primaryOnly: false,
+        withSpecials: true,
+      });
+    } catch {
+      continue; // feed unavailable for this sport
+    }
+
+    const totals = new Map<number, PinnacleMarket>();
+    for (const m of markets) {
+      if (m.type === 'total' && m.period === 0) totals.set(m.matchupId, m);
+    }
+
+    for (const s of matchups) {
+      const league = leagues[s.league?.name ?? ''];
+      if (!league || s.type !== 'special' || s.special?.category !== 'Player Props') continue;
+      if (!isOnTodaysSlate(s.startTime, now) || new Date(s.startTime) <= now) continue;
+      if (PINNACLE_SKIP_UNITS.has(s.units ?? '')) continue;
+
+      // "Tarik Skubal Total Strikeouts" / "Tommy White Total Bases"
+      const match = /^(.+?) Total (.+)$/.exec(s.special.description ?? '');
+      const market = totals.get(s.id);
+      if (!match || !market) continue;
+
+      const names = new Map((s.participants ?? []).map((p) => [p.id, p.name]));
+      const over = market.prices.find((p) => names.get(p.participantId) === 'Over');
+      const under = market.prices.find((p) => names.get(p.participantId) === 'Under');
+      if (!over || !under || over.points == null) continue;
+
+      const player = match[1];
+      const marketName = match[2] === 'Bases' ? 'Total Bases' : match[2];
+      const pOver = devigOver(americanToProb(over.price), americanToProb(under.price));
+      const teams = s.parent?.participants ?? [];
+      const away = teams.find((t) => t.alignment === 'away')?.name;
+      const home = teams.find((t) => t.alignment === 'home')?.name;
+
+      for (const side of ['over', 'under'] as const) {
+        const p = side === 'over' ? pOver : 1 - pOver;
+        const edge = (p - best.be) * 100;
+        if (edge < MIN_EDGE || p > MAX_SHARP_ONLY_PROB) continue;
+
+        edges.push({
+          id: `pin-${s.id}-${side}`,
+          sport: league,
+          event: away && home ? `${away} @ ${home}` : '', // some feeds omit teams
+          startTime: s.startTime,
+          player,
+          market: marketName,
+          side,
+          line: over.points,
+          platform: best.name,
+          price: null,
+          winProb: round1(p * 100),
+          fairOdds: probToAmerican(p),
+          breakeven: round1(best.be * 100),
+          breakevenBasis: 'entry',
+          edge: round1(edge),
+          lineMatch: 'unverified',
+          sharpLines: [{ book: 'pinnacle', line: over.points, overProb: round1(pOver * 100) }],
+        });
+      }
+    }
+  }
+
+  edges.sort((a, b) => b.edge - a.edge);
+  const perSport = new Map<string, number>();
+  const capped = edges.filter((e) => {
+    const n = (perSport.get(e.sport) ?? 0) + 1;
+    perSport.set(e.sport, n);
+    return n <= MAX_SHARP_ONLY_PER_SPORT;
+  });
+
+  return {
+    generatedAt: now.toISOString(),
+    source: capped.length > 0 ? 'sharp-only' : 'empty',
+    message:
+      capped.length > 0
+        ? 'Pick’em lines unavailable — showing Pinnacle sharp prices. Confirm each line matches in your app.'
+        : 'No sharp props on today’s slate yet.',
+    platformsSeen: [],
+    sharpBooksSeen: ['pinnacle'],
+    edges: capped,
     breakevens: Object.fromEntries(
       targetBooks().map((k) => [PLATFORMS[k].name, PLATFORMS[k].breakeven == null ? null : PLATFORMS[k].breakeven! * 100]),
     ),
@@ -453,36 +639,51 @@ function sanitize(result: PropEdgesResult, now = new Date()): PropEdgesResult {
   return { ...result, edges };
 }
 
-/** Cron entry point: scans once per PROPS_SCAN_HOURS window and persists. */
-export async function generatePropEdges(): Promise<PropEdgesResult> {
-  if (!scanEnabled()) return statusResult('disabled', 'Set PROP_SCAN=on to enable prop scanning.');
-  const apiKey = process.env.ODDS_API_KEY;
-  if (!apiKey) return statusResult('unconfigured', 'ODDS_API_KEY is not configured.');
-
-  const now = new Date();
-  const key = scanKey(now);
+async function storeResult(key: string, result: PropEdgesResult): Promise<void> {
   const db = supabaseOrNull();
-
-  if (db) {
-    const { data } = await db.from('prop_edge_scans').select('payload').eq('scan_key', key).maybeSingle();
-    if (data?.payload) return sanitize(data.payload as PropEdgesResult, now);
-  }
-
-  const result = await fetchEdges(apiKey);
-  if (db) {
-    await db
-      .from('prop_edge_scans')
-      .upsert({ scan_key: key, generated_at: result.generatedAt, payload: result })
-      .then(undefined, () => undefined); // persistence is best-effort
-  }
-  return result;
+  if (!db) return;
+  await db
+    .from('prop_edge_scans')
+    .upsert({ scan_key: key, generated_at: result.generatedAt, payload: result })
+    .then(undefined, () => undefined); // persistence is best-effort
 }
 
-/** Read path for /api/props — never spends API credits. */
+/**
+ * Cron entry point. Odds API scan (pick'em vs sharp) once per PROPS_SCAN_HOURS
+ * window when enabled; otherwise — or if it's out of credits — a free Pinnacle
+ * sharp-only scan on every run.
+ */
+export async function generatePropEdges(): Promise<PropEdgesResult> {
+  const now = new Date();
+  const apiKey = process.env.ODDS_API_KEY;
+
+  if (scanEnabled() && apiKey) {
+    const key = scanKey(now);
+    const db = supabaseOrNull();
+    if (db) {
+      const { data } = await db.from('prop_edge_scans').select('payload').eq('scan_key', key).maybeSingle();
+      if (data?.payload) return sanitize(data.payload as PropEdgesResult, now);
+    }
+    try {
+      const result = await fetchEdges(apiKey);
+      await storeResult(key, result);
+      return result;
+    } catch {
+      // out of credits / API down → Pinnacle fallback below
+    }
+  }
+
+  const fallback = await fetchPinnacleEdges();
+  // Hourly key: refreshes every cron run without colliding with Odds API windows.
+  await storeResult(`${now.toISOString().slice(0, 13)}-pin`, fallback);
+  return fallback;
+}
+
+/** Read path for /api/props — never spends Odds API credits. */
 export async function getPropEdges(): Promise<PropEdgesResult> {
-  if (!scanEnabled()) return statusResult('disabled', 'Prop scanning is not enabled yet.');
   const db = supabaseOrNull();
-  if (!db) return statusResult('unconfigured', 'Database is not configured.');
+  // No database (local dev): read Pinnacle live; it's free and the route is CDN-cached.
+  if (!db) return fetchPinnacleEdges().catch(() => statusResult('empty', 'Prop scan unavailable right now.'));
   try {
     const { data } = await db
       .from('prop_edge_scans')
