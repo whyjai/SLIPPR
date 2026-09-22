@@ -21,24 +21,54 @@ export type DailySlip = {
   sports: string[];
   picks: PropEdge[];
   platform: string;
-  payout: number | null;
+  payout: number;
   hitAll: number; // %
   randomHitAll: number; // %
-  ev: number | null; // % per $1
+  ev: number; // % per $1
   avgWin: number; // %
   asOf: string; // "3:06 PM ET"
-  sharpOnly: boolean;
 };
 
 const etTime = (iso: string) =>
   new Intl.DateTimeFormat('en-US', { timeZone: BOARD_TZ, hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
 
 export function buildDailySlip(result: PropEdgesResult): DailySlip | null {
-  // Only flat-payout pick'em plays with a known matchup; the payout math and a
-  // public post both depend on those. 0.5 lines are skipped: apps usually list
-  // them as discounted (goblin) picks, so the standard payout wouldn't apply.
-  const eligible = result.edges
-    .filter((e) => e.breakevenBasis === 'entry' && e.lineMatch !== 'estimated' && e.event && e.line !== 0.5)
+  // A public post needs the app's real lines. Sharp-only (Pinnacle) scans guess
+  // at them, and the guess can be wrong (e.g. a hitter posted at 0.5, not 1.5).
+  if (result.source !== 'live') return null;
+
+  // One entry = one app, so pick the platform whose best one-per-game slip is
+  // strongest. Only flat-payout picks at the sharp books' exact line qualify.
+  let best: { platform: string; picks: PropEdge[]; hitAll: number; payout: number } | null = null;
+  for (const [platform, table] of Object.entries(POWER_PAYOUTS)) {
+    const picks = pickSlip(result.edges.filter((e) => e.platform === platform));
+    const payout = table[picks.length];
+    if (picks.length < MIN_SLIP || payout == null) continue;
+    const hitAll = picks.reduce((acc, p) => acc * (p.winProb / 100), 1);
+    // Rank by expected return per $1, not raw hit rate.
+    if (!best || payout * hitAll > best.payout * best.hitAll) best = { platform, picks, hitAll, payout };
+  }
+  if (!best) return null;
+
+  const { platform, picks, hitAll, payout } = best;
+  return {
+    dateLabel: todayEtLabel().toUpperCase().replace(/,/g, ' ·'),
+    sports: [...new Set(picks.map((p) => p.sport))],
+    picks,
+    platform,
+    payout,
+    hitAll: hitAll * 100,
+    randomHitAll: 0.5 ** picks.length * 100,
+    ev: (payout * hitAll - 1) * 100,
+    avgWin: picks.reduce((s, p) => s + p.winProb, 0) / picks.length,
+    asOf: `${etTime(result.generatedAt)} ET`,
+  };
+}
+
+/** Highest-probability exact-line picks, one per game (keeps legs ~independent). */
+function pickSlip(edges: PropEdge[]): PropEdge[] {
+  const eligible = edges
+    .filter((e) => e.breakevenBasis === 'entry' && e.lineMatch === 'exact' && e.event)
     .sort((a, b) => b.winProb - a.winProb || b.edge - a.edge);
 
   const picks: PropEdge[] = [];
@@ -49,28 +79,7 @@ export function buildDailySlip(result: PropEdgesResult): DailySlip | null {
     picks.push(e);
     if (picks.length === SLIP_SIZE) break;
   }
-  if (picks.length < MIN_SLIP) return null;
-
-  // Most common platform among the picks (all PrizePicks in sharp-only mode).
-  const counts = new Map<string, number>();
-  picks.forEach((p) => counts.set(p.platform, (counts.get(p.platform) ?? 0) + 1));
-  const platform = [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
-  const payout = POWER_PAYOUTS[platform]?.[picks.length] ?? null;
-
-  const hitAll = picks.reduce((acc, p) => acc * (p.winProb / 100), 1);
-  return {
-    dateLabel: todayEtLabel().toUpperCase().replace(/,/g, ' ·'),
-    sports: [...new Set(picks.map((p) => p.sport))],
-    picks,
-    platform,
-    payout,
-    hitAll: hitAll * 100,
-    randomHitAll: 0.5 ** picks.length * 100,
-    ev: payout != null ? (payout * hitAll - 1) * 100 : null,
-    avgWin: picks.reduce((s, p) => s + p.winProb, 0) / picks.length,
-    asOf: `${etTime(result.generatedAt)} ET`,
-    sharpOnly: result.source === 'sharp-only',
-  };
+  return picks;
 }
 
 // ---------------------------------------------------------------------------
@@ -311,7 +320,6 @@ export function SlipGraphic({ slip }: { slip: DailySlip }) {
   const lo = Math.floor(Math.min(...slip.picks.map((p) => p.winProb)));
   const hi = Math.ceil(Math.max(...slip.picks.map((p) => p.winProb)));
   const n = slip.picks.length;
-  const lineWord = slip.sharpOnly ? 'confirm each pick is a standard line in your app' : 'lines move — confirm in your app';
 
   return (
     <Frame chip={sep(slip.dateLabel, slip.sports.join(' + '))}>
@@ -338,12 +346,12 @@ export function SlipGraphic({ slip }: { slip: DailySlip }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ fontSize: 14, fontWeight: 700, color: BRIGHT, letterSpacing: 2.5 }}>BEST PAYOUT TONIGHT</span>
           <span style={{ fontSize: 34, fontWeight: 800, letterSpacing: -1 }}>
-            {slip.payout != null ? sep(slip.platform, `${n}-Pick Power`) : slip.platform}
+            {sep(slip.platform, `${n}-Pick Power`)}
           </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
           <Mono size={46} color={BRIGHT} weight={700}>
-            {slip.payout != null ? `${slip.payout}x` : 'Flat'}
+            {`${slip.payout}x`}
           </Mono>
           <span style={{ fontSize: 15, fontWeight: 500, color: MUTED }}>{sep('flat payout', 'no juice')}</span>
         </div>
@@ -355,18 +363,16 @@ export function SlipGraphic({ slip }: { slip: DailySlip }) {
           value={`${slip.hitAll.toFixed(1)}%`}
           sub={`vs ${slip.randomHitAll.toFixed(1)}% for a random slip`}
         />
-        {slip.ev != null && (
-          <Stat
-            label="EXPECTED VALUE"
-            value={`${slip.ev >= 0 ? '+' : ''}${Math.round(slip.ev)}%`}
-            sub={`at ${slip.payout}x, per $1 entered`}
-          />
-        )}
-        <Stat label="AVG WIN %" value={`${slip.avgWin.toFixed(1)}%`} sub="Pinnacle no-vig" />
+        <Stat
+          label="EXPECTED VALUE"
+          value={`${slip.ev >= 0 ? '+' : ''}${Math.round(slip.ev)}%`}
+          sub={`at ${slip.payout}x, per $1 entered`}
+        />
+        <Stat label="AVG WIN %" value={`${slip.avgWin.toFixed(1)}%`} sub="sharp no-vig consensus" />
       </div>
 
       <Footer
-        fine={`Lines as of ${slip.asOf} — ${lineWord}. Win % is a market estimate, not a guarantee. ${RESPONSIBLE}`}
+        fine={`Lines as of ${slip.asOf} — lines move, confirm in your app. Win % is a market estimate, not a guarantee. ${RESPONSIBLE}`}
       />
     </Frame>
   );
