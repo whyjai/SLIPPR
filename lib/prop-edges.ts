@@ -312,6 +312,26 @@ function consensusOver(sharp: SharpQuote[], line: number): number | null {
   return den > 0 ? num / den : null;
 }
 
+/**
+ * Probability the pick wins, given it doesn't push. Half-point lines can't
+ * push. On a whole-number line (PrizePicks posts some) landing exactly on it
+ * voids the pick, so it's neither a win nor a loss: over = P(X ≥ L+1),
+ * under = P(X ≤ L−1), and we condition on no push.
+ */
+export function sideWinProb(sharp: SharpQuote[], line: number, side: PropSide): number | null {
+  if (!Number.isInteger(line)) {
+    const pOver = consensusOver(sharp, line);
+    return pOver == null ? null : side === 'over' ? pOver : 1 - pOver;
+  }
+  const over = consensusOver(sharp, line + 0.5);
+  const overOrPush = consensusOver(sharp, line - 0.5);
+  if (over == null || overOrPush == null) return null;
+  const under = 1 - overOrPush;
+  const decided = over + under;
+  if (decided <= 0) return null;
+  return (side === 'over' ? over : under) / decided;
+}
+
 function breakevenFor(book: string, price: number | null): { be: number; basis: 'entry' | 'price' } | null {
   const flat = PLATFORMS[book]?.breakeven;
   if (flat != null && (price == null || (price >= FLAT_PRICE_MIN && price <= FLAT_PRICE_MAX))) {
@@ -375,11 +395,10 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
 
       for (const t of prop.targets) {
         platformsSeen.add(PLATFORMS[t.book].name);
-        const pOver = consensusOver(prop.sharp, t.line);
+        const p = sideWinProb(prop.sharp, t.line, t.side);
         const be = breakevenFor(t.book, t.price);
-        if (pOver == null || !be) continue;
+        if (p == null || !be) continue;
 
-        const p = t.side === 'over' ? pOver : 1 - pOver;
         const edge = (p - be.be) * 100;
         if (edge < MIN_EDGE) continue;
 
