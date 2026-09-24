@@ -116,7 +116,10 @@ const DEFAULT_TARGETS = ['prizepicks', 'underdog', 'pick6', 'betr_us_dfs', 'flif
 const FLAT_PRICE_MIN = -140;
 const FLAT_PRICE_MAX = 105;
 
-const MIN_EDGE = 1; // points; below this isn't worth listing
+// Matches the "only stack 3%+" guidance shown on the page itself — a pick
+// this app surfaces should already clear the bar it tells users to apply,
+// not rely on them reading a caveat to filter out the rest.
+const MIN_EDGE = 3; // points; below this isn't worth listing
 const MAX_EDGES = 150;
 const MAX_ESTIMATED_GAP = 0.2; // skip line mismatches >20% — model gets unreliable
 
