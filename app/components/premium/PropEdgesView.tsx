@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ChevronDown, ChevronUp, Crosshair, Loader2, Lock, RefreshCw } from 'lucide-react';
+import { AlertTriangle, ChevronDown, ChevronUp, Crosshair, Loader2, Lock, RefreshCw, Zap } from 'lucide-react';
 import { Badge, Card, PageHeader, Toggle, cn } from './ui';
 import { useAuth } from '../AuthProvider';
 import { useUpgrade } from '../UpgradeProvider';
 import { todayEtLabel } from '@/lib/slate';
 import type { PropEdge, PropEdgesResult } from '@/lib/prop-edges';
+import type { StaleLineAlert } from '@/lib/stale-lines';
 
 const FREE_VISIBLE = 5;
 
@@ -102,6 +103,8 @@ export default function PropEdgesView() {
             </div>
           }
         />
+
+        <StaleLineAlertsCard />
 
         {data && (data.source === 'live' || data.source === 'sharp-only') && (
           <div className="animate-fade-up mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-500">
@@ -345,5 +348,74 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
     >
       {label}
     </button>
+  );
+}
+
+function timeAgo(iso: string): string {
+  const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  return `${Math.round(mins / 60)}h ago`;
+}
+
+/**
+ * Recent catches from the stale-line scan: a Pinnacle move the app hadn't
+ * followed yet. Self-contained — loads on its own so a quiet night (no
+ * alerts) doesn't block the rest of the page.
+ */
+function StaleLineAlertsCard() {
+  const [alerts, setAlerts] = useState<StaleLineAlert[] | null>(null);
+
+  useEffect(() => {
+    fetch('/api/stale-lines')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json: { alerts: StaleLineAlert[] } | null) => {
+        if (json) setAlerts(json.alerts);
+      })
+      .catch(() => setAlerts([]));
+  }, []);
+
+  if (alerts !== null && alerts.length === 0) return null; // nothing to show, no space wasted
+
+  return (
+    <Card className="animate-fade-up mb-6 border-sky-500/20 bg-sky-500/[0.03] p-5">
+      <div className="mb-1 flex items-center gap-2.5">
+        <Zap className="h-4 w-4 text-sky-400" />
+        <h2 className="text-sm font-semibold text-sky-300">Stale Line Alerts</h2>
+        {alerts === null && <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-400/60" />}
+      </div>
+      <p className="mb-4 text-xs leading-relaxed text-zinc-500">
+        Pinnacle moved and this app hadn&apos;t caught up yet — the price shown is what the app was still offering.
+        These close fast; confirm the line is still live before you take it.
+      </p>
+      {alerts && alerts.length > 0 && (
+        <ul className="space-y-2">
+          {alerts.map((a) => (
+            <li
+              key={a.id}
+              className="flex flex-wrap items-start gap-x-3 gap-y-1 rounded-xl border border-sky-500/15 bg-black/30 px-4 py-3"
+            >
+              <Badge tone="violet" className="!px-2 !text-[10px]">
+                {a.sport}
+              </Badge>
+              <div className="min-w-0 flex-1">
+                <span className="text-sm font-medium text-zinc-200">
+                  {a.player} {a.side} {a.line} {a.market}
+                </span>
+                <span className="mx-2 text-zinc-600">·</span>
+                <span className="text-xs text-zinc-500">
+                  {a.event || a.sport} · {a.platform}
+                  {a.price != null && ` ${fmtOdds(a.price)}`}
+                </span>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+                  Sharp win {a.sharpWinPct}% vs {a.breakevenPct}% needed — edge +{a.edgePct.toFixed(1)}
+                </p>
+              </div>
+              <span className="shrink-0 font-mono text-xs text-sky-300/90">{timeAgo(a.createdAt)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
   );
 }

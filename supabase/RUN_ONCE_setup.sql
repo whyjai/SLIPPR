@@ -2,7 +2,7 @@
 -- SLIPPR — one-shot database setup.
 -- Paste this whole file into Supabase → SQL Editor → Run.
 -- Safe to run more than once (every statement is idempotent).
--- Covers migrations 004–008 + the constraints the app code requires.
+-- Covers migrations 004–009 + the constraints the app code requires.
 -- ============================================================================
 
 create extension if not exists "uuid-ossp";
@@ -124,3 +124,42 @@ create table if not exists public.prop_edge_scans (
 create index if not exists prop_edge_scans_generated_at_idx
   on public.prop_edge_scans (generated_at desc);
 alter table public.prop_edge_scans enable row level security;
+
+-- ---- stale_line_snapshots / _alerts / _budget (migration 009) -------------
+create table if not exists public.stale_line_snapshots (
+  prop_id text primary key,
+  player text not null,
+  market text not null,
+  sport text not null,
+  event text not null,
+  line numeric not null,
+  over_prob numeric not null,
+  start_time timestamptz not null,
+  updated_at timestamptz not null default now()
+);
+create table if not exists public.stale_line_alerts (
+  id text primary key,
+  prop_id text not null,
+  platform text not null,
+  player text not null,
+  market text not null,
+  side text not null,
+  line numeric not null,
+  sport text not null,
+  event text not null,
+  start_time timestamptz not null,
+  price integer,
+  sharp_win_pct numeric not null,
+  breakeven_pct numeric not null,
+  edge_pct numeric not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists stale_line_alerts_created_at_idx
+  on public.stale_line_alerts (created_at desc);
+create table if not exists public.stale_line_budget (
+  day text primary key,
+  requests_used integer not null default 0
+);
+alter table public.stale_line_snapshots enable row level security;
+alter table public.stale_line_alerts enable row level security;
+alter table public.stale_line_budget enable row level security;
