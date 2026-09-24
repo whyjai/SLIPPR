@@ -124,7 +124,7 @@ function scanEnabled(): boolean {
   return /^(on|1|true|yes)$/i.test(process.env.PROP_SCAN ?? '');
 }
 
-function targetBooks(): string[] {
+export function targetBooks(): string[] {
   const extras = (process.env.PROPS_EXTRA_BOOKS ?? '')
     .split(',')
     .map((s) => s.trim())
@@ -524,10 +524,27 @@ function bestPickemBreakeven(): { name: string; be: number } {
   return best;
 }
 
-export async function fetchPinnacleEdges(): Promise<PropEdgesResult> {
+/** One player-prop total, as Pinnacle currently prices it. Shared by the edge
+ *  scanner and the stale-line watcher so both read the exact same feed the
+ *  exact same way — a divergent second copy is how the "two Max Muncys"
+ *  mixup happened in an earlier one-off script. */
+export type PinnaclePlayerProp = {
+  id: string; // stable per player+market+event; safe to use as a snapshot key
+  sport: string; // league label, e.g. "MLB"
+  event: string; // "Away @ Home", or '' when the feed omits teams
+  startTime: string;
+  player: string;
+  market: string; // "Total Bases", "Strikeouts", "Points", ...
+  line: number;
+  overPrice: number;
+  underPrice: number;
+  overProb: number; // devigged
+};
+
+/** Every upcoming player-prop total Pinnacle has posted, across sports. */
+export async function fetchPinnaclePlayerProps(): Promise<PinnaclePlayerProp[]> {
   const now = new Date();
-  const best = bestPickemBreakeven();
-  const edges: PropEdge[] = [];
+  const props: PinnaclePlayerProp[] = [];
 
   // Sequential per sport: bursts of parallel requests trip the feed's rate limit.
   for (const [sportId, leagues] of Object.entries(PINNACLE_SPORTS)) {
@@ -564,38 +581,62 @@ export async function fetchPinnacleEdges(): Promise<PropEdgesResult> {
       const under = market.prices.find((p) => names.get(p.participantId) === 'Under');
       if (!over || !under || over.points == null) continue;
 
-      const player = match[1];
+      // "Max Muncy (Dodgers)" -> "Max Muncy" — Pinnacle disambiguates same-name
+      // players this way; the apps list them under the plain name.
+      const player = match[1].replace(/\s*\([^)]*\)$/, '');
       const marketName = match[2] === 'Bases' ? 'Total Bases' : match[2];
-      const pOver = devigOver(americanToProb(over.price), americanToProb(under.price));
       const teams = s.parent?.participants ?? [];
       const away = teams.find((t) => t.alignment === 'away')?.name;
       const home = teams.find((t) => t.alignment === 'home')?.name;
 
-      for (const side of ['over', 'under'] as const) {
-        const p = side === 'over' ? pOver : 1 - pOver;
-        const edge = (p - best.be) * 100;
-        if (edge < MIN_EDGE || p > MAX_SHARP_ONLY_PROB) continue;
+      props.push({
+        id: `pin-${s.id}`,
+        sport: league,
+        event: away && home ? `${away} @ ${home}` : '', // some feeds omit teams
+        startTime: s.startTime,
+        player,
+        market: marketName,
+        line: over.points,
+        overPrice: over.price,
+        underPrice: under.price,
+        overProb: devigOver(americanToProb(over.price), americanToProb(under.price)),
+      });
+    }
+  }
+  return props;
+}
 
-        edges.push({
-          id: `pin-${s.id}-${side}`,
-          sport: league,
-          event: away && home ? `${away} @ ${home}` : '', // some feeds omit teams
-          startTime: s.startTime,
-          player,
-          market: marketName,
-          side,
-          line: over.points,
-          platform: best.name,
-          price: null,
-          winProb: round1(p * 100),
-          fairOdds: probToAmerican(p),
-          breakeven: round1(best.be * 100),
-          breakevenBasis: 'entry',
-          edge: round1(edge),
-          lineMatch: 'unverified',
-          sharpLines: [{ book: 'pinnacle', line: over.points, overProb: round1(pOver * 100) }],
-        });
-      }
+export async function fetchPinnacleEdges(): Promise<PropEdgesResult> {
+  const now = new Date();
+  const best = bestPickemBreakeven();
+  const edges: PropEdge[] = [];
+  const props = await fetchPinnaclePlayerProps();
+
+  for (const prop of props) {
+    for (const side of ['over', 'under'] as const) {
+      const p = side === 'over' ? prop.overProb : 1 - prop.overProb;
+      const edge = (p - best.be) * 100;
+      if (edge < MIN_EDGE || p > MAX_SHARP_ONLY_PROB) continue;
+
+      edges.push({
+        id: `${prop.id}-${side}`,
+        sport: prop.sport,
+        event: prop.event,
+        startTime: prop.startTime,
+        player: prop.player,
+        market: prop.market,
+        side,
+        line: prop.line,
+        platform: best.name,
+        price: null,
+        winProb: round1(p * 100),
+        fairOdds: probToAmerican(p),
+        breakeven: round1(best.be * 100),
+        breakevenBasis: 'entry',
+        edge: round1(edge),
+        lineMatch: 'unverified',
+        sharpLines: [{ book: 'pinnacle', line: prop.line, overProb: round1(prop.overProb * 100) }],
+      });
     }
   }
 
