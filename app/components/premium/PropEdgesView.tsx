@@ -261,11 +261,19 @@ function PlayRow({
 
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-zinc-100">
-            {best.player}{' '}
-            <span className={best.side === 'over' ? 'text-emerald-300' : 'text-sky-300'}>
-              {best.side === 'over' ? 'Over' : 'Under'} {best.line}
-            </span>{' '}
-            {best.market}
+            {best.market === 'Moneyline' ? (
+              <>
+                {best.player} <span className="text-emerald-300">Moneyline</span>
+              </>
+            ) : (
+              <>
+                {best.player && `${best.player} `}
+                <span className={best.side === 'over' ? 'text-emerald-300' : 'text-sky-300'}>
+                  {best.side === 'over' ? 'Over' : 'Under'} {best.line}
+                </span>{' '}
+                {best.market}
+              </>
+            )}
             {best.lineMatch === 'estimated' && (
               <span className="ml-2 text-[10px] font-normal uppercase tracking-wider text-amber-400/80">est.</span>
             )}

@@ -303,6 +303,148 @@ function collectQuotes(event: OddsEvent, markets: string[]) {
   return props;
 }
 
+// ---------------------------------------------------------------------------
+// Game lines: moneyline + game total. Fliff-only — it's the one target app
+// here that's a real sportsbook (PrizePicks/Underdog/Pick6/Betr don't carry
+// these markets at all). The Leg Board already prices moneyline/spread/total
+// edges against mainstream sportsbooks (FanDuel, DraftKings, BetMGM, ...) but
+// explicitly excludes Fliff from that scan, so this is genuinely new
+// coverage, not a duplicate: does Fliff's own price beat the sharp consensus.
+// ---------------------------------------------------------------------------
+
+const GAME_MARKETS = ['h2h', 'totals'];
+
+/** Weighted-devig fair win probability for the home team, from sharp books
+ *  that post both sides of the moneyline. */
+function fairHomeWinProb(event: OddsEvent): { p: number; books: Array<{ book: string; p: number }> } | null {
+  let num = 0;
+  let den = 0;
+  const books: Array<{ book: string; p: number }> = [];
+  for (const bm of event.bookmakers ?? []) {
+    if (!(bm.key in SHARP_BOOKS)) continue;
+    const h2h = bm.markets.find((m) => m.key === 'h2h');
+    const home = h2h?.outcomes.find((o) => o.name === event.home_team);
+    const away = h2h?.outcomes.find((o) => o.name === event.away_team);
+    if (!home || !away) continue;
+    const w = SHARP_BOOKS[bm.key];
+    const p = devigOver(americanToProb(home.price), americanToProb(away.price));
+    num += w * p;
+    den += w;
+    books.push({ book: bm.key, p });
+  }
+  return den > 0 ? { p: num / den, books } : null;
+}
+
+/** Same idea for the game total: fair P(Over point), from sharp books posting
+ *  both sides at that exact point (a point mismatch is skipped, not shifted —
+ *  game totals move in smaller, less predictable steps than player lines, so
+ *  the Poisson/normal shift used for props isn't a safe stand-in here). */
+function fairTotalOverProb(event: OddsEvent, point: number): { p: number; books: Array<{ book: string; p: number }> } | null {
+  let num = 0;
+  let den = 0;
+  const books: Array<{ book: string; p: number }> = [];
+  for (const bm of event.bookmakers ?? []) {
+    if (!(bm.key in SHARP_BOOKS)) continue;
+    const totals = bm.markets.find((m) => m.key === 'totals');
+    const over = totals?.outcomes.find((o) => o.name === 'Over' && o.point === point);
+    const under = totals?.outcomes.find((o) => o.name === 'Under' && o.point === point);
+    if (!over || !under) continue;
+    const w = SHARP_BOOKS[bm.key];
+    const p = devigOver(americanToProb(over.price), americanToProb(under.price));
+    num += w * p;
+    den += w;
+    books.push({ book: bm.key, p });
+  }
+  return den > 0 ? { p: num / den, books } : null;
+}
+
+/** Fliff's moneyline + game-total edges for one event, in the PropEdge shape
+ *  so they render in the same list as player props. `player` holds the team
+ *  name (moneyline) or is blank (game total, which has no player); `side` is
+ *  fixed 'over' for moneyline (there's no "under a team winning") and the
+ *  real over/under for totals. */
+function collectGameLines(event: OddsEvent, sport: string): PropEdge[] {
+  const fliff = event.bookmakers?.find((b) => b.key === 'fliff');
+  if (!fliff) return [];
+  const edges: PropEdge[] = [];
+  const gameLabel = `${event.away_team} @ ${event.home_team}`;
+
+  const home = fairHomeWinProb(event);
+  if (home != null) {
+    const h2h = fliff.markets.find((m) => m.key === 'h2h');
+    const sides: Array<{ team: string; p: number; sharpLines: PropEdge['sharpLines'] }> = [
+      { team: event.home_team, p: home.p, sharpLines: home.books.map((b) => ({ book: b.book, line: 0, overProb: round1(b.p * 100) })) },
+      {
+        team: event.away_team,
+        p: 1 - home.p,
+        sharpLines: home.books.map((b) => ({ book: b.book, line: 0, overProb: round1((1 - b.p) * 100) })),
+      },
+    ];
+    for (const { team, p, sharpLines } of sides) {
+      const price = h2h?.outcomes.find((o) => o.name === team)?.price;
+      if (price == null) continue;
+      const be = americanToProb(price);
+      const edge = (p - be) * 100;
+      if (edge < MIN_EDGE) continue;
+      edges.push({
+        id: `${event.id}-h2h-${team}`.replace(/[^a-zA-Z0-9.-]/g, ''),
+        sport,
+        event: gameLabel,
+        startTime: event.commence_time,
+        player: team,
+        market: 'Moneyline',
+        side: 'over',
+        line: 0,
+        platform: PLATFORMS.fliff.name,
+        price,
+        winProb: round1(p * 100),
+        fairOdds: probToAmerican(p),
+        breakeven: round1(be * 100),
+        breakevenBasis: 'price',
+        edge: round1(edge),
+        lineMatch: 'exact',
+        sharpLines,
+      });
+    }
+  }
+
+  const totals = fliff.markets.find((m) => m.key === 'totals');
+  for (const o of totals?.outcomes ?? []) {
+    if (o.point == null || (o.name !== 'Over' && o.name !== 'Under')) continue;
+    const total = fairTotalOverProb(event, o.point);
+    if (total == null) continue;
+    const p = o.name === 'Over' ? total.p : 1 - total.p;
+    const be = americanToProb(o.price);
+    const edge = (p - be) * 100;
+    if (edge < MIN_EDGE) continue;
+    edges.push({
+      id: `${event.id}-total-${o.name}-${o.point}`.replace(/[^a-zA-Z0-9.-]/g, ''),
+      sport,
+      event: gameLabel,
+      startTime: event.commence_time,
+      player: '',
+      market: 'Game Total',
+      side: o.name === 'Over' ? 'over' : 'under',
+      line: o.point,
+      platform: PLATFORMS.fliff.name,
+      price: o.price,
+      winProb: round1(p * 100),
+      fairOdds: probToAmerican(p),
+      breakeven: round1(be * 100),
+      breakevenBasis: 'price',
+      edge: round1(edge),
+      lineMatch: 'exact',
+      sharpLines: total.books.map((b) => ({
+        book: b.book,
+        line: o.point!,
+        overProb: round1((o.name === 'Over' ? b.p : 1 - b.p) * 100),
+      })),
+    });
+  }
+
+  return edges;
+}
+
 function consensusOver(sharp: SharpQuote[], line: number): number | null {
   let num = 0;
   let den = 0;
@@ -382,13 +524,24 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
     let data: OddsEvent;
     try {
       ({ data } = await axios.get<OddsEvent>(`${ODDS_API}/sports/${ev.sport_key}/events/${ev.id}/odds`, {
-        params: { apiKey, bookmakers: books.join(','), markets: cfg.markets.join(','), oddsFormat: 'american' },
+        params: {
+          apiKey,
+          bookmakers: books.join(','),
+          markets: [...cfg.markets, ...GAME_MARKETS].join(','),
+          oddsFormat: 'american',
+        },
         timeout: 15000,
       }));
     } catch (error) {
       const status = axios.isAxiosError(error) ? error.response?.status : undefined;
       if (status === 401 || status === 429) quotaErrors++;
       continue;
+    }
+
+    for (const gl of collectGameLines(data, cfg.label)) {
+      platformsSeen.add(gl.platform);
+      sharpSeen.add('pinnacle'); // fairHomeWinProb/fairTotalOverProb only fire with sharp-book coverage
+      edges.push(gl);
     }
 
     const gameLabel = `${ev.away_team} @ ${ev.home_team}`;
