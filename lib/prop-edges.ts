@@ -490,10 +490,28 @@ function collectGameLines(event: OddsEvent, sport: string): PropEdge[] {
   return edges;
 }
 
+// Small yardage lines are lumpy (a big chance of zero, then one catch or run of
+// almost any length), so a smooth model can't shift them: moving a 4.5–14.5
+// yard line by one yard overshot the real books by 5–8 pts in the 2026-09-24
+// accuracy test (Brooks, J. Smith, Love, Penix, Zaccheaus, Moore), versus
+// ~1–3 pts on lines of 35+. Below this, only a sharp book at the exact line
+// counts.
+const YARDAGE_MARKETS = new Set([
+  'player_rush_yds',
+  'player_reception_yds',
+  'player_pass_yds',
+  'Rushing Yards',
+  'Receiving Yards',
+  'Passing Yards',
+]);
+const SMALL_YARDAGE_LINE = 15;
+
 function consensusOver(sharp: SharpQuote[], line: number, market?: string): number | null {
   let num = 0;
   let den = 0;
+  const exactOnly = market != null && YARDAGE_MARKETS.has(market) && line < SMALL_YARDAGE_LINE;
   for (const q of sharp) {
+    if (exactOnly && q.line !== line) continue;
     if (Math.abs(q.line - line) / Math.max(q.line, 0.5) > MAX_ESTIMATED_GAP) continue;
     const w = SHARP_BOOKS[q.book] * (q.line === line ? 1 : 0.6); // exact quotes count more
     num += w * shiftOverProb(q.overProb, q.line, line, market);
@@ -848,6 +866,13 @@ const THRESHOLD_MAX_GAP = 0.25;
 const PINNACLE_ONLY_MARGIN = 0.03;
 
 function thresholdsFor(prop: PinnaclePlayerProp, target: number) {
+  if (YARDAGE_MARKETS.has(prop.market) && prop.line < SMALL_YARDAGE_LINE) {
+    // Too lumpy to shift (see consensusOver): only Pinnacle's own line is trustworthy.
+    return {
+      overIfAtMost: prop.overProb >= target ? prop.line : null,
+      underIfAtLeast: 1 - prop.overProb >= target ? prop.line : null,
+    };
+  }
   const span = Math.max(prop.line * THRESHOLD_MAX_GAP, 1);
   const lo = Math.max(0.5, prop.line - span);
   const hi = prop.line + span;
