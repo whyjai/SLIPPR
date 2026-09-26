@@ -203,18 +203,63 @@ function normPpf(p: number): number {
   return (lo + hi) / 2;
 }
 
-/** Estimate P(over targetLine) from fair P(over sharpLine). */
-function shiftOverProb(pOver: number, sharpLine: number, targetLine: number): number {
+/**
+ * How widely each stat swings, as sd / median. Measured from the books' own
+ * alternate-line ladders (DraftKings/FanDuel, 95 points / 66 rebounds / 64
+ * assists / 72 threes / 52 strikeout / 41 hits / 82 total-bases ladders,
+ * 2026-09-22): fitting a normal to each ladder gives the spread the market
+ * itself prices. NFL yardage has no cached ladders; its 0.6 is fit to the
+ * five-book consensus at neighboring lines on 2026-09-24 (6 props, errors
+ * within ~3 pts, on the conservative side). Pass yards is an uncalibrated
+ * typical value. Keys cover both Odds API market keys and Pinnacle labels.
+ */
+const SPREAD_RATIO: Record<string, number> = {
+  player_points: 0.45,
+  Points: 0.45,
+  player_rebounds: 0.52,
+  Rebounds: 0.52,
+  player_assists: 0.57,
+  Assists: 0.57,
+  player_threes: 0.94,
+  'Threes Made': 0.94,
+  player_points_rebounds_assists: 0.4, // a sum of partly offsetting parts: tighter than each alone
+  'Pts & Rebs & Asts': 0.4,
+  pitcher_strikeouts: 0.46,
+  Strikeouts: 0.46,
+  batter_hits: 1.0,
+  Hits: 1.0,
+  batter_total_bases: 2.2,
+  'Total Bases': 2.2,
+  player_rush_yds: 0.6,
+  'Rushing Yards': 0.6,
+  player_reception_yds: 0.6,
+  'Receiving Yards': 0.6,
+  player_receptions: 0.5,
+  Receptions: 0.5,
+  player_pass_yds: 0.25,
+  'Passing Yards': 0.25,
+};
+
+/**
+ * Estimate P(over targetLine) from fair P(over sharpLine). Normal with a
+ * market-calibrated spread when we have one; the old line-size heuristic
+ * (Poisson under 12, normal 0.3 above) only for uncalibrated markets.
+ *
+ * Solving P(X > L) = pOver for the mean: (L − μ)/sd = Φ⁻¹(1 − pOver), so
+ * μ = L − sd·Φ⁻¹(1 − pOver). (An earlier version added that term instead of
+ * subtracting it, which mirrored the lean — a 70% Over at 20 came out 27% at
+ * 20.5 — on every normal-branch shift.)
+ */
+function shiftOverProb(pOver: number, sharpLine: number, targetLine: number, market?: string): number {
   if (sharpLine === targetLine) return pOver;
-  if (sharpLine < 12) {
-    // Low counting stats (Ks, receptions, SOG, 3s) → Poisson
+  const ratio = market ? SPREAD_RATIO[market] : undefined;
+  if (ratio == null && sharpLine < 12) {
     const lam = fitPoisson(sharpLine, pOver);
     return 1 - poissonCdf(Math.floor(targetLine), lam);
   }
-  // Yardage / points → normal, sd scales with the line
-  const sd = Math.max(0.3 * sharpLine, 3);
-  const median = sharpLine + sd * normPpf(1 - pOver);
-  return 1 - normCdf((targetLine - median) / sd);
+  const sd = ratio != null ? Math.max(ratio * sharpLine, 1) : Math.max(0.3 * sharpLine, 3);
+  const mean = sharpLine - sd * normPpf(1 - pOver);
+  return 1 - normCdf((targetLine - mean) / sd);
 }
 
 // ---------------------------------------------------------------------------
@@ -445,13 +490,13 @@ function collectGameLines(event: OddsEvent, sport: string): PropEdge[] {
   return edges;
 }
 
-function consensusOver(sharp: SharpQuote[], line: number): number | null {
+function consensusOver(sharp: SharpQuote[], line: number, market?: string): number | null {
   let num = 0;
   let den = 0;
   for (const q of sharp) {
     if (Math.abs(q.line - line) / Math.max(q.line, 0.5) > MAX_ESTIMATED_GAP) continue;
     const w = SHARP_BOOKS[q.book] * (q.line === line ? 1 : 0.6); // exact quotes count more
-    num += w * shiftOverProb(q.overProb, q.line, line);
+    num += w * shiftOverProb(q.overProb, q.line, line, market);
     den += w;
   }
   return den > 0 ? num / den : null;
@@ -463,13 +508,13 @@ function consensusOver(sharp: SharpQuote[], line: number): number | null {
  * voids the pick, so it's neither a win nor a loss: over = P(X ≥ L+1),
  * under = P(X ≤ L−1), and we condition on no push.
  */
-export function sideWinProb(sharp: SharpQuote[], line: number, side: PropSide): number | null {
+export function sideWinProb(sharp: SharpQuote[], line: number, side: PropSide, market?: string): number | null {
   if (!Number.isInteger(line)) {
-    const pOver = consensusOver(sharp, line);
+    const pOver = consensusOver(sharp, line, market);
     return pOver == null ? null : side === 'over' ? pOver : 1 - pOver;
   }
-  const over = consensusOver(sharp, line + 0.5);
-  const overOrPush = consensusOver(sharp, line - 0.5);
+  const over = consensusOver(sharp, line + 0.5, market);
+  const overOrPush = consensusOver(sharp, line - 0.5, market);
   if (over == null || overOrPush == null) return null;
   const under = 1 - overOrPush;
   const decided = over + under;
@@ -551,7 +596,7 @@ async function fetchEdges(apiKey: string): Promise<PropEdgesResult> {
 
       for (const t of prop.targets) {
         platformsSeen.add(PLATFORMS[t.book].name);
-        const p = sideWinProb(prop.sharp, t.line, t.side);
+        const p = sideWinProb(prop.sharp, t.line, t.side, prop.market);
         const be = breakevenFor(t.book, t.price);
         if (p == null || !be) continue;
 
@@ -760,6 +805,82 @@ export async function fetchPinnaclePlayerProps(): Promise<PinnaclePlayerProp[]> 
     }
   }
   return props;
+}
+
+// ---------------------------------------------------------------------------
+// Pinnacle thresholds: free, no app lines needed.
+//
+// The apps set their line near the sharp median (every MLB total-bases prop
+// PrizePicks/Underdog carried on 2026-09-22/24 was 48–54% at Pinnacle), so a
+// lopsided Pinnacle price at Pinnacle's own line is usually NOT what the app
+// offers — that's why sharp-only "65% Under 1.5" picks failed verification.
+// What Pinnacle alone CAN answer: at what app line does each side become +EV?
+// We shift Pinnacle's fair probability along the stat's distribution (the same
+// Poisson/normal model used for estimated lines) and report the cutoffs, so
+// the bettor just compares one number in the app.
+// ---------------------------------------------------------------------------
+
+export type PinnacleThreshold = {
+  id: string;
+  sport: string;
+  event: string;
+  startTime: string;
+  player: string;
+  market: string;
+  pinnacleLine: number;
+  overProbAtPinnacle: number; // %
+  /** Over is +EV (≥ target) at any app line at or below this; null = never within range. */
+  overIfAtMost: number | null;
+  /** Under is +EV at any app line at or above this; null = never within range. */
+  underIfAtLeast: number | null;
+  targetPct: number; // win % required: best pick'em breakeven + MIN_EDGE + Pinnacle-only noise margin
+};
+
+// Beyond ~25% from Pinnacle's line the distribution shift is a guess, and the
+// apps essentially never post that far off the market anyway.
+const THRESHOLD_MAX_GAP = 0.25;
+
+// Sharp books routinely disagree with each other by 1–3 units on these lines,
+// each pricing its own line near 50%. Shifting Pinnacle's price to another
+// book's line missed that book's actual price by 3.0 pts on average (48 NFL
+// comparisons, 2026-09-24). A Pinnacle-only call has to clear that noise on
+// top of the normal edge bar, or it's flagging ordinary disagreement.
+const PINNACLE_ONLY_MARGIN = 0.03;
+
+function thresholdsFor(prop: PinnaclePlayerProp, target: number) {
+  const span = Math.max(prop.line * THRESHOLD_MAX_GAP, 1);
+  const lo = Math.max(0.5, prop.line - span);
+  const hi = prop.line + span;
+  let overIfAtMost: number | null = null;
+  let underIfAtLeast: number | null = null;
+  // x.5 lines only (step 1 from a .5 start): whole-number app lines can push.
+  for (let x = Math.floor(lo) + 0.5; x <= hi; x += 1) {
+    const pOver = shiftOverProb(prop.overProb, prop.line, x, prop.market);
+    if (pOver >= target) overIfAtMost = x; // grid ascends, so keep the highest qualifying line
+    if (underIfAtLeast == null && 1 - pOver >= target) underIfAtLeast = x; // first (lowest) qualifying line
+  }
+  return { overIfAtMost, underIfAtLeast };
+}
+
+/** Every upcoming Pinnacle prop with its +EV app-line cutoffs. Free (Pinnacle only). */
+export async function fetchPinnacleThresholds(): Promise<PinnacleThreshold[]> {
+  const best = bestPickemBreakeven();
+  const target = best.be + MIN_EDGE / 100 + PINNACLE_ONLY_MARGIN;
+  const props = await fetchPinnaclePlayerProps();
+  return props
+    .filter((p) => p.event)
+    .map((prop) => ({
+      id: prop.id,
+      sport: prop.sport,
+      event: prop.event,
+      startTime: prop.startTime,
+      player: prop.player,
+      market: prop.market,
+      pinnacleLine: prop.line,
+      overProbAtPinnacle: round1(prop.overProb * 100),
+      ...thresholdsFor(prop, target),
+      targetPct: round1(target * 100),
+    }));
 }
 
 export async function fetchPinnacleEdges(): Promise<PropEdgesResult> {
