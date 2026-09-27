@@ -158,3 +158,40 @@ export const TEAM_NAMES: Record<string, { city: string; nickname: string }> = {
 };
 
 export const nickname = (abbr: string) => TEAM_NAMES[abbr]?.nickname ?? abbr;
+
+export type SnapCount = {
+  gameId: string;
+  season: number;
+  week: number;
+  gameType: string;
+  player: string;
+  team: string;
+  offensePct: number; // 0–1
+};
+
+/** Offensive snap share per player-game (nflverse's copy of PFR snap counts). */
+export function snapCounts(season: number): Promise<SnapCount[]> {
+  return cached(`snaps-${season}`, async () => {
+    const rows = await fetchCsv(`snap_counts/snap_counts_${season}.csv`);
+    return rows.map((r) => ({
+      gameId: r.game_id,
+      season: Number(r.season),
+      week: Number(r.week),
+      gameType: r.game_type,
+      player: r.player,
+      team: r.team,
+      offensePct: Number(r.offense_pct) || 0,
+    }));
+  });
+}
+
+/**
+ * Join key for names across nflverse files, which disagree on suffixes and
+ * punctuation ("Chris Godwin Jr." vs "Chris Godwin", "D.J. Moore" vs "DJ Moore").
+ */
+export function nameKey(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g, '')
+    .replace(/[^a-z]/g, '');
+}

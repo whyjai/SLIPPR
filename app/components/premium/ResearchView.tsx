@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowDownUp, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { Badge, Card, PageHeader, cn } from './ui';
 import type { MatchupNote, NflResearch, Position } from '@/lib/research/nfl-defense';
+import PlayerTrendsPanel from './PlayerTrendsPanel';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 const SEASONS = [2026, 2025];
@@ -32,6 +33,7 @@ export default function ResearchView() {
   const [pos, setPos] = useState<Position>('TE');
   const [metric, setMetric] = useState('receptions');
   const [softFirst, setSoftFirst] = useState(true);
+  const [view, setView] = useState<'matchups' | 'players'>('matchups');
 
   useEffect(() => {
     let cancelled = false;
@@ -73,7 +75,7 @@ export default function ResearchView() {
         <PageHeader
           eyebrow="Research"
           title="NFL Matchup Research"
-          description="How every defense holds up against each position, built only from box scores. No odds, no picks — the numbers behind the matchups."
+          description="Defense-vs-position rankings, matchup notes and player usage trends, built only from box scores and snap counts. No odds, no picks — the numbers behind the matchups."
           actions={
             <div className="flex gap-1.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-1">
               {SEASONS.map((s) => (
@@ -108,7 +110,29 @@ export default function ResearchView() {
           </div>
         )}
 
-        {loading && !data ? (
+        <div className="mb-6 flex gap-1 border-b border-white/[0.06]">
+          {(
+            [
+              ['matchups', 'Matchups'],
+              ['players', 'Player trends'],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setView(key)}
+              className={cn(
+                '-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition',
+                view === key ? 'border-emerald-400 text-emerald-300' : 'border-transparent text-zinc-400 hover:text-zinc-200',
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {view === 'players' ? (
+          <PlayerTrendsPanel season={season} />
+        ) : loading && !data ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="skeleton h-28" />
