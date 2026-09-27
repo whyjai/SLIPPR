@@ -4,6 +4,7 @@ import { useEffect, useState, type ComponentType } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   BadgeCheck,
+  ChartColumn,
   Crosshair,
   History,
   Home,
@@ -25,12 +26,14 @@ import SlipBuilderView from './premium/SlipBuilderView';
 import HistoryView from './premium/HistoryView';
 import SharpView from './premium/SharpView';
 import PropEdgesView from './premium/PropEdgesView';
+import ResearchView from './premium/ResearchView';
 import SettingsView from './premium/SettingsView';
 import TrackRecordView from './premium/TrackRecordView';
 import { UpgradeProvider, useUpgrade } from './UpgradeProvider';
 import { useAuth } from './AuthProvider';
 
 type Tab =
+  | 'research'
   | 'home'
   | 'dashboard'
   | 'board'
@@ -42,6 +45,7 @@ type Tab =
   | 'settings';
 
 const TAB_PARAM_MAP: Record<string, Tab> = {
+  research: 'research',
   home: 'home',
   dashboard: 'dashboard',
   board: 'board',
@@ -60,6 +64,7 @@ type NavEntry = {
 };
 
 const platformNav: NavEntry[] = [
+  { tab: 'research', label: 'Research', icon: ChartColumn },
   { tab: 'home', label: 'Home', icon: Home },
   { tab: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { tab: 'board', label: 'Leg Board', icon: ListOrdered },
@@ -200,6 +205,7 @@ function ShellInner() {
             />
           )}
           {activeTab === 'dashboard' && <DashboardView embedded />}
+          {activeTab === 'research' && <ResearchView />}
           {activeTab === 'board' && <LegBoardView />}
           {activeTab === 'props' && <PropEdgesView />}
           {activeTab === 'builder' && <SlipBuilderView />}
