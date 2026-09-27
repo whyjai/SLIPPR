@@ -1,4 +1,5 @@
 import { nickname, playerWeeks, schedule, TEAM_NAMES, type Game, type PlayerWeek } from './nflverse';
+import { schemeNotesFor, type SchemeNote } from './nfl-teams';
 
 /**
  * Defense vs. position: what each defense has allowed, per game, to opposing
@@ -162,6 +163,8 @@ export type MatchupGame = {
   home: string;
   kickoff: string; // "2026-09-27 13:00" (ET)
   notes: MatchupNote[];
+  /** How the defense lines up (blitz, box, coverage) × how the opposing player fares against it. */
+  schemeNotes: SchemeNote[];
 };
 
 export type NflResearch = {
@@ -340,6 +343,7 @@ export async function getNflResearch(season: number): Promise<NflResearch> {
   const { rows, leagueAvg } = computeDefense(weeks);
   const byTeam = new Map(rows.map((r) => [r.team, r]));
   const next = upcoming(games);
+  const scheme = await schemeNotesFor(season, next.games, weeks);
 
   const matchups: MatchupGame[] = next.games
     .sort((a, b) => `${a.gameday} ${a.gametime}`.localeCompare(`${b.gameday} ${b.gametime}`))
@@ -356,6 +360,7 @@ export async function getNflResearch(season: number): Promise<NflResearch> {
         home: g.home,
         kickoff: `${g.gameday} ${g.gametime}`,
         notes,
+        schemeNotes: scheme.get(g.gameId) ?? [],
       };
     });
 

@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp, Search, TrendingDown, TrendingUp } from 'lucide-react';
 import { Card, cn } from './ui';
 import type { Averages, GameLogEntry, NflPlayerTrends, PlayerTrend, Position, UsageChange } from '@/lib/research/nfl-players';
+import type { PlayerSplits, SplitLine } from '@/lib/research/nfl-teams';
 
 type Filter = 'ALL' | Position;
 type StatKey = Exclude<keyof Averages, 'games'>;
@@ -244,7 +245,7 @@ export default function PlayerTrendsPanel({ season }: { season: number }) {
                   ))}
                   {open === p.id ? <ChevronUp className="h-4 w-4 text-zinc-500" /> : <ChevronDown className="h-4 w-4 text-zinc-500" />}
                 </button>
-                {open === p.id && <PlayerDetail player={p} />}
+                {open === p.id && <PlayerDetail player={p} season={season} />}
               </Fragment>
             ))}
             {rows.length === 0 && <p className="px-4 py-8 text-center text-sm text-zinc-500">No players match.</p>}
@@ -285,7 +286,7 @@ function StatCell({ player, col }: { player: PlayerTrend; col: Column }) {
   );
 }
 
-function PlayerDetail({ player }: { player: PlayerTrend }) {
+function PlayerDetail({ player, season }: { player: PlayerTrend; season: number }) {
   const stats = HIT_STATS[player.position];
   const last5 = player.log.slice(0, 5);
   return (
@@ -314,6 +315,7 @@ function PlayerDetail({ player }: { player: PlayerTrend }) {
             });
         })}
       </div>
+      <LookSplits player={player} season={season} />
       <div className="overflow-x-auto">
         <table className="w-full min-w-[520px] text-xs">
           <thead className="text-left text-[10px] uppercase tracking-wider text-zinc-500">
@@ -406,5 +408,90 @@ function ChangeList({ title, items, up }: { title: string; items: UsageChange[];
         </ul>
       )}
     </Card>
+  );
+}
+
+/** How the player has fared against specific defensive looks (last season + this season). */
+function LookSplits({ player, season }: { player: PlayerTrend; season: number }) {
+  const [splits, setSplits] = useState<PlayerSplits | null | 'error'>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/research/nfl/splits?season=${season}&player=${encodeURIComponent(player.id)}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+      .then((json: PlayerSplits) => !cancelled && setSplits(json))
+      .catch(() => !cancelled && setSplits('error'));
+    return () => {
+      cancelled = true;
+    };
+  }, [player.id, season]);
+
+  if (splits === null) return <div className="skeleton mb-4 h-24" />;
+  if (splits === 'error') return null;
+
+  // Passing for QBs, rushing (box counts) first for RBs, receiving for everyone who's targeted.
+  const sections: Array<{ title: string; lines: SplitLine[]; cols: Array<[string, (l: SplitLine) => string]> }> = [];
+  const passCols: Array<[string, (l: SplitLine) => string]> = [
+    ['Dropbacks', (l) => `${l.dropbacks}`],
+    ['Yds/att', (l) => `${l.ypa ?? '—'}`],
+    ['Comp %', (l) => (l.compPct == null ? '—' : `${l.compPct}%`)],
+    ['EPA/db', (l) => `${l.epaPerDropback != null && l.epaPerDropback > 0 ? '+' : ''}${l.epaPerDropback ?? '—'}`],
+  ];
+  const recCols: Array<[string, (l: SplitLine) => string]> = [
+    ['Targets', (l) => `${l.targets}`],
+    ['Catch %', (l) => `${l.catchRate}%`],
+    ['Yds/target', (l) => `${l.ypt}`],
+  ];
+  const rushCols: Array<[string, (l: SplitLine) => string]> = [
+    ['Carries', (l) => `${l.carries}`],
+    ['Yds/carry', (l) => `${l.ypc}`],
+  ];
+  if (player.position === 'QB' && splits.passing.length) sections.push({ title: 'Passing', lines: splits.passing, cols: passCols });
+  if (player.position === 'RB' && splits.rushing.length) sections.push({ title: 'Rushing', lines: splits.rushing, cols: rushCols });
+  if (player.position !== 'QB' && splits.receiving.length) sections.push({ title: 'Receiving', lines: splits.receiving, cols: recCols });
+  if (!sections.length) return null;
+
+  const since = splits.seasons.length > 1 ? `${splits.seasons[0]}–${splits.seasons.at(-1)}` : `${splits.seasons[0] ?? ''}`;
+  return (
+    <div className="mb-4">
+      <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+        vs. defensive looks · {since} · man/zone from seasons with coverage data
+      </p>
+      <div className="grid gap-3 lg:grid-cols-2">
+        {sections.map((sec) => (
+          <div key={sec.title} className="overflow-x-auto rounded-lg border border-white/[0.06] bg-white/[0.02]">
+            <table className="w-full text-xs">
+              <thead className="text-left text-[10px] uppercase tracking-wider text-zinc-500">
+                <tr>
+                  <th className="px-3 py-1.5 font-medium">{sec.title}</th>
+                  {sec.cols.map(([h]) => (
+                    <th key={h} className="px-3 py-1.5 text-right font-medium">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="font-mono text-zinc-300">
+                {sec.lines.map((l) => {
+                  const n = l.dropbacks ?? l.targets ?? l.carries ?? 0;
+                  const thin = n < (l.dropbacks != null ? 40 : 10);
+                  return (
+                    <tr key={l.look} className={cn('border-t border-white/[0.04]', thin && 'text-zinc-600')}>
+                      <td className="px-3 py-1.5 font-sans text-zinc-400">{l.label}</td>
+                      {sec.cols.map(([h, f]) => (
+                        <td key={h} className="px-3 py-1.5 text-right">
+                          {f(l)}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+      <p className="mt-1.5 text-[10px] text-zinc-600">Dimmed rows: small sample.</p>
+    </div>
   );
 }

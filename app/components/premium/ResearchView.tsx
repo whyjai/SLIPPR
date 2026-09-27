@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowDownUp, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { ArrowDownUp, Layers, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { Badge, Card, PageHeader, cn } from './ui';
 import type { MatchupNote, NflResearch, Position } from '@/lib/research/nfl-defense';
 import PlayerTrendsPanel from './PlayerTrendsPanel';
+import TeamTendenciesPanel from './TeamTendenciesPanel';
+import type { SchemeNote } from '@/lib/research/nfl-teams';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
 const SEASONS = [2026, 2025];
@@ -33,7 +35,7 @@ export default function ResearchView() {
   const [pos, setPos] = useState<Position>('TE');
   const [metric, setMetric] = useState('receptions');
   const [softFirst, setSoftFirst] = useState(true);
-  const [view, setView] = useState<'matchups' | 'players'>('matchups');
+  const [view, setView] = useState<'matchups' | 'players' | 'teams'>('matchups');
 
   useEffect(() => {
     let cancelled = false;
@@ -115,6 +117,7 @@ export default function ResearchView() {
             [
               ['matchups', 'Matchups'],
               ['players', 'Player trends'],
+              ['teams', 'Team tendencies'],
             ] as const
           ).map(([key, label]) => (
             <button
@@ -132,6 +135,8 @@ export default function ResearchView() {
 
         {view === 'players' ? (
           <PlayerTrendsPanel season={season} />
+        ) : view === 'teams' ? (
+          <TeamTendenciesPanel season={season} />
         ) : loading && !data ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -165,6 +170,19 @@ export default function ResearchView() {
                             <NoteRow key={`${n.defense}-${n.position}-${n.metric}`} note={n} />
                           ))}
                         </ul>
+                      )}
+                      {/* ?? []: a CDN-cached response from before scheme notes existed won't have the field */}
+                      {(g.schemeNotes ?? []).length > 0 && (
+                        <div className="mt-4 border-t border-white/[0.06] pt-3">
+                          <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                            Scheme matchups
+                          </p>
+                          <ul className="space-y-2.5">
+                            {(g.schemeNotes ?? []).map((n) => (
+                              <SchemeRow key={`${n.defense}-${n.kind}`} note={n} />
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </Card>
                   ))}
@@ -270,5 +288,24 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
     >
       {label}
     </button>
+  );
+}
+
+const SCHEME_LABEL: Record<SchemeNote['kind'], string> = {
+  blitz: 'Blitz',
+  stackedBox: 'Box 8+',
+  lightBox: 'Light box',
+  coverage: 'Man/zone',
+};
+
+function SchemeRow({ note }: { note: SchemeNote }) {
+  return (
+    <li className="flex gap-3">
+      <div className="mt-0.5 flex h-6 min-w-[5.5rem] items-center justify-center gap-1 rounded-md bg-sky-500/10 px-1.5 text-[11px] font-semibold text-sky-300">
+        <Layers className="h-3 w-3" />
+        {SCHEME_LABEL[note.kind]}
+      </div>
+      <p className="text-sm leading-relaxed text-zinc-300">{note.text}</p>
+    </li>
   );
 }
