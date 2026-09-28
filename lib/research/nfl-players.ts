@@ -1,4 +1,4 @@
-import { nameKey, playerWeeks, snapCounts, type PlayerWeek } from './nflverse';
+import { nameKey, pfrToGsis, playerWeeks, snapCounts, type PlayerWeek } from './nflverse';
 
 /**
  * Player trends: usage and production per game this season, the last three
@@ -124,16 +124,25 @@ function involved(pos: Position, a: Averages): boolean {
 }
 
 export async function getNflPlayerTrends(season: number): Promise<NflPlayerTrends> {
-  const [cur, prev, snapsCur, snapsPrev] = await Promise.all([
+  const [cur, prev, snapsCur, snapsPrev, xwalk] = await Promise.all([
     playerWeeks(season),
     playerWeeks(season - 1).catch(() => [] as PlayerWeek[]),
     snapCounts(season).catch(() => []),
     snapCounts(season - 1).catch(() => []),
+    pfrToGsis().catch(() => new Map<string, string>()),
   ]);
-  const snapByKey = new Map<string, number>();
+  // Join by player id through the PFR crosswalk; name + team only as a fallback.
+  const snapById = new Map<string, number>();
+  const snapByName = new Map<string, number>();
   for (const s of [...snapsPrev, ...snapsCur]) {
-    if (s.gameType === 'REG') snapByKey.set(`${nameKey(s.player)}|${s.team}|${s.season}|${s.week}`, s.offensePct);
+    if (s.gameType !== 'REG') continue;
+    const gsis = xwalk.get(s.pfrId);
+    if (gsis) snapById.set(`${gsis}|${s.season}|${s.week}`, s.offensePct);
+    snapByName.set(`${nameKey(s.player)}|${s.team}|${s.season}|${s.week}`, s.offensePct);
   }
+  const snapFor = (w: PlayerWeek) =>
+    snapById.get(`${w.playerId}|${w.season}|${w.week}`) ??
+    snapByName.get(`${nameKey(w.name)}|${w.team}|${w.season}|${w.week}`);
 
   const byPlayer = new Map<string, PlayerWeek[]>();
   for (const w of [...prev, ...cur]) {
@@ -146,8 +155,7 @@ export async function getNflPlayerTrends(season: number): Promise<NflPlayerTrend
     const thisSeason = weeks.filter((w) => w.season === season);
     if (!thisSeason.length) continue;
     weeks.sort((a, b) => a.season - b.season || a.week - b.week);
-    const entry = (w: PlayerWeek) =>
-      toEntry(w, snapByKey.get(`${nameKey(w.name)}|${w.team}|${w.season}|${w.week}`));
+    const entry = (w: PlayerWeek) => toEntry(w, snapFor(w));
     const curLog = thisSeason.map(entry);
     const priorLog = weeks.filter((w) => w.season === season - 1).map(entry);
     const latest = thisSeason[thisSeason.length - 1];
@@ -171,7 +179,8 @@ export async function getNflPlayerTrends(season: number): Promise<NflPlayerTrend
   // have a real role now or before, and the swing must be meaningful.
   const changes: UsageChange[] = [];
   for (const p of players) {
-    if (!p.prior || p.position === 'QB') continue;
+    // Two games minimum: one early injury exit would otherwise read as a lost role.
+    if (!p.prior || p.position === 'QB' || p.season.games < 2) continue;
     const add = (metric: UsageChange['metric'], now: number | null, before: number | null, minSwing: number) => {
       if (now == null || before == null) return;
       const delta = round1(now - before);

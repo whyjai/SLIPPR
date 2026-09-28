@@ -264,7 +264,7 @@ function upcoming(games: Game[]): { week: number | null; games: Game[] } {
   return { week, games: open.filter((g) => g.week === week) };
 }
 
-/** The offense's leading player at a position for a stat, by per-game average this season. */
+/** The offense's leading player at a position for a stat this season (by total), with his per-game average. */
 function leadingPlayer(weeks: PlayerWeek[], team: string, pos: Position, metric: string) {
   const agg = new Map<string, { name: string; total: number; games: number }>();
   for (const w of weeks) {
@@ -274,12 +274,12 @@ function leadingPlayer(weeks: PlayerWeek[], team: string, pos: Position, metric:
     a.games += 1;
     agg.set(w.playerId, a);
   }
-  let best: { name: string; perGame: number; games: number } | null = null;
+  // Leader by season total, so one big game from a backup can't outrank the starter; show per game.
+  let best: { name: string; total: number; games: number } | null = null;
   for (const a of agg.values()) {
-    const perGame = a.total / a.games;
-    if (!best || perGame > best.perGame) best = { name: a.name, perGame: round1(perGame), games: a.games };
+    if (!best || a.total > best.total || (a.total === best.total && a.games < best.games)) best = a;
   }
-  return best;
+  return best && best.total > 0 ? { name: best.name, perGame: round1(best.total / best.games), games: best.games } : null;
 }
 
 function notesFor(

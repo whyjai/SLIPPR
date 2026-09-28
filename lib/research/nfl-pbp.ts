@@ -291,7 +291,9 @@ export function aggregate(
       if (!games.has(t)) games.set(t, new Set());
       games.get(t)!.add(p.gameId);
     }
-    const pass = p.type === 'pass';
+    // Pass = any QB dropback (incl. sacks and scrambles, which nflverse types as 'run'); run = designed run.
+    // Same split as nflfastR's `pass` / rbsdm, so pass rates and EPA per dropback match public numbers.
+    const pass = p.dropback;
 
     // --- offense tendencies
     bump(o, 'plays');

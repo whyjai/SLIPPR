@@ -165,6 +165,7 @@ export type SnapCount = {
   week: number;
   gameType: string;
   player: string;
+  pfrId: string;
   team: string;
   offensePct: number; // 0–1
 };
@@ -179,9 +180,24 @@ export function snapCounts(season: number): Promise<SnapCount[]> {
       week: Number(r.week),
       gameType: r.game_type,
       player: r.player,
+      pfrId: r.pfr_player_id,
       team: r.team,
       offensePct: Number(r.offense_pct) || 0,
     }));
+  });
+}
+
+/**
+ * PFR id → nflverse (GSIS) player id, from the nflverse players table. Snap
+ * counts come from PFR, so this is how they join to box scores exactly;
+ * names alone miss nicknames ("Kenny" vs "Kenneth" Gainwell) and accents.
+ */
+export function pfrToGsis(): Promise<Map<string, string>> {
+  return cached('players-xwalk', async () => {
+    const rows = await fetchCsv('players/players.csv');
+    const out = new Map<string, string>();
+    for (const r of rows) if (r.pfr_id && r.pfr_id !== 'NA' && r.gsis_id && r.gsis_id !== 'NA') out.set(r.pfr_id, r.gsis_id);
+    return out;
   });
 }
 

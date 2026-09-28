@@ -52,24 +52,24 @@ export type TendencyMetric = {
 
 export const OFFENSE_METRICS: TendencyMetric[] = [
   { key: 'playsPerGame', label: 'Plays / game', unit: '', highIsFirst: true, hint: 'Offensive snaps per game (runs + dropbacks).' },
-  { key: 'pace', label: 'Pace', unit: 'sec', highIsFirst: false, hint: 'Game-clock seconds between snaps in neutral game states. #1 = fastest.' },
-  { key: 'neutralPassRate', label: 'Neutral pass rate', unit: '%', highIsFirst: true, hint: 'Pass rate on 1st/2nd down with win probability 20–80%, outside the last 2 minutes of a half.' },
+  { key: 'pace', label: 'Pace', unit: 'sec', highIsFirst: false, hint: 'Game-clock seconds between snaps while the clock keeps running, neutral game states. #1 = fastest.' },
+  { key: 'neutralPassRate', label: 'Neutral pass rate', unit: '%', highIsFirst: true, hint: 'Dropback rate (incl. sacks and scrambles) on 1st/2nd down with win probability 20–80%, outside the last 2 minutes of a half.' },
   { key: 'proe', label: 'Pass rate over expected', unit: 'pts', highIsFirst: true, hint: 'How much more (or less) they pass than an average team would in the same situations.' },
   { key: 'shotgunRate', label: 'Shotgun', unit: '%', highIsFirst: true, hint: 'Share of snaps from shotgun.' },
   { key: 'noHuddleRate', label: 'No-huddle', unit: '%', highIsFirst: true, hint: 'Share of snaps with no huddle.' },
   { key: 'playActionRate', label: 'Play-action', unit: '%', highIsFirst: true, hint: 'Share of dropbacks with a play-action fake (charted plays).' },
   { key: 'motionRate', label: 'Pre-snap motion', unit: '%', highIsFirst: true, hint: 'Share of snaps with motion (charted plays).' },
-  { key: 'rzPassRate', label: 'Red-zone pass rate', unit: '%', highIsFirst: true, hint: 'Pass rate inside the opponent 20.' },
+  { key: 'rzPassRate', label: 'Red-zone pass rate', unit: '%', highIsFirst: true, hint: 'Dropback rate inside the opponent 20.' },
 ];
 
 export const DEFENSE_METRICS: TendencyMetric[] = [
   { key: 'blitzRate', label: 'Blitz rate', unit: '%', highIsFirst: true, hint: 'Share of dropbacks with at least one blitzer (charted plays).' },
   { key: 'avgRushers', label: 'Pass rushers', unit: '', highIsFirst: true, hint: 'Average pass rushers per dropback.' },
-  { key: 'stackedBoxRate', label: 'Stacked box (8+)', unit: '%', highIsFirst: true, hint: 'Share of opponent runs faced with 8+ defenders in the box.' },
-  { key: 'lightBoxRate', label: 'Light box (≤6)', unit: '%', highIsFirst: true, hint: 'Share of opponent runs faced with 6 or fewer in the box.' },
+  { key: 'stackedBoxRate', label: 'Stacked box (8+)', unit: '%', highIsFirst: true, hint: 'Share of opponent designed runs faced with 8+ defenders in the box.' },
+  { key: 'lightBoxRate', label: 'Light box (≤6)', unit: '%', highIsFirst: true, hint: 'Share of opponent designed runs faced with 6 or fewer in the box.' },
   { key: 'manRate', label: 'Man coverage', unit: '%', highIsFirst: true, hint: 'Share of dropbacks in man coverage.' },
   { key: 'passEpaAllowed', label: 'EPA / dropback allowed', unit: 'EPA', highIsFirst: true, hint: 'Expected points added per opponent dropback. #1 = allows the most.' },
-  { key: 'rushEpaAllowed', label: 'EPA / rush allowed', unit: 'EPA', highIsFirst: true, hint: 'Expected points added per opponent run. #1 = allows the most.' },
+  { key: 'rushEpaAllowed', label: 'EPA / rush allowed', unit: 'EPA', highIsFirst: true, hint: 'Expected points added per opponent designed run. #1 = allows the most.' },
   { key: 'yardsPerPlayAllowed', label: 'Yards / play allowed', unit: '', highIsFirst: true, hint: 'Opponent yards per play. #1 = allows the most.' },
 ];
 
