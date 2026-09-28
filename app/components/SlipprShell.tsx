@@ -4,10 +4,13 @@ import { useEffect, useState, type ComponentType } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   BadgeCheck,
+  ChartColumn,
+  Crosshair,
   History,
   Home,
   LayoutDashboard,
   ListOrdered,
+  Lock,
   LogOut,
   Menu,
   Settings,
@@ -23,15 +26,19 @@ import LegBoardView from './premium/LegBoardView';
 import SlipBuilderView from './premium/SlipBuilderView';
 import HistoryView from './premium/HistoryView';
 import SharpView from './premium/SharpView';
+import PropEdgesView from './premium/PropEdgesView';
+import ResearchView from './premium/ResearchView';
 import SettingsView from './premium/SettingsView';
 import TrackRecordView from './premium/TrackRecordView';
 import { UpgradeProvider, useUpgrade } from './UpgradeProvider';
 import { useAuth } from './AuthProvider';
 
 type Tab =
+  | 'research'
   | 'home'
   | 'dashboard'
   | 'board'
+  | 'props'
   | 'builder'
   | 'track'
   | 'history'
@@ -39,9 +46,11 @@ type Tab =
   | 'settings';
 
 const TAB_PARAM_MAP: Record<string, Tab> = {
+  research: 'research',
   home: 'home',
   dashboard: 'dashboard',
   board: 'board',
+  props: 'props',
   builder: 'builder',
   track: 'track',
   history: 'history',
@@ -55,18 +64,24 @@ type NavEntry = {
   icon: ComponentType<{ className?: string }>;
 };
 
-const platformNav: NavEntry[] = [
+// Research is free. Betting tools are Pro; the server enforces it, the badge just says so.
+const researchNav: NavEntry[] = [
+  { tab: 'research', label: 'Research', icon: ChartColumn },
   { tab: 'home', label: 'Home', icon: Home },
-  { tab: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { tab: 'board', label: 'Leg Board', icon: ListOrdered },
-  { tab: 'builder', label: 'Slip Builder', icon: SlidersHorizontal },
-];
-
-const analysisNav: NavEntry[] = [
   { tab: 'track', label: 'Track Record', icon: BadgeCheck },
   { tab: 'history', label: 'History', icon: History },
+];
+
+const proNav: NavEntry[] = [
+  { tab: 'board', label: 'Leg Board', icon: ListOrdered },
+  { tab: 'props', label: 'Prop Edges', icon: Crosshair },
+  { tab: 'builder', label: 'Slip Builder', icon: SlidersHorizontal },
+  { tab: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { tab: 'sharp', label: 'Sharp vs Public', icon: TrendingUp },
 ];
+
+/** Pro tabs with no free preview; the rest show a trimmed teaser. */
+const PRO_ONLY_TABS = new Set<Tab>(['dashboard', 'sharp']);
 
 export default function SlipprShell() {
   return (
@@ -77,6 +92,7 @@ export default function SlipprShell() {
 }
 
 function ShellInner() {
+  const { isPro } = useAuth();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -133,8 +149,8 @@ function ShellInner() {
 
         {/* Nav */}
         <nav className="flex-1 space-y-7 overflow-y-auto px-4 pt-2">
-          <NavGroup label="Platform">
-            {platformNav.map((entry) => (
+          <NavGroup label="Research">
+            {researchNav.map((entry) => (
               <NavItem
                 key={entry.tab}
                 {...entry}
@@ -144,11 +160,12 @@ function ShellInner() {
             ))}
           </NavGroup>
 
-          <NavGroup label="Analysis">
-            {analysisNav.map((entry) => (
+          <NavGroup label="Pro tools">
+            {proNav.map((entry) => (
               <NavItem
                 key={entry.tab}
                 {...entry}
+                pro
                 active={activeTab === entry.tab}
                 onClick={() => goTo(entry.tab)}
               />
@@ -188,18 +205,21 @@ function ShellInner() {
         </div>
 
         <main key={activeTab} className="animate-fade-up">
+          {PRO_ONLY_TABS.has(activeTab) && !isPro && <ProLockedView tab={activeTab} />}
           {activeTab === 'home' && (
             <LandingView
               onOpenDashboard={() => goTo('dashboard')}
               onOpenBoard={() => goTo('board')}
             />
           )}
-          {activeTab === 'dashboard' && <DashboardView embedded />}
+          {activeTab === 'dashboard' && isPro && <DashboardView embedded />}
+          {activeTab === 'research' && <ResearchView />}
           {activeTab === 'board' && <LegBoardView />}
+          {activeTab === 'props' && <PropEdgesView />}
           {activeTab === 'builder' && <SlipBuilderView />}
           {activeTab === 'track' && <TrackRecordView />}
           {activeTab === 'history' && <HistoryView />}
-          {activeTab === 'sharp' && <SharpView onOpenDashboard={() => goTo('dashboard')} />}
+          {activeTab === 'sharp' && isPro && <SharpView onOpenDashboard={() => goTo('dashboard')} />}
           {activeTab === 'settings' && <SettingsView />}
         </main>
       </div>
@@ -272,10 +292,11 @@ type NavItemProps = {
   icon: ComponentType<{ className?: string }>;
   label: string;
   active: boolean;
+  pro?: boolean;
   onClick: () => void;
 };
 
-function NavItem({ icon: Icon, label, active, onClick }: NavItemProps) {
+function NavItem({ icon: Icon, label, active, pro, onClick }: NavItemProps) {
   return (
     <button
       type="button"
@@ -295,6 +316,44 @@ function NavItem({ icon: Icon, label, active, onClick }: NavItemProps) {
         }`}
       />
       {label}
+      {pro && (
+        <span className="ml-auto rounded-md border border-amber-400/25 bg-amber-400/10 px-1.5 py-px text-[9px] font-semibold tracking-wider text-amber-300">
+          PRO
+        </span>
+      )}
     </button>
+  );
+}
+
+const PRO_COPY: Partial<Record<Tab, { title: string; body: string }>> = {
+  dashboard: {
+    title: 'Dashboard',
+    body: 'Tiered consensus slips, council grades and predatory-line warnings, generated on demand.',
+  },
+  sharp: {
+    title: 'Sharp vs Public',
+    body: 'Where sharp money and public money disagree on today’s slate.',
+  },
+};
+
+function ProLockedView({ tab }: { tab: Tab }) {
+  const { goPro, checkoutPending, checkoutError } = useUpgrade();
+  const copy = PRO_COPY[tab];
+  return (
+    <div className="px-6 pb-16 pt-16 lg:px-10">
+      <div className="mx-auto max-w-lg rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 text-center">
+        <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300">
+          <Lock className="h-5 w-5" />
+        </div>
+        <h1 className="mb-2 text-xl font-semibold">{copy?.title ?? 'Pro tool'} is part of SLIPPR Pro</h1>
+        <p className="mb-6 text-sm leading-relaxed text-zinc-400">
+          {copy?.body} Research — matchups, player trends and team tendencies — stays free.
+        </p>
+        <button onClick={() => void goPro()} disabled={checkoutPending} className="btn-primary px-7 py-3">
+          {checkoutPending ? 'Opening checkout…' : 'Upgrade to Pro'}
+        </button>
+        {checkoutError && <p className="mt-3 text-xs text-rose-300">{checkoutError}</p>}
+      </div>
+    </div>
   );
 }

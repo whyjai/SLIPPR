@@ -3,6 +3,8 @@ import { runDailyCron } from '@/lib/daily-cron';
 import { verifyCronRequest } from '@/lib/cron-auth';
 import { generateLegBoard } from '@/lib/leg-board';
 import { runSettlement } from '@/lib/settle';
+import { generatePropEdges } from '@/lib/prop-edges';
+import { scanStaleLines } from '@/lib/stale-lines';
 import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
@@ -46,6 +48,29 @@ export async function GET(req: Request) {
   } catch (error) {
     summary.board = { error: errMessage(error) };
     logger.error('Board generation failed', { error: errMessage(error) });
+  }
+
+  // 1b. Prop Edges — DFS pick'em vs sharp lines (opt-in via PROP_SCAN, best-effort).
+  try {
+    const props = await generatePropEdges();
+    summary.props = { source: props.source, edges: props.edges.length, platforms: props.platformsSeen };
+    logger.info('Prop edges scanned', summary.props as Record<string, unknown>);
+  } catch (error) {
+    summary.props = { error: errMessage(error) };
+    logger.error('Prop edge scan failed', { error: errMessage(error) });
+  }
+
+  // 1c. Stale Line Alerts — one extra pass here as a floor, since this cron
+  // (every 3h) is much slower than the stale-line window (usually minutes).
+  // /api/cron/stale-lines exists so an external scheduler can hit it far more
+  // often; this call just means alerts still fire if nothing else is wired up.
+  try {
+    const stale = await scanStaleLines();
+    summary.staleLines = { scanned: stale.scanned, moved: stale.moved, newAlerts: stale.newAlerts.length, budget: stale.budget };
+    logger.info('Stale-line scan', summary.staleLines as Record<string, unknown>);
+  } catch (error) {
+    summary.staleLines = { error: errMessage(error) };
+    logger.error('Stale-line scan failed', { error: errMessage(error) });
   }
 
   // 2. Settlement — capture closing lines + grade settled picks (best-effort).

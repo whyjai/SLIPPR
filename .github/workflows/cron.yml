@@ -1,0 +1,39 @@
+# Runs the board / prop scan / settlement cron every 3 hours.
+# Replaces Vercel Cron, which the Hobby plan limits to once a day.
+#
+# Setup: repo Settings → Secrets and variables → Actions → New repository
+# secret CRON_SECRET (same value as in Vercel). Optional variable SLIPPR_URL
+# overrides the default production URL.
+name: Scheduled cron
+
+on:
+  schedule:
+    - cron: '0 */3 * * *' # UTC; GitHub may start scheduled runs a few minutes late
+  workflow_dispatch: # "Run workflow" button for a manual refresh
+
+concurrency:
+  group: cron
+  cancel-in-progress: false
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call /api/cron
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SLIPPR_URL: ${{ vars.SLIPPR_URL || 'https://slippr.vercel.app' }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::CRON_SECRET repository secret is not set"
+            exit 1
+          fi
+          status=$(curl -sS -o body.json -w '%{http_code}' --max-time 320 \
+            -H "Authorization: Bearer $CRON_SECRET" "$SLIPPR_URL/api/cron")
+          echo "HTTP $status"
+          # The repo is public, so Actions logs are too: print which steps
+          # errored, never the response body (it describes today's board).
+          jq -r 'to_entries[] | select(.value | type == "object") | "\(.key): \(if .value.error then "ERROR" else "ok" end)"' body.json 2>/dev/null || echo "(non-JSON response)"
+          rm -f body.json
+          if [ "$status" -ge 400 ]; then exit 1; fi

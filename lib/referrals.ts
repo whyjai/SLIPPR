@@ -1,4 +1,8 @@
-import { supabase } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
+
+// Server-only: writes subscriptions, so it uses the service role. Callers pass
+// the session user's id, never one from the request body.
+const db = () => getSupabaseAdmin();
 
 const PREMIUM_DAYS = 7;
 
@@ -7,10 +11,18 @@ export function generateReferralCode(userId: string): string {
 }
 
 async function awardPremiumDays(userId: string) {
+  // Never touch a paying subscriber's row (it would set an expiry on it).
+  const { data: current } = await db()
+    .from('subscriptions')
+    .select('tier, stripe_subscription_id')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (current?.stripe_subscription_id || (current && current.tier !== 'free')) return;
+
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + PREMIUM_DAYS);
 
-  const { error } = await supabase.from('subscriptions').upsert(
+  const { error } = await db().from('subscriptions').upsert(
     {
       user_id: userId,
       tier: 'premium',
@@ -23,7 +35,11 @@ async function awardPremiumDays(userId: string) {
 }
 
 export async function applyReferral(referralCode: string, newUserId: string) {
-  const { data: referrer, error: lookupError } = await supabase
+  // One referral per account.
+  const { data: already } = await db().from('referrals').select('id').eq('referred_id', newUserId).maybeSingle();
+  if (already) throw new Error('Referral already applied');
+
+  const { data: referrer, error: lookupError } = await db()
     .from('referral_codes')
     .select('user_id')
     .eq('code', referralCode)
@@ -37,7 +53,7 @@ export async function applyReferral(referralCode: string, newUserId: string) {
     throw new Error('Cannot use your own referral code');
   }
 
-  const { error: insertError } = await supabase.from('referrals').insert({
+  const { error: insertError } = await db().from('referrals').insert({
     referrer_id: referrer.user_id,
     referred_id: newUserId,
     referral_code: referralCode,
@@ -56,7 +72,7 @@ export async function applyReferral(referralCode: string, newUserId: string) {
 export async function ensureReferralCode(userId: string): Promise<string> {
   const code = generateReferralCode(userId);
 
-  const { error } = await supabase.from('referral_codes').upsert(
+  const { error } = await db().from('referral_codes').upsert(
     { user_id: userId, code },
     { onConflict: 'user_id' },
   );
