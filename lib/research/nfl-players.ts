@@ -11,10 +11,12 @@ export type Position = 'QB' | 'RB' | 'WR' | 'TE';
 export type GameLogEntry = {
   season: number;
   week: number;
+  team: string;
   opponent: string;
   snapPct: number | null; // 0–100
   targets: number;
   targetShare: number; // 0–100
+  teamTargets: number;
   receptions: number;
   recYds: number;
   recTd: number;
@@ -76,15 +78,17 @@ const SKILL = new Set(['QB', 'RB', 'WR', 'TE', 'FB']);
 const LOG_GAMES = 10;
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
-function toEntry(w: PlayerWeek, snap: number | undefined): GameLogEntry {
+function toEntry(w: PlayerWeek, snap: number | undefined, teamTargets: number): GameLogEntry {
   const n = (k: string) => Number(w[k] ?? 0);
   return {
     season: w.season,
     week: w.week,
+    team: w.team,
     opponent: w.opponent,
     snapPct: snap == null ? null : Math.round(snap * 100),
     targets: n('targets'),
     targetShare: round1(n('target_share') * 100),
+    teamTargets,
     receptions: n('receptions'),
     recYds: n('receiving_yards'),
     recTd: n('receiving_tds'),
@@ -99,13 +103,15 @@ function toEntry(w: PlayerWeek, snap: number | undefined): GameLogEntry {
 }
 
 function average(games: GameLogEntry[]): Averages {
-  const avg = (f: (g: GameLogEntry) => number) => round1(games.reduce((s, g) => s + f(g), 0) / (games.length || 1));
+  const sum = (f: (g: GameLogEntry) => number) => games.reduce((s, g) => s + f(g), 0);
+  const avg = (f: (g: GameLogEntry) => number) => round1(sum(f) / (games.length || 1));
   const snaps = games.filter((g) => g.snapPct != null);
   return {
     games: games.length,
     snapPct: snaps.length ? Math.round(snaps.reduce((s, g) => s + (g.snapPct ?? 0), 0) / snaps.length) : null,
     targets: avg((g) => g.targets),
-    targetShare: avg((g) => g.targetShare),
+    // Season share (his targets / team targets), not the mean of weekly shares.
+    targetShare: round1((100 * sum((g) => g.targets)) / (sum((g) => g.teamTargets) || 1)),
     receptions: avg((g) => g.receptions),
     recYds: avg((g) => g.recYds),
     carries: avg((g) => g.carries),
@@ -144,6 +150,12 @@ export async function getNflPlayerTrends(season: number): Promise<NflPlayerTrend
     snapById.get(`${w.playerId}|${w.season}|${w.week}`) ??
     snapByName.get(`${nameKey(w.name)}|${w.team}|${w.season}|${w.week}`);
 
+  const teamTargets = new Map<string, number>();
+  for (const w of [...prev, ...cur]) {
+    const k = `${w.team}|${w.season}|${w.week}`;
+    teamTargets.set(k, (teamTargets.get(k) ?? 0) + Number(w.targets ?? 0));
+  }
+
   const byPlayer = new Map<string, PlayerWeek[]>();
   for (const w of [...prev, ...cur]) {
     if (w.seasonType !== 'REG' || !SKILL.has(w.position)) continue;
@@ -155,7 +167,7 @@ export async function getNflPlayerTrends(season: number): Promise<NflPlayerTrend
     const thisSeason = weeks.filter((w) => w.season === season);
     if (!thisSeason.length) continue;
     weeks.sort((a, b) => a.season - b.season || a.week - b.week);
-    const entry = (w: PlayerWeek) => toEntry(w, snapFor(w));
+    const entry = (w: PlayerWeek) => toEntry(w, snapFor(w), teamTargets.get(`${w.team}|${w.season}|${w.week}`) ?? 0);
     const curLog = thisSeason.map(entry);
     const priorLog = weeks.filter((w) => w.season === season - 1).map(entry);
     const latest = thisSeason[thisSeason.length - 1];

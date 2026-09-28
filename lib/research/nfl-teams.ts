@@ -196,6 +196,7 @@ export type SplitLine = {
   // passing
   dropbacks?: number;
   ypa?: number | null; // passing yards per attempt
+  ypd?: number | null; // yards per dropback, sacks and scrambles included
   compPct?: number | null;
   epaPerDropback?: number | null;
   // receiving
@@ -216,6 +217,8 @@ export type PlayerSplits = {
   passing: SplitLine[];
   receiving: SplitLine[];
   rushing: SplitLine[];
+  /** Every player's plays summed: what each look does league-wide. */
+  league?: { passing: SplitLine[]; receiving: SplitLine[]; rushing: SplitLine[] };
 };
 
 const LOOK_LABEL: Record<Look, string> = {
@@ -236,25 +239,32 @@ export async function mergedSplits(season: number) {
   const aggs = [cur];
   if (STORED[season - 1]) aggs.unshift(await getSeasonAggregate(season - 1));
   const chartedThrough = { season, week: cur.chartedThroughWeek ?? cur.throughWeek, partialGames: cur.chartedPartialGames ?? 0 };
-  return { splits: mergeSplits(...aggs), seasons: aggs.map((a) => a.season), chartedThrough };
+  const splits = mergeSplits(...aggs);
+  // Passing stats live only on passers, receiving on receivers, rushing on rushers, so a plain sum is league-wide.
+  const league: Partial<Record<Look, Record<string, number>>> = {};
+  for (const p of Object.values(splits)) {
+    for (const [look, c] of Object.entries(p.splits) as Array<[Look, Record<string, number>]>) {
+      const t = (league[look] ??= {});
+      for (const [k, v] of Object.entries(c)) t[k] = (t[k] ?? 0) + v;
+    }
+  }
+  return { splits, league, seasons: aggs.map((a) => a.season), chartedThrough };
 }
 
-export function summarizeSplits(
-  id: string,
-  merged: Awaited<ReturnType<typeof mergedSplits>>,
-): PlayerSplits | null {
-  const p = merged.splits[id];
-  if (!p) return null;
+const LOOK_ORDER: Look[] = ['blitz', 'noBlitz', 'man', 'zone', 'playAction', 'noPlayAction', 'lightBox', 'normalBox', 'stackedBox'];
+
+function splitLines(splits: Partial<Record<Look, Record<string, number>>>) {
   const passing: SplitLine[] = [];
   const receiving: SplitLine[] = [];
   const rushing: SplitLine[] = [];
-  for (const [look, c] of Object.entries(p.splits) as Array<[Look, Record<string, number>]>) {
+  for (const [look, c] of Object.entries(splits) as Array<[Look, Record<string, number>]>) {
     const base = { look, label: LOOK_LABEL[look] };
     if (c.dropbacks) {
       passing.push({
         ...base,
         dropbacks: c.dropbacks,
         ypa: c.att ? r1((c.passYds ?? 0) / c.att) : null,
+        ypd: r1((c.dbYards ?? 0) / c.dropbacks),
         compPct: c.att ? Math.round(((c.comp ?? 0) / c.att) * 100) : null,
         epaPerDropback: r2((c.epa ?? 0) / c.dropbacks),
       });
@@ -269,9 +279,19 @@ export function summarizeSplits(
     }
     if (c.carries) rushing.push({ ...base, carries: c.carries, ypc: r1((c.rushYds ?? 0) / c.carries) });
   }
-  const order: Look[] = ['blitz', 'noBlitz', 'man', 'zone', 'playAction', 'noPlayAction', 'lightBox', 'normalBox', 'stackedBox'];
-  const byOrder = (a: SplitLine, b: SplitLine) => order.indexOf(a.look) - order.indexOf(b.look);
-  return { playerId: id, name: p.name, seasons: merged.seasons, chartedThrough: merged.chartedThrough, passing: passing.sort(byOrder), receiving: receiving.sort(byOrder), rushing: rushing.sort(byOrder) };
+  const byOrder = (a: SplitLine, b: SplitLine) => LOOK_ORDER.indexOf(a.look) - LOOK_ORDER.indexOf(b.look);
+  return { passing: passing.sort(byOrder), receiving: receiving.sort(byOrder), rushing: rushing.sort(byOrder) };
+}
+
+export function summarizeSplits(
+  id: string,
+  merged: Awaited<ReturnType<typeof mergedSplits>>,
+): PlayerSplits | null {
+  const p = merged.splits[id];
+  if (!p) return null;
+  const mine = splitLines(p.splits);
+  const league = splitLines(merged.league);
+  return { playerId: id, name: p.name, seasons: merged.seasons, chartedThrough: merged.chartedThrough, ...mine, league };
 }
 
 // ---------------------------------------------------------------------------
@@ -309,6 +329,46 @@ const nick = (t: string) => TEAM_NAMES[t]?.nickname ?? t;
 const place = (rank: number, n: number, most: boolean) =>
   most ? `#${rank} most` : `#${n - rank + 1} least`;
 
+/**
+ * How much of a player's own split (vs. a look) to believe, as a sample size
+ * m: weight = h / (h + m), h = harmonic mean of his on/off samples. Measured
+ * on 2025 by splitting each player's season in halves, odd/even weeks and
+ * thirds (scripts/research/audit-nfl.mts): QB blitz splits didn't repeat
+ * (r -0.16 to 0.14), receiver man/zone barely (0.01-0.09, m ~200), RB
+ * stacked-box was unstable (-0.06 to 0.53 on ~13 carries), RB light-box held
+ * modestly (0.17-0.33, m ~80-250).
+ * Everything else is the league-wide effect of the look, which is large.
+ */
+const SPLIT_TRUST = { qbBlitz: Infinity, recMan: 200, rbStacked: 200, rbLight: 100 } as const;
+
+type Side = { rate: number; n: number };
+
+/**
+ * Expected rate for a player vs. a look: his overall rate plus the league's
+ * on-minus-off gap, nudged toward his own gap by how much his sample earns.
+ */
+function expectVsLook(on: Side, off: Side, lgOn: number, lgOff: number, m: number) {
+  const h = 2 / (1 / on.n + 1 / off.n);
+  const weight = Number.isFinite(m) ? h / (h + m) : 0;
+  const gap = lgOn - lgOff + weight * (on.rate - off.rate - (lgOn - lgOff));
+  const overall = (on.rate * on.n + off.rate * off.n) / (on.n + off.n);
+  return { overall: r1(overall), expected: r1(overall + (off.n / (on.n + off.n)) * gap), weight };
+}
+
+/** Only worth a note when the look moves his expectation this much (yards per dropback / carry / target). */
+const MIN_EFFECT = 0.3;
+const matters = (e: { overall: number; expected: number }) => Math.abs(e.expected - e.overall) >= MIN_EFFECT;
+
+const ownSplit = (weight: number) =>
+  weight < 0.25 ? 'is mostly sample noise' : `counts for about ${Math.round(weight * 100)}% after sample-size adjustment`;
+
+/** Merge split lines (e.g. light + normal box) into one carries-weighted side. */
+function combine(lines: Array<SplitLine | undefined>, n: (l: SplitLine) => number, rate: (l: SplitLine) => number | null | undefined) {
+  const ls = lines.filter((l): l is SplitLine => !!l && rate(l) != null);
+  const total = ls.reduce((a, l) => a + n(l), 0);
+  return total ? { rate: ls.reduce((a, l) => a + n(l) * (rate(l) as number), 0) / total, n: total } : null;
+}
+
 /** Up to three scheme notes for one offense facing one defense. */
 function sideNotes(
   offense: string,
@@ -328,17 +388,23 @@ function sideNotes(
   const blitz = d.defense.blitzRate;
   if (extreme(blitz.rank) && lead.qb) {
     const s = summarizeSplits(lead.qb.id, merged);
-    const on = s?.passing.find((l) => l.look === 'blitz');
-    const off = s?.passing.find((l) => l.look === 'noBlitz');
-    if (on && off && on.dropbacks! >= 40 && off.dropbacks! >= 40) {
-      out.push({
+    const line = (ls: SplitLine[] | undefined, look: Look) => ls?.find((l) => l.look === look);
+    const on = line(s?.passing, 'blitz');
+    const off = line(s?.passing, 'noBlitz');
+    const lgOn = line(s?.league?.passing, 'blitz')?.ypd;
+    const lgOff = line(s?.league?.passing, 'noBlitz')?.ypd;
+    if (on?.ypd != null && off?.ypd != null && lgOn != null && lgOff != null && on.dropbacks! >= 40 && off.dropbacks! >= 40) {
+      const e = expectVsLook({ rate: on.ypd, n: on.dropbacks! }, { rate: off.ypd, n: off.dropbacks! }, lgOn, lgOff, SPLIT_TRUST.qbBlitz);
+      if (matters(e)) out.push({
         kind: 'blitz',
         defense,
         offense,
         rank: blitz.rank!,
         text:
           `${nick(defense)} blitz on ${blitz.value}% of dropbacks (${place(blitz.rank!, n, blitz.rank! <= 5)}). ` +
-          `${lead.qb.name} ${since}: ${on.ypa} yds/att vs. the blitz, ${off.ypa} without (${on.dropbacks} / ${off.dropbacks} dropbacks).`,
+          `League-wide, QBs gain ${lgOn} yds/dropback vs. the blitz and ${lgOff} without. ` +
+          `${lead.qb.name}: expect about ${e.expected} vs. the blitz (${e.overall} overall). His own ${on.ypd} vs. ${off.ypd} ` +
+          `${since} (${on.dropbacks} / ${off.dropbacks} dropbacks) ${ownSplit(e.weight)}.`,
       });
     }
   }
@@ -347,50 +413,44 @@ function sideNotes(
   const light = d.defense.lightBoxRate;
   if (lead.rb) {
     const s = summarizeSplits(lead.rb.id, merged);
-    const get = (look: Look) => s?.rushing.find((l) => l.look === look);
-    const rest = (looks: Look[]) => {
-      const ls = looks.map(get).filter(Boolean) as SplitLine[];
-      const carries = ls.reduce((a, l) => a + l.carries!, 0);
-      const yds = ls.reduce((a, l) => a + l.carries! * (l.ypc ?? 0), 0);
-      return carries ? { carries, ypc: r1(yds / carries) } : null;
+    const get = (ls: SplitLine[] | undefined, look: Look) => ls?.find((l) => l.look === look);
+    const side = (ls: SplitLine[] | undefined, looks: Look[]) => combine(looks.map((l) => get(ls, l)), (l) => l.carries!, (l) => l.ypc);
+    const note = (kind: 'stackedBox' | 'lightBox', rank: number, value: number | null, look: Look, rest: Look[], minOn: number, minOff: number) => {
+      const on = side(s?.rushing, [look]);
+      const off = side(s?.rushing, rest);
+      const lgOn = side(s?.league?.rushing, [look]);
+      const lgOff = side(s?.league?.rushing, rest);
+      if (!on || !off || !lgOn || !lgOff || on.n < minOn || off.n < minOff) return;
+      const e = expectVsLook(on, off, lgOn.rate, lgOff.rate, kind === 'stackedBox' ? SPLIT_TRUST.rbStacked : SPLIT_TRUST.rbLight);
+      if (!matters(e)) return;
+      const lookText = kind === 'stackedBox' ? '8+ in the box' : 'light boxes';
+      out.push({
+        kind,
+        defense,
+        offense,
+        rank,
+        text:
+          `${nick(defense)} ${kind === 'stackedBox' ? 'put 8+ in the box' : 'play a light box (≤6)'} on ${value}% of runs (${place(rank, n, true)}). ` +
+          `League-wide, runs gain ${r1(lgOn.rate)} yds/carry vs. ${lookText} and ${r1(lgOff.rate)} otherwise. ` +
+          `${lead.rb!.name}: expect about ${e.expected} vs. ${lookText} (${e.overall} overall). His own ${r1(on.rate)} vs. ${r1(off.rate)} ` +
+          `${since} (${on.n} / ${off.n} carries) ${ownSplit(e.weight)}.`,
+      });
     };
-    if (stacked.rank != null && stacked.rank <= 5) {
-      const on = get('stackedBox');
-      const other = rest(['lightBox', 'normalBox']);
-      if (on && other && on.carries! >= 10 && other.carries >= 30) {
-        out.push({
-          kind: 'stackedBox',
-          defense,
-          offense,
-          rank: stacked.rank,
-          text:
-            `${nick(defense)} put 8+ in the box on ${stacked.value}% of runs (${place(stacked.rank, n, true)}). ` +
-            `${lead.rb.name} ${since}: ${on.ypc} yds/carry vs. 8+, ${other.ypc} otherwise (${on.carries} / ${other.carries} carries).`,
-        });
-      }
-    } else if (light.rank != null && light.rank <= 5) {
-      const on = get('lightBox');
-      const other = rest(['normalBox', 'stackedBox']);
-      if (on && other && on.carries! >= 20 && other.carries >= 20) {
-        out.push({
-          kind: 'lightBox',
-          defense,
-          offense,
-          rank: light.rank,
-          text:
-            `${nick(defense)} play a light box (≤6) on ${light.value}% of runs (${place(light.rank, n, true)}). ` +
-            `${lead.rb.name} ${since}: ${on.ypc} yds/carry vs. light boxes, ${other.ypc} otherwise (${on.carries} / ${other.carries} carries).`,
-        });
-      }
-    }
+    if (stacked.rank != null && stacked.rank <= 5) note('stackedBox', stacked.rank, stacked.value, 'stackedBox', ['lightBox', 'normalBox'], 10, 30);
+    else if (light.rank != null && light.rank <= 5) note('lightBox', light.rank, light.value, 'lightBox', ['normalBox', 'stackedBox'], 20, 20);
   }
 
   const man = d.defense.manRate;
   if (extreme(man.rank) && lead.receiver && tend.coverageSeason) {
     const s = summarizeSplits(lead.receiver.id, merged);
-    const vsMan = s?.receiving.find((l) => l.look === 'man');
-    const vsZone = s?.receiving.find((l) => l.look === 'zone');
-    if (vsMan && vsZone && vsMan.targets! >= 12 && vsZone.targets! >= 25) {
+    const line = (ls: SplitLine[] | undefined, look: Look) => ls?.find((l) => l.look === look);
+    const vsMan = line(s?.receiving, 'man');
+    const vsZone = line(s?.receiving, 'zone');
+    const lgMan = line(s?.league?.receiving, 'man')?.ypt;
+    const lgZone = line(s?.league?.receiving, 'zone')?.ypt;
+    if (vsMan?.ypt != null && vsZone?.ypt != null && lgMan != null && lgZone != null && vsMan.targets! >= 12 && vsZone.targets! >= 25) {
+      const e = expectVsLook({ rate: vsMan.ypt, n: vsMan.targets! }, { rate: vsZone.ypt, n: vsZone.targets! }, lgMan, lgZone, SPLIT_TRUST.recMan);
+      if (!matters(e)) return out;
       const label = tend.coverageSeason === tend.season ? '' : ` in ${tend.coverageSeason}`;
       out.push({
         kind: 'coverage',
@@ -399,7 +459,9 @@ function sideNotes(
         rank: man.rank!,
         text:
           `${nick(defense)} played man coverage on ${man.value}% of dropbacks${label} (${place(man.rank!, n, man.rank! <= 5)}). ` +
-          `${lead.receiver.name}: ${vsMan.ypt} yds/target vs. man, ${vsZone.ypt} vs. zone (${vsMan.targets} / ${vsZone.targets} targets).`,
+          `League-wide, targets gain ${lgMan} yds vs. man and ${lgZone} vs. zone. ` +
+          `${lead.receiver.name}: expect about ${e.expected} yds/target vs. man (${e.overall} overall). His own ${vsMan.ypt} vs. ${vsZone.ypt} ` +
+          `(${vsMan.targets} / ${vsZone.targets} targets) ${ownSplit(e.weight)}.`,
       });
     }
   }

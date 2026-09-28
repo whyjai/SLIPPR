@@ -195,6 +195,13 @@ export default function ResearchView() {
               <p className="mb-4 text-sm text-zinc-500">
                 Per game allowed to opposing {pos}s. #1 allows the most (softest matchup), #{data.defense.length} the
                 fewest.
+                {activeMetric?.noisy && (
+                  <span className="text-amber-400/90">
+                    {' '}
+                    Noisy stat: last season this ranking barely predicted the rest of the year. Don&apos;t lean on it
+                    alone.
+                  </span>
+                )}
               </p>
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 {POSITIONS.map((p) => (

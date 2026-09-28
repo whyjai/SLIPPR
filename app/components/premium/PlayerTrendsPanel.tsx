@@ -315,6 +315,17 @@ function PlayerDetail({ player, season }: { player: PlayerTrend; season: number 
             });
         })}
       </div>
+      {(() => {
+        // Older CDN responses lack `team`; treat those as same-team.
+        const other = player.log.filter((g) => g.team && g.team !== player.team);
+        if (!other.length) return null;
+        const teams = [...new Set(other.map((g) => g.team))].join(', ');
+        return (
+          <p className="-mt-2 mb-4 text-xs text-amber-400/90">
+            {other.length} of these {player.log.length} games were with {teams}, and the hit rates include them.
+          </p>
+        );
+      })()}
       <LookSplits player={player} season={season} />
       <div className="overflow-x-auto">
         <table className="w-full min-w-[520px] text-xs">
@@ -347,6 +358,7 @@ function PlayerDetail({ player, season }: { player: PlayerTrend; season: number 
               <tr key={`${g.season}-${g.week}`} className="border-t border-white/[0.04]">
                 <td className="py-1.5 pr-3 text-zinc-500">
                   {g.season} W{g.week}
+                  {g.team && g.team !== player.team && <span className="text-amber-400/90"> · {g.team}</span>}
                 </td>
                 <td className="pr-3">{g.opponent}</td>
                 <td className="pr-3 text-right">{g.snapPct == null ? '—' : `${g.snapPct}%`}</td>
@@ -430,7 +442,8 @@ function LookSplits({ player, season }: { player: PlayerTrend; season: number })
   if (splits === 'error') return null;
 
   // Passing for QBs, rushing (box counts) first for RBs, receiving for everyone who's targeted.
-  const sections: Array<{ title: string; lines: SplitLine[]; cols: Array<[string, (l: SplitLine) => string]> }> = [];
+  type Col = [string, (l: SplitLine) => string];
+  const sections: Array<{ title: string; lines: SplitLine[]; cols: Col[]; league: SplitLine[]; leagueCol: Col }> = [];
   const passCols: Array<[string, (l: SplitLine) => string]> = [
     ['Dropbacks', (l) => `${l.dropbacks}`],
     ['Yds/att', (l) => `${l.ypa ?? '—'}`],
@@ -446,9 +459,13 @@ function LookSplits({ player, season }: { player: PlayerTrend; season: number })
     ['Carries', (l) => `${l.carries}`],
     ['Yds/carry', (l) => `${l.ypc}`],
   ];
-  if (player.position === 'QB' && splits.passing.length) sections.push({ title: 'Passing', lines: splits.passing, cols: passCols });
-  if (player.position === 'RB' && splits.rushing.length) sections.push({ title: 'Rushing', lines: splits.rushing, cols: rushCols });
-  if (player.position !== 'QB' && splits.receiving.length) sections.push({ title: 'Receiving', lines: splits.receiving, cols: recCols });
+  const lg = splits.league ?? { passing: [], receiving: [], rushing: [] }; // older cached responses lack it
+  if (player.position === 'QB' && splits.passing.length)
+    sections.push({ title: 'Passing', lines: splits.passing, cols: passCols, league: lg.passing, leagueCol: ['Lg yds/att', (l) => `${l.ypa ?? '—'}`] });
+  if (player.position === 'RB' && splits.rushing.length)
+    sections.push({ title: 'Rushing', lines: splits.rushing, cols: rushCols, league: lg.rushing, leagueCol: ['Lg yds/carry', (l) => `${l.ypc}`] });
+  if (player.position !== 'QB' && splits.receiving.length)
+    sections.push({ title: 'Receiving', lines: splits.receiving, cols: recCols, league: lg.receiving, leagueCol: ['Lg yds/target', (l) => `${l.ypt}`] });
   if (!sections.length) return null;
 
   const since = splits.seasons.length > 1 ? `${splits.seasons[0]}–${splits.seasons.at(-1)}` : `${splits.seasons[0] ?? ''}`;
@@ -476,12 +493,16 @@ function LookSplits({ player, season }: { player: PlayerTrend; season: number })
                       {h}
                     </th>
                   ))}
+                  {sec.league.length > 0 && (
+                    <th className="px-3 py-1.5 text-right font-medium text-zinc-600">{sec.leagueCol[0]}</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="font-mono text-zinc-300">
                 {sec.lines.map((l) => {
                   const n = l.dropbacks ?? l.targets ?? l.carries ?? 0;
-                  const thin = n < (l.dropbacks != null ? 40 : 10);
+                  // Below these, a split is mostly noise (scripts/research/audit-nfl.mts).
+                  const thin = n < (l.dropbacks != null ? 100 : 30);
                   return (
                     <tr key={l.look} className={cn('border-t border-white/[0.04]', thin && 'text-zinc-600')}>
                       <td className="px-3 py-1.5 font-sans text-zinc-400">{l.label}</td>
@@ -490,6 +511,14 @@ function LookSplits({ player, season }: { player: PlayerTrend; season: number })
                           {f(l)}
                         </td>
                       ))}
+                      {sec.league.length > 0 && (
+                        <td className="px-3 py-1.5 text-right text-zinc-500">
+                          {(() => {
+                            const lgLine = sec.league.find((x) => x.look === l.look);
+                            return lgLine ? sec.leagueCol[1](lgLine) : '—';
+                          })()}
+                        </td>
+                      )}
                     </tr>
                   );
                 })}
@@ -498,7 +527,11 @@ function LookSplits({ player, season }: { player: PlayerTrend; season: number })
           </div>
         ))}
       </div>
-      <p className="mt-1.5 text-[10px] text-zinc-600">Dimmed rows: small sample.</p>
+      <p className="mt-1.5 text-[10px] text-zinc-600">
+        Dimmed rows: small sample. A player&apos;s own split swings a lot from week to week (last season, blitz and
+        man/zone splits barely repeated between halves of the season); the Lg column is what each look does on
+        average, and is the steadier guide.
+      </p>
     </div>
   );
 }

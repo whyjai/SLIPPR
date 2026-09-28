@@ -15,6 +15,8 @@ export type MetricDef = {
   label: string;
   short: string;
   phrase: string;
+  /** Set when the ranking barely predicts the rest of the season (see scripts/research/audit-nfl.mts). */
+  noisy?: boolean;
 };
 
 const RECEIVING: MetricDef[] = [
@@ -33,6 +35,7 @@ const RECEIVING: MetricDef[] = [
   },
   {
     key: 'receiving_tds',
+    noisy: true,
     label: 'Receiving TDs',
     short: 'rec TD',
     phrase: 'receiving TDs',
@@ -55,6 +58,7 @@ export const METRICS: Record<Position, MetricDef[]> = {
     },
     {
       key: 'passing_tds',
+      noisy: true,
       label: 'Passing TDs',
       short: 'pass TD',
       phrase: 'passing TDs',
@@ -67,6 +71,7 @@ export const METRICS: Record<Position, MetricDef[]> = {
     },
     {
       key: 'rushing_yards',
+      noisy: true,
       label: 'Rushing yards',
       short: 'rush yds',
       phrase: 'rushing yards',
@@ -75,19 +80,22 @@ export const METRICS: Record<Position, MetricDef[]> = {
   RB: [
     {
       key: 'fantasy_points_ppr',
+      noisy: true,
       label: 'Fantasy points (PPR)',
       short: 'fpts',
       phrase: 'fantasy points (PPR)',
     },
     {
       key: 'rushing_yards',
+      noisy: true,
       label: 'Rushing yards',
       short: 'rush yds',
       phrase: 'rushing yards',
     },
-    { key: 'carries', label: 'Carries', short: 'car', phrase: 'carries' },
+    { key: 'carries', noisy: true, label: 'Carries', short: 'car', phrase: 'carries' },
     {
       key: 'rushing_tds',
+      noisy: true,
       label: 'Rushing TDs',
       short: 'rush TD',
       phrase: 'rushing TDs',
@@ -100,6 +108,7 @@ export const METRICS: Record<Position, MetricDef[]> = {
     },
     {
       key: 'receiving_yards',
+      noisy: true,
       label: 'Receiving yards',
       short: 'rec yds',
       phrase: 'receiving yards',
@@ -125,10 +134,15 @@ export const METRICS: Record<Position, MetricDef[]> = {
   ],
 };
 
-/** Metrics worth a matchup note (concrete stats first; fantasy points last). */
+/**
+ * Metrics worth a matchup note (concrete stats first; fantasy points last). Only
+ * ones whose early-season rank carries over: in 2025, run defense vs RBs after
+ * 3, 6 or 9 weeks had ~0 correlation with the rest of the season, as did TDs
+ * allowed, while pass-game volume allowed held r 0.3-0.45.
+ */
 const NOTE_METRICS: Record<Position, string[]> = {
-  QB: ['passing_yards', 'passing_tds', 'fantasy_points_ppr'],
-  RB: ['rushing_yards', 'receptions', 'fantasy_points_ppr'],
+  QB: ['passing_yards', 'fantasy_points_ppr'],
+  RB: ['receptions'],
   WR: ['receptions', 'receiving_yards', 'fantasy_points_ppr'],
   TE: ['receptions', 'receiving_yards', 'fantasy_points_ppr'],
 };
