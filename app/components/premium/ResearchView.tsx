@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ArrowDownUp, Layers, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { Badge, Card, PageHeader, cn } from './ui';
 import type { MatchupNote, NflResearch, Position } from '@/lib/research/nfl-defense';
 import PlayerTrendsPanel from './PlayerTrendsPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
+import NbaResearchView from './NbaResearchView';
 import type { SchemeNote } from '@/lib/research/nfl-teams';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
@@ -29,7 +30,44 @@ function kickoffLabel(kickoff: string): string {
   return `${weekday} ${h12}:${String(mm).padStart(2, '0')} ${hh < 12 ? 'AM' : 'PM'} ET`;
 }
 
+type Sport = 'nfl' | 'nba';
+
 export default function ResearchView() {
+  const [sport, setSport] = useState<Sport>(() => {
+    try {
+      return window.localStorage.getItem('research-sport') === 'nba' ? 'nba' : 'nfl';
+    } catch {
+      return 'nfl';
+    }
+  });
+  const choose = (s: Sport) => {
+    setSport(s);
+    try {
+      window.localStorage.setItem('research-sport', s);
+    } catch {
+      // private mode: just don't remember it
+    }
+  };
+  const sportSwitch = (
+    <div className="flex gap-1 rounded-xl border border-white/[0.06] bg-white/[0.02] p-1">
+      {(['nfl', 'nba'] as Sport[]).map((s) => (
+        <button
+          key={s}
+          onClick={() => choose(s)}
+          className={cn(
+            'rounded-lg px-3.5 py-1.5 text-sm font-semibold uppercase transition',
+            sport === s ? 'bg-white/10 text-zinc-100' : 'text-zinc-500 hover:text-zinc-200',
+          )}
+        >
+          {s}
+        </button>
+      ))}
+    </div>
+  );
+  return sport === 'nba' ? <NbaResearchView sportSwitch={sportSwitch} /> : <NflResearchView sportSwitch={sportSwitch} />;
+}
+
+function NflResearchView({ sportSwitch }: { sportSwitch: ReactNode }) {
   const [season, setSeason] = useState(SEASONS[0]);
   const [result, setResult] = useState<{ season: number; data?: NflResearch; error?: string } | null>(null);
   const [pos, setPos] = useState<Position>('TE');
@@ -79,7 +117,9 @@ export default function ResearchView() {
           title="NFL Matchup Research"
           description="Defense-vs-position rankings, matchup notes and player usage trends, built only from box scores and snap counts. No odds, no picks — the numbers behind the matchups."
           actions={
-            <div className="flex gap-1.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-1">
+            <div className="flex flex-wrap items-center gap-2">
+              {sportSwitch}
+              <div className="flex gap-1.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-1">
               {SEASONS.map((s) => (
                 <button
                   key={s}
@@ -92,6 +132,7 @@ export default function ResearchView() {
                   {s}
                 </button>
               ))}
+              </div>
             </div>
           }
         />
