@@ -48,6 +48,8 @@ export type TendencyMetric = {
   /** true: #1 = highest value. false: #1 = lowest (e.g. pace: fewest seconds per snap = fastest). */
   highIsFirst: boolean;
   hint: string;
+  /** From FTN charting, which runs a few days behind box scores. */
+  charted?: boolean;
 };
 
 export const OFFENSE_METRICS: TendencyMetric[] = [
@@ -57,16 +59,16 @@ export const OFFENSE_METRICS: TendencyMetric[] = [
   { key: 'proe', label: 'Pass rate over expected', unit: 'pts', highIsFirst: true, hint: 'How much more (or less) they pass than an average team would in the same situations.' },
   { key: 'shotgunRate', label: 'Shotgun', unit: '%', highIsFirst: true, hint: 'Share of snaps from shotgun.' },
   { key: 'noHuddleRate', label: 'No-huddle', unit: '%', highIsFirst: true, hint: 'Share of snaps with no huddle.' },
-  { key: 'playActionRate', label: 'Play-action', unit: '%', highIsFirst: true, hint: 'Share of dropbacks with a play-action fake (charted plays).' },
-  { key: 'motionRate', label: 'Pre-snap motion', unit: '%', highIsFirst: true, hint: 'Share of snaps with motion (charted plays).' },
+  { key: 'playActionRate', charted: true, label: 'Play-action', unit: '%', highIsFirst: true, hint: 'Share of dropbacks with a play-action fake (charted plays).' },
+  { key: 'motionRate', charted: true, label: 'Pre-snap motion', unit: '%', highIsFirst: true, hint: 'Share of snaps with motion (charted plays).' },
   { key: 'rzPassRate', label: 'Red-zone pass rate', unit: '%', highIsFirst: true, hint: 'Dropback rate inside the opponent 20.' },
 ];
 
 export const DEFENSE_METRICS: TendencyMetric[] = [
-  { key: 'blitzRate', label: 'Blitz rate', unit: '%', highIsFirst: true, hint: 'Share of dropbacks with at least one blitzer (charted plays).' },
-  { key: 'avgRushers', label: 'Pass rushers', unit: '', highIsFirst: true, hint: 'Average pass rushers per dropback.' },
-  { key: 'stackedBoxRate', label: 'Stacked box (8+)', unit: '%', highIsFirst: true, hint: 'Share of opponent designed runs faced with 8+ defenders in the box.' },
-  { key: 'lightBoxRate', label: 'Light box (≤6)', unit: '%', highIsFirst: true, hint: 'Share of opponent designed runs faced with 6 or fewer in the box.' },
+  { key: 'blitzRate', charted: true, label: 'Blitz rate', unit: '%', highIsFirst: true, hint: 'Share of dropbacks with at least one blitzer (charted plays).' },
+  { key: 'avgRushers', charted: true, label: 'Pass rushers', unit: '', highIsFirst: true, hint: 'Average pass rushers per dropback.' },
+  { key: 'stackedBoxRate', charted: true, label: 'Stacked box (8+)', unit: '%', highIsFirst: true, hint: 'Share of opponent designed runs faced with 8+ defenders in the box.' },
+  { key: 'lightBoxRate', charted: true, label: 'Light box (≤6)', unit: '%', highIsFirst: true, hint: 'Share of opponent designed runs faced with 6 or fewer in the box.' },
   { key: 'manRate', label: 'Man coverage', unit: '%', highIsFirst: true, hint: 'Share of dropbacks in man coverage.' },
   { key: 'passEpaAllowed', label: 'EPA / dropback allowed', unit: 'EPA', highIsFirst: true, hint: 'Expected points added per opponent dropback. #1 = allows the most.' },
   { key: 'rushEpaAllowed', label: 'EPA / rush allowed', unit: 'EPA', highIsFirst: true, hint: 'Expected points added per opponent designed run. #1 = allows the most.' },
@@ -86,6 +88,9 @@ export type TeamTendency = {
 export type NflTeamTendencies = {
   season: number;
   throughWeek: number;
+  /** Charted metrics (blitz, box, play-action, motion) run behind; see SeasonAggregate. */
+  chartedThroughWeek: number;
+  chartedPartialGames: number;
   hasCharting: boolean;
   /** Season the man-coverage column comes from (the current season's isn't published until it ends). */
   coverageSeason: number | null;
@@ -168,6 +173,8 @@ export async function getNflTeamTendencies(season: number): Promise<NflTeamTende
   return {
     season,
     throughWeek: agg.throughWeek,
+    chartedThroughWeek: agg.chartedThroughWeek ?? agg.throughWeek,
+    chartedPartialGames: agg.chartedPartialGames ?? 0,
     hasCharting: agg.hasCharting,
     coverageSeason: coverageAgg?.season ?? null,
     offenseMetrics: OFFENSE_METRICS,
@@ -204,6 +211,8 @@ export type PlayerSplits = {
   playerId: string;
   name: string;
   seasons: number[];
+  /** Current season's charting coverage (splits need charted plays). */
+  chartedThrough?: { season: number; week: number; partialGames: number };
   passing: SplitLine[];
   receiving: SplitLine[];
   rushing: SplitLine[];
@@ -223,9 +232,11 @@ const LOOK_LABEL: Record<Look, string> = {
 
 /** Stored last season + live current season, summed. */
 export async function mergedSplits(season: number) {
-  const aggs = [await getSeasonAggregate(season)];
+  const cur = await getSeasonAggregate(season);
+  const aggs = [cur];
   if (STORED[season - 1]) aggs.unshift(await getSeasonAggregate(season - 1));
-  return { splits: mergeSplits(...aggs), seasons: aggs.map((a) => a.season) };
+  const chartedThrough = { season, week: cur.chartedThroughWeek ?? cur.throughWeek, partialGames: cur.chartedPartialGames ?? 0 };
+  return { splits: mergeSplits(...aggs), seasons: aggs.map((a) => a.season), chartedThrough };
 }
 
 export function summarizeSplits(
@@ -260,7 +271,7 @@ export function summarizeSplits(
   }
   const order: Look[] = ['blitz', 'noBlitz', 'man', 'zone', 'playAction', 'noPlayAction', 'lightBox', 'normalBox', 'stackedBox'];
   const byOrder = (a: SplitLine, b: SplitLine) => order.indexOf(a.look) - order.indexOf(b.look);
-  return { playerId: id, name: p.name, seasons: merged.seasons, passing: passing.sort(byOrder), receiving: receiving.sort(byOrder), rushing: rushing.sort(byOrder) };
+  return { playerId: id, name: p.name, seasons: merged.seasons, chartedThrough: merged.chartedThrough, passing: passing.sort(byOrder), receiving: receiving.sort(byOrder), rushing: rushing.sort(byOrder) };
 }
 
 // ---------------------------------------------------------------------------

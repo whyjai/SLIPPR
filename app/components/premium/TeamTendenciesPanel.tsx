@@ -110,6 +110,15 @@ export default function TeamTendenciesPanel({ season }: { season: number }) {
       </div>
       <p className="mb-4 text-xs text-zinc-500">
         {metric.hint}
+        {metric.charted && (data.chartedThroughWeek ?? data.throughWeek) < data.throughWeek && (
+          <span className="text-amber-400/90">
+            {' '}
+            FTN charting runs a few days behind box scores: this is through Week {data.chartedThroughWeek}
+            {data.chartedPartialGames > 0 &&
+              ` (+${data.chartedPartialGames} Week ${data.chartedThroughWeek + 1} game${data.chartedPartialGames === 1 ? '' : 's'})`}
+            .
+          </span>
+        )}
         {fromOtherSeason && (
           <span className="text-amber-400/90">
             {' '}

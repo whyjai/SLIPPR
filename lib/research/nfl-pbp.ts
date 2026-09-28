@@ -253,6 +253,9 @@ export type PlayerSplitCounts = {
 export type SeasonAggregate = {
   season: number;
   throughWeek: number;
+  /** FTN charting lags box scores by a few days: last week with every game charted, and charted games after it. */
+  chartedThroughWeek?: number;
+  chartedPartialGames?: number;
   hasCharting: boolean;
   hasCoverage: boolean;
   teams: Record<string, TeamCounts>;
@@ -395,9 +398,21 @@ export function aggregate(
   }
   for (const [t, g] of games) team(t).games = [...g];
 
+  const gamesByWeek = new Map<number, Set<string>>();
+  for (const p of plays) (gamesByWeek.get(p.week) ?? gamesByWeek.set(p.week, new Set()).get(p.week)!).add(p.gameId);
+  const chartedGames = new Set([...charting.keys()].map((k) => k.split('|')[0]));
+  let chartedThroughWeek = 0;
+  for (const w of [...gamesByWeek.keys()].sort((a, b) => a - b)) {
+    if ([...gamesByWeek.get(w)!].every((g) => chartedGames.has(g))) chartedThroughWeek = w;
+    else break;
+  }
+  const chartedPartialGames = [...(gamesByWeek.get(chartedThroughWeek + 1) ?? [])].filter((g) => chartedGames.has(g)).length;
+
   return {
     season,
     throughWeek: plays.reduce((m, p) => Math.max(m, p.week), 0),
+    chartedThroughWeek,
+    chartedPartialGames,
     hasCharting: charting.size > 0,
     hasCoverage: coverage.size > 0,
     teams,

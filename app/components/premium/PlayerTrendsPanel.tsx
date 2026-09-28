@@ -456,6 +456,13 @@ function LookSplits({ player, season }: { player: PlayerTrend; season: number })
     <div className="mb-4">
       <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
         vs. defensive looks · {since} · man/zone from seasons with coverage data
+        {splits.chartedThrough && (
+          <>
+            {' '}
+            · {splits.chartedThrough.season} charted through Week {splits.chartedThrough.week}
+            {splits.chartedThrough.partialGames > 0 && ` (+${splits.chartedThrough.partialGames})`}
+          </>
+        )}
       </p>
       <div className="grid gap-3 lg:grid-cols-2">
         {sections.map((sec) => (
