@@ -241,7 +241,8 @@ export async function getTrackRecord(): Promise<TrackRecordSummary | null> {
         };
       })
       .filter((g) => g.graded > 0),
-    recent: picks.slice(0, 25).map((p) => ({
+    // Settled picks only: pending ones are today's live Pro board.
+    recent: picks.filter((p) => p.result !== 'pending').slice(0, 25).map((p) => ({
       pick: p.pick,
       sport: p.sport,
       entryOdds: p.entry_odds,

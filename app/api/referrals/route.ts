@@ -1,21 +1,25 @@
 import { NextResponse } from 'next/server';
+import { getServerSupabase } from '@/lib/supabase/server';
 import { applyReferral, ensureReferralCode } from '@/lib/referrals';
 
+// Both actions act on the signed-in user only; ids in the body are ignored.
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { referralCode, newUserId, action, userId } = body;
+  const supabase = await getServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'Sign in first.' }, { status: 401 });
+
+  const { referralCode, action } = await req.json();
 
   try {
-    if (action === 'generate' && userId) {
-      const code = await ensureReferralCode(userId);
-      return NextResponse.json({ code });
+    if (action === 'generate') {
+      return NextResponse.json({ code: await ensureReferralCode(user.id) });
     }
-
-    if (action === 'apply' && referralCode && newUserId) {
-      const result = await applyReferral(referralCode, newUserId);
+    if (action === 'apply' && typeof referralCode === 'string') {
+      const result = await applyReferral(referralCode, user.id);
       return NextResponse.json({ success: true, ...result });
     }
-
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Referral failed';

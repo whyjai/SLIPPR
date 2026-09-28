@@ -1,39 +1,41 @@
-import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+import { getServerSupabase } from '@/lib/supabase/server';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const user_id = searchParams.get('user_id');
+// The user is always the signed-in session, never an id from the request —
+// otherwise anyone could read or write anyone's history.
+async function sessionUserId(): Promise<string | null> {
+  const supabase = await getServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
 
-  if (!user_id) {
-    return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
-  }
+const unauthorized = () => NextResponse.json({ error: 'Sign in to see your history.' }, { status: 401 });
 
-  const { data, error } = await supabase
+export async function GET() {
+  const userId = await sessionUserId();
+  if (!userId) return unauthorized();
+
+  const { data, error } = await getSupabaseAdmin()
     .from('bet_history')
     .select('*')
-    .eq('user_id', user_id)
+    .eq('user_id', userId)
     .order('date', { ascending: false });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
+  if (error) return NextResponse.json({ error: 'Could not load history.' }, { status: 500 });
+  return NextResponse.json(data, { headers: { 'Cache-Control': 'private, no-store' } });
 }
 
 export async function POST(req: Request) {
-  const { user_id, slip } = await req.json();
+  const userId = await sessionUserId();
+  if (!userId) return unauthorized();
 
-  if (!user_id || !slip) {
-    return NextResponse.json({ error: 'user_id and slip are required' }, { status: 400 });
-  }
+  const { slip } = await req.json();
+  if (!slip) return NextResponse.json({ error: 'slip is required' }, { status: 400 });
 
-  const { error } = await supabase.from('bet_history').insert({ user_id, slip });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
+  const { error } = await getSupabaseAdmin().from('bet_history').insert({ user_id: userId, slip });
+  if (error) return NextResponse.json({ error: 'Could not save slip.' }, { status: 500 });
   return NextResponse.json({ success: true });
 }

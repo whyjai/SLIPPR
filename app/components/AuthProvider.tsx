@@ -35,8 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [tier, setTier] = useState<SubscriptionTier>('free');
 
+  // The server decides the tier (signed out = free), so ask even without a session.
   const refreshTier = useCallback(async () => {
-    if (!configured) return;
     try {
       const res = await fetch('/api/subscription', { cache: 'no-store' });
       if (!res.ok) return;
@@ -45,11 +45,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       setTier('free');
     }
-  }, [configured]);
+  }, []);
 
   useEffect(() => {
     if (!configured) {
       setLoading(false);
+      void refreshTier();
       return;
     }
 
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session);
       setUser(data.session?.user ?? null);
       setLoading(false);
-      if (data.session) void refreshTier();
+      void refreshTier();
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange(

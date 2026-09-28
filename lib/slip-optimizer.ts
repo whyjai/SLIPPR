@@ -1,10 +1,5 @@
-import {
-  americanToDecimal,
-  impliedToAmerican,
-  type BoardLeg,
-  type MarketType,
-  type Sport,
-} from './leg-board';
+import type { BoardLeg, MarketType, Sport } from './leg-board';
+import { americanToDecimal, impliedToAmerican } from './odds-math';
 
 export type RiskProfile = 'safe' | 'balanced' | 'aggressive';
 

@@ -86,7 +86,7 @@ create index if not exists pick_results_created_idx on public.pick_results (crea
 alter table public.pick_results enable row level security;
 drop policy if exists pick_results_public_read on public.pick_results;
 create policy pick_results_public_read
-  on public.pick_results for select using (true);
+  on public.pick_results for select using (result <> 'pending'); -- pending = today's Pro board
 
 -- ---- auto-provision profile + free subscription on signup (006) ------------
 create or replace function public.handle_new_user()
@@ -163,3 +163,13 @@ create table if not exists public.stale_line_budget (
 alter table public.stale_line_snapshots enable row level security;
 alter table public.stale_line_alerts enable row level security;
 alter table public.stale_line_budget enable row level security;
+
+-- ---- RLS on user tables (see migrations/010_lock_down_rls.sql) ------------
+alter table public.subscriptions enable row level security;
+alter table public.profiles enable row level security;
+drop policy if exists "Users read own subscription" on public.subscriptions;
+create policy "Users read own subscription"
+  on public.subscriptions for select using (auth.uid() = user_id);
+drop policy if exists "Users read own profile" on public.profiles;
+create policy "Users read own profile"
+  on public.profiles for select using (auth.uid() = id);

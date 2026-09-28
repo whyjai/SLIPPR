@@ -5,6 +5,7 @@ import { AlertTriangle, ChevronDown, ChevronUp, Loader2, Lock, RefreshCw } from 
 import { Badge, Card, PageHeader, cn } from './ui';
 import { useAuth } from '../AuthProvider';
 import { useUpgrade } from '../UpgradeProvider';
+import type { Locked } from '@/lib/entitlement';
 import type { BoardLeg, LegBoardResult, MarketType, Sport } from '@/lib/leg-board';
 
 const DFS_SITES = new Set(['PrizePicks', 'Underdog']);
@@ -76,7 +77,8 @@ export default function LegBoardView() {
   }, [board, sportFilter, marketFilter, sortKey]);
 
   const visible = isPro ? filtered : filtered.slice(0, FREE_VISIBLE);
-  const lockedCount = filtered.length - visible.length;
+  // Free responses are already trimmed server-side; `locked` counts what was held back.
+  const lockedCount = filtered.length - visible.length + (isPro ? 0 : ((board as Locked | null)?.locked ?? 0));
 
   return (
     <div className="px-6 pb-16 pt-10 lg:px-10">

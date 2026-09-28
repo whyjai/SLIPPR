@@ -7,7 +7,7 @@
  *   npx tsx scripts/research/build-nfl-season.mts 2025
  */
 import { writeFileSync } from 'node:fs';
-import { aggregate, loadCharting, loadCoverage, loadPlays } from '../../lib/research/nfl-pbp.ts';
+import { aggregate, loadCharting, loadCoverage, loadPlays } from '../../lib/research/nfl-pbp';
 
 const season = Number(process.argv[2]);
 if (!Number.isInteger(season)) throw new Error('usage: build-nfl-season.mts <season>');

@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { ParlayEngine } from '@/lib/parlay-engine';
+import { isPro, PRIVATE_CACHE, proRequired } from '@/lib/entitlement';
 
+// Pro only — also keeps anonymous traffic from running the engine.
 export async function GET() {
+  if (!(await isPro())) return proRequired();
   const engine = new ParlayEngine();
   const result = await engine.generateDailySlips();
 
@@ -18,5 +21,5 @@ export async function GET() {
     councilConsensus: result.council,
     weeklyRankings: result.council.weeklyRankings,
     lastRefresh: result.lastRefresh.toISOString(),
-  });
+  }, { headers: PRIVATE_CACHE });
 }

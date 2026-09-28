@@ -5,6 +5,7 @@ import { AlertTriangle, ChevronDown, ChevronUp, Crosshair, Loader2, Lock, Refres
 import { Badge, Card, PageHeader, Toggle, cn } from './ui';
 import { useAuth } from '../AuthProvider';
 import { useUpgrade } from '../UpgradeProvider';
+import type { Locked } from '@/lib/entitlement';
 import { todayEtLabel } from '@/lib/slate';
 import type { PropEdge, PropEdgesResult } from '@/lib/prop-edges';
 import type { StaleLineAlert } from '@/lib/stale-lines';
@@ -79,7 +80,7 @@ export default function PropEdgesView() {
   }, [data, platforms, sport, exactOnly, sortKey]);
 
   const visible = isPro ? groups : groups.slice(0, FREE_VISIBLE);
-  const lockedCount = groups.length - visible.length;
+  const lockedCount = groups.length - visible.length + (isPro ? 0 : ((data as Locked | null)?.locked ?? 0));
 
   const togglePlatform = (p: string) =>
     setPlatforms((prev) => {
@@ -372,18 +373,23 @@ function timeAgo(iso: string): string {
  * alerts) doesn't block the rest of the page.
  */
 function StaleLineAlertsCard() {
+  const { goPro, checkoutPending } = useUpgrade();
   const [alerts, setAlerts] = useState<StaleLineAlert[] | null>(null);
+  const [locked, setLocked] = useState(0);
 
   useEffect(() => {
     fetch('/api/stale-lines')
       .then((res) => (res.ok ? res.json() : null))
-      .then((json: { alerts: StaleLineAlert[] } | null) => {
-        if (json) setAlerts(json.alerts);
+      .then((json: ({ alerts: StaleLineAlert[] } & Locked) | null) => {
+        if (json) {
+          setAlerts(json.alerts);
+          setLocked(json.locked ?? 0);
+        }
       })
       .catch(() => setAlerts([]));
   }, []);
 
-  if (alerts !== null && alerts.length === 0) return null; // nothing to show, no space wasted
+  if (alerts !== null && alerts.length === 0 && locked === 0) return null; // nothing to show, no space wasted
 
   return (
     <Card className="animate-fade-up mb-6 border-sky-500/20 bg-sky-500/[0.03] p-5">
@@ -396,6 +402,16 @@ function StaleLineAlertsCard() {
         Pinnacle moved and this app hadn&apos;t caught up yet — the price shown is what the app was still offering.
         These close fast; confirm the line is still live before you take it.
       </p>
+      {locked > 0 && (
+        <button
+          onClick={goPro}
+          disabled={checkoutPending}
+          className="flex items-center gap-2 rounded-xl border border-sky-500/15 bg-black/30 px-4 py-3 text-sm text-sky-200 hover:border-sky-500/30"
+        >
+          <Lock className="h-3.5 w-3.5" />
+          {locked} stale line{locked === 1 ? '' : 's'} caught recently — unlock with Pro
+        </button>
+      )}
       {alerts && alerts.length > 0 && (
         <ul className="space-y-2">
           {alerts.map((a) => (

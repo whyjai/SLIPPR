@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getRecentStaleAlerts } from '@/lib/stale-lines';
+import { isPro, PRIVATE_CACHE } from '@/lib/entitlement';
 
 // Read-only — never touches the Odds API. Powers the "Stale Line Alerts" card.
+// Pro only: free users get the count so the card can show what's locked.
 export async function GET() {
-  const alerts = await getRecentStaleAlerts(20);
-
-  return NextResponse.json(
-    { alerts },
-    { headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=120' } },
-  );
+  const [alerts, pro] = await Promise.all([getRecentStaleAlerts(20), isPro()]);
+  return NextResponse.json(pro ? { alerts } : { alerts: [], locked: alerts.length }, { headers: PRIVATE_CACHE });
 }
