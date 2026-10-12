@@ -3,14 +3,13 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ArrowDownUp } from 'lucide-react';
 import { Badge, Card, PageHeader, cn } from './ui';
-import NbaPlayerTrendsPanel from './NbaPlayerTrendsPanel';
+import HoopsPlayerTrendsPanel from './HoopsPlayerTrendsPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
-import type { NbaResearch } from '@/lib/research/nba-defense';
-import type { NbaGameCard, PlayerLine, StyleStat, TeamLine } from '@/lib/research/nba-matchups';
+import type { HoopsResearch } from '@/lib/research/hoops-defense';
+import type { GameCard as Game, PlayerLine, StyleStat, TeamLine } from '@/lib/research/hoops-matchups';
 
 type Pos = 'G' | 'F' | 'C';
 const POS_LABEL: Record<Pos, string> = { G: 'Guards', F: 'Forwards', C: 'Centers' };
-const label = (season: number) => `${season - 1}-${String(season).slice(2)}`;
 
 const tipoffLabel = (iso: string) =>
   new Date(iso).toLocaleString('en-US', {
@@ -27,9 +26,32 @@ const dayLabel = (day: string) =>
     timeZone: 'UTC',
   });
 
-export default function NbaResearchView({ sportSwitch }: { sportSwitch: ReactNode }) {
+type League = 'nba' | 'wnba';
+const NAME: Record<League, string> = { nba: 'NBA', wnba: 'WNBA' };
+
+/** What the audit found, per league (scripts/research/audit-hoops.mts). */
+const FINDINGS: Record<League, { stable: string; miss: string; noisy: string; adj: string; minGames: number }> = {
+  nba: {
+    minGames: 15,
+    adj: "Matchup adj. is how much this opponent's style moves a player's line, and it is small: 1-5% on average.",
+    stable: "a team's first 20 games predicted the rest of 2025-26 at r 0.6-0.8",
+    miss: 'tested on past seasons it typically misses the total by ~15 and the margin by ~12',
+    noisy: 'in 2025-26 these ranks barely predicted the rest of the season. Guards held up modestly.',
+  },
+  wnba: {
+    minGames: 8,
+    adj: "No matchup adjustment on player lines: tested on 2026, opponent style didn't make them more accurate.",
+    stable:
+      "in 2026 a team's first 11 games predicted the rest at r 0.6-0.8 for pace, shot profile and paint points; defensive efficiency held up less (r 0.4-0.7)",
+    miss: 'tested on 2026 it typically missed the total by ~14-16 and the margin by ~10-11',
+    noisy: "in 2026 these ranks didn't predict the rest of the season at any position.",
+  },
+};
+
+export default function HoopsResearchView({ league, sportSwitch }: { league: League; sportSwitch: ReactNode }) {
+  const label = (season: number) => (league === 'nba' ? `${season - 1}-${String(season).slice(2)}` : `${season}`);
   const [season, setSeason] = useState<number | null>(null); // null = latest, resolved by the API
-  const [result, setResult] = useState<{ key: number | null; data?: NbaResearch; error?: string } | null>(null);
+  const [result, setResult] = useState<{ key: number | null; data?: HoopsResearch; error?: string } | null>(null);
   const [view, setView] = useState<'matchups' | 'players' | 'teams'>('matchups');
   const [pos, setPos] = useState<Pos>('G');
   const [metric, setMetric] = useState<StyleStat>('pts');
@@ -37,17 +59,17 @@ export default function NbaResearchView({ sportSwitch }: { sportSwitch: ReactNod
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/research/nba${season ? `?season=${season}` : ''}`)
+    fetch(`/api/research/${league}${season ? `?season=${season}` : ''}`)
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        if (!cancelled) setResult({ key: season, data: json as NbaResearch });
+        if (!cancelled) setResult({ key: season, data: json as HoopsResearch });
       })
       .catch((e) => !cancelled && setResult({ key: season, error: e instanceof Error ? e.message : String(e) }));
     return () => {
       cancelled = true;
     };
-  }, [season]);
+  }, [league, season]);
 
   const loading = result?.key !== season;
   const data = result?.data ?? null;
@@ -67,7 +89,7 @@ export default function NbaResearchView({ sportSwitch }: { sportSwitch: ReactNod
       <div className="mx-auto max-w-6xl">
         <PageHeader
           eyebrow="Research"
-          title="NBA Matchup Research"
+          title={`${NAME[league]} Matchup Research`}
           description="Team pace and efficiency, how each defense plays, defense vs position and player trends, from box scores. No odds, no picks."
           actions={
             <div className="flex flex-wrap items-center gap-2">
@@ -125,16 +147,16 @@ export default function NbaResearchView({ sportSwitch }: { sportSwitch: ReactNod
         </div>
 
         {view === 'players' && shown != null ? (
-          <NbaPlayerTrendsPanel season={shown} />
+          <HoopsPlayerTrendsPanel league={league} season={shown} />
         ) : view === 'teams' && shown != null ? (
           <TeamTendenciesPanel
             season={shown}
-            endpoint="/api/research/nba/teams"
+            endpoint={`/api/research/${league}/teams`}
             defaultMetric={{ defense: 'drtg', offense: 'pace' }}
             intro={() => (
               <>
-                Pace, efficiency and shot profile on both ends, per 100 possessions where it matters. These hold up: a
-                team&apos;s first 20 games predicted the rest of 2025-26 at r 0.6-0.8.
+                Pace, efficiency and shot profile on both ends, per 100 possessions where it matters. These hold up:{' '}
+                {FINDINGS[league].stable}.
               </>
             )}
           />
@@ -145,26 +167,31 @@ export default function NbaResearchView({ sportSwitch }: { sportSwitch: ReactNod
             ))}
           </div>
         ) : error ? (
-          <Card className="p-10 text-center text-sm text-zinc-400">Couldn&apos;t load NBA data: {error}</Card>
+          <Card className="p-10 text-center text-sm text-zinc-400">Couldn&apos;t load {NAME[league]} data: {error}</Card>
         ) : data ? (
           <>
+            {!data.slate && data.season === data.latestSeason && (
+              <p className="mb-8 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-sm text-zinc-400">
+                No upcoming {NAME[league]} games on the schedule yet. The numbers below are the {data.seasonLabel}{' '}
+                season.
+              </p>
+            )}
             {data.slate && data.slate.games.length > 0 && (
               <section className="mb-10">
                 <h2 className="mb-1 text-lg font-semibold">Next slate: {dayLabel(data.slate.date)}</h2>
                 <p className="mb-4 text-sm text-zinc-500">
                   {data.slate.usingLastSeason && (
                     <span className="text-amber-400/90">
-                      Using {data.slate.basisLabel} numbers until every team has 15 games this season; players are from
-                      current rosters.{' '}
+                      Using {data.slate.basisLabel} numbers until every team has {FINDINGS[league].minGames} games this
+                      season; players are from current rosters.{' '}
                     </span>
                   )}
-                  Estimate = both teams&apos; pace and ratings plus a {data.slate.homeEdge}-point home edge; tested on
-                  past seasons it typically misses the total by ~15 and the margin by ~12. Matchup adj. is how much this
-                  opponent&apos;s style moves a player&apos;s line, and it is small: 1-5% on average.
+                  Estimate = both teams&apos; pace and ratings plus a {data.slate.homeEdge}-point home edge;{' '}
+                  {FINDINGS[league].miss}. {FINDINGS[league].adj}
                 </p>
                 <div className="grid gap-3 lg:grid-cols-2">
                   {data.slate.games.map((g) => (
-                    <GameCard key={g.id} game={g} />
+                    <GameCard key={g.id} game={g} adjust={data.slate?.adjustments ?? true} />
                   ))}
                 </div>
               </section>
@@ -177,8 +204,7 @@ export default function NbaResearchView({ sportSwitch }: { sportSwitch: ReactNod
                 {data.noisy[pos] && (
                   <span className="text-amber-400/90">
                     {' '}
-                    Noisy: forward and center labels are loose and matchups switch, so in 2025-26 these ranks barely
-                    predicted the rest of the season. Guards held up modestly.
+                    Noisy: position labels are loose and matchups switch, so {FINDINGS[league].noisy}
                   </span>
                 )}
               </p>
@@ -280,7 +306,7 @@ function Adj({ v }: { v: number }) {
   return <span className={v > 0 ? 'text-emerald-300/90' : 'text-rose-300/90'}>{`${v > 0 ? '+' : ''}${v}%`}</span>;
 }
 
-function Players({ team, rows }: { team: string; rows: PlayerLine[] }) {
+function Players({ team, rows, adjust }: { team: string; rows: PlayerLine[]; adjust: boolean }) {
   if (!rows.length) return null;
   return (
     <table className="w-full text-xs">
@@ -292,7 +318,7 @@ function Players({ team, rows }: { team: string; rows: PlayerLine[] }) {
           <th className="pr-2 text-right font-medium">Reb</th>
           <th className="pr-2 text-right font-medium">Ast</th>
           <th className="pr-2 text-right font-medium">3PM</th>
-          <th className="text-right font-medium">PRA adj.</th>
+          {adjust && <th className="text-right font-medium">PRA adj.</th>}
         </tr>
       </thead>
       <tbody className="font-mono text-zinc-300">
@@ -308,9 +334,11 @@ function Players({ team, rows }: { team: string; rows: PlayerLine[] }) {
                 <span className="block text-[10px] text-zinc-600">{p.last10[k]}</span>
               </td>
             ))}
-            <td className="text-right">
-              <Adj v={p.adj.pra} />
-            </td>
+            {adjust && (
+              <td className="text-right">
+                <Adj v={p.adj.pra} />
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
@@ -318,7 +346,7 @@ function Players({ team, rows }: { team: string; rows: PlayerLine[] }) {
   );
 }
 
-function GameCard({ game: g }: { game: NbaGameCard }) {
+function GameCard({ game: g, adjust }: { game: Game; adjust: boolean }) {
   const e = g.estimate;
   return (
     <Card className="p-5">
@@ -346,8 +374,8 @@ function GameCard({ game: g }: { game: NbaGameCard }) {
         </ul>
       )}
       <div className="space-y-2">
-        <Players team={g.away.team} rows={g.players.away} />
-        <Players team={g.home.team} rows={g.players.home} />
+        <Players team={g.away.team} rows={g.players.away} adjust={adjust} />
+        <Players team={g.home.team} rows={g.players.home} adjust={adjust} />
         <p className="text-[10px] text-zinc-600">Per game; small figures are the last 10 games. Min is last 10.</p>
       </div>
     </Card>

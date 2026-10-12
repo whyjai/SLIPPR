@@ -4,15 +4,15 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp, Search, TrendingDown, TrendingUp } from 'lucide-react';
 import { Card, cn } from './ui';
 import type {
-  NbaAverages,
-  NbaGameLogEntry,
-  NbaPlayerTrend,
-  NbaPlayerTrends,
-  NbaUsageChange,
-} from '@/lib/research/nba-players';
+  HoopsAverages,
+  HoopsGameLogEntry,
+  HoopsPlayerTrend,
+  HoopsPlayerTrends,
+  HoopsUsageChange,
+} from '@/lib/research/hoops-players';
 
 type Pos = 'ALL' | 'G' | 'F' | 'C';
-type StatKey = Exclude<keyof NbaAverages, 'games' | 'starts'>;
+type StatKey = Exclude<keyof HoopsAverages, 'games' | 'starts'>;
 
 const COLUMNS: Array<{ key: StatKey; label: string }> = [
   { key: 'min', label: 'Min' },
@@ -25,7 +25,7 @@ const COLUMNS: Array<{ key: StatKey; label: string }> = [
 ];
 
 /** Hit-rate stats, with the step between thresholds. */
-const HIT_STATS: Array<{ key: keyof NbaGameLogEntry; label: string; step: number }> = [
+const HIT_STATS: Array<{ key: keyof HoopsGameLogEntry; label: string; step: number }> = [
   { key: 'pts', label: 'pts', step: 3 },
   { key: 'reb', label: 'reb', step: 2 },
   { key: 'ast', label: 'ast', step: 2 },
@@ -35,8 +35,8 @@ const HIT_STATS: Array<{ key: keyof NbaGameLogEntry; label: string; step: number
 
 const PAGE = 40;
 
-export default function NbaPlayerTrendsPanel({ season }: { season: number }) {
-  const [result, setResult] = useState<{ season: number; data?: NbaPlayerTrends; error?: string } | null>(null);
+export default function HoopsPlayerTrendsPanel({ league, season }: { league: 'nba' | 'wnba'; season: number }) {
+  const [result, setResult] = useState<{ season: number; data?: HoopsPlayerTrends; error?: string } | null>(null);
   const [pos, setPos] = useState<Pos>('ALL');
   const [team, setTeam] = useState('');
   const [query, setQuery] = useState('');
@@ -46,17 +46,17 @@ export default function NbaPlayerTrendsPanel({ season }: { season: number }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/research/nba/players?season=${season}`)
+    fetch(`/api/research/${league}/players?season=${season}`)
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        if (!cancelled) setResult({ season, data: json as NbaPlayerTrends });
+        if (!cancelled) setResult({ season, data: json as HoopsPlayerTrends });
       })
       .catch((e) => !cancelled && setResult({ season, error: e instanceof Error ? e.message : String(e) }));
     return () => {
       cancelled = true;
     };
-  }, [season]);
+  }, [league, season]);
 
   const loading = result?.season !== season;
   const data = result?.data ?? null;
@@ -87,7 +87,7 @@ export default function NbaPlayerTrendsPanel({ season }: { season: number }) {
     );
   }
   if (!data) return null;
-  const prevLabel = `${data.season - 2}-${String(data.season - 1).slice(2)}`;
+  const prevLabel = league === 'nba' ? `${data.season - 2}-${String(data.season - 1).slice(2)}` : `${data.season - 1}`;
 
   return (
     <div>
@@ -240,7 +240,7 @@ function Stat({ now, before }: { now: number | null; before: number | null }) {
   );
 }
 
-function Changes({ title, items, up }: { title: string; items: NbaUsageChange[]; up: boolean }) {
+function Changes({ title, items, up }: { title: string; items: HoopsUsageChange[]; up: boolean }) {
   const Icon = up ? TrendingUp : TrendingDown;
   return (
     <Card className="p-4">
@@ -268,7 +268,7 @@ function Changes({ title, items, up }: { title: string; items: NbaUsageChange[];
   );
 }
 
-function Detail({ player }: { player: NbaPlayerTrend }) {
+function Detail({ player }: { player: HoopsPlayerTrend }) {
   const last5 = player.log.slice(0, 5);
   const other = player.log.filter((g) => g.team !== player.team);
   return (
@@ -282,7 +282,7 @@ function Detail({ player }: { player: NbaPlayerTrend }) {
           return [base - s.step, base, base + s.step]
             .filter((t) => t >= 1)
             .map((t) => {
-              const hit = (gs: NbaGameLogEntry[]) => gs.filter((g) => Number(g[s.key]) >= t).length;
+              const hit = (gs: HoopsGameLogEntry[]) => gs.filter((g) => Number(g[s.key]) >= t).length;
               return (
                 <div key={`${s.key}-${t}`} className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
                   <p className="text-xs font-medium text-zinc-200">

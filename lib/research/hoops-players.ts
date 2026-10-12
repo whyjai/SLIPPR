@@ -1,11 +1,11 @@
 /**
- * NBA player trends: minutes and production per game this season, the last
+ * Basketball player trends: minutes and production per game this season, the last
  * 5 and 10 games, last season for comparison, usage rate, and a 10-game log
  * (hit rates are computed from it in the UI). Box scores only.
  */
-import { nbaPlayerGames, nbaTeamGames, seasonLabel, type NbaPlayerGame, type NbaPos } from './nba-data';
+import { playerGames, seasonLabel, teamGames, type HoopsPlayerGame, type HoopsPos, type League } from './hoops-data';
 
-export type NbaGameLogEntry = {
+export type HoopsGameLogEntry = {
   date: string;
   team: string;
   opp: string;
@@ -21,7 +21,7 @@ export type NbaGameLogEntry = {
   fga: number;
 };
 
-export type NbaAverages = {
+export type HoopsAverages = {
   games: number;
   starts: number;
   min: number;
@@ -38,22 +38,22 @@ export type NbaAverages = {
   usage: number | null;
 };
 
-export type NbaPlayerTrend = {
+export type HoopsPlayerTrend = {
   id: string;
   name: string;
-  pos: NbaPos | null;
+  pos: HoopsPos | null;
   team: string;
-  season: NbaAverages;
-  last5: NbaAverages;
-  last10: NbaAverages;
-  prior: NbaAverages | null; // last season, 10+ games
-  log: NbaGameLogEntry[]; // newest first, up to 10
+  season: HoopsAverages;
+  last5: HoopsAverages;
+  last10: HoopsAverages;
+  prior: HoopsAverages | null; // last season, 10+ games
+  log: HoopsGameLogEntry[]; // newest first, up to 10
 };
 
-export type NbaUsageChange = {
+export type HoopsUsageChange = {
   id: string;
   name: string;
-  pos: NbaPos | null;
+  pos: HoopsPos | null;
   team: string;
   metric: 'Minutes' | 'Usage %';
   now: number;
@@ -61,14 +61,14 @@ export type NbaUsageChange = {
   delta: number;
 };
 
-export type NbaPlayerTrends = {
-  sport: 'nba';
+export type HoopsPlayerTrends = {
+  sport: League;
   season: number;
   seasonLabel: string;
   generatedAt: string;
-  players: NbaPlayerTrend[];
-  risers: NbaUsageChange[];
-  fallers: NbaUsageChange[];
+  players: HoopsPlayerTrend[];
+  risers: HoopsUsageChange[];
+  fallers: HoopsUsageChange[];
 };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
@@ -76,10 +76,10 @@ const LOG_GAMES = 10;
 
 type TeamTotals = { fga: number; fta: number; tov: number; minutes: number };
 
-function averages(rows: NbaPlayerGame[], team: Map<string, TeamTotals>): NbaAverages {
+function averages(rows: HoopsPlayerGame[], team: Map<string, TeamTotals>): HoopsAverages {
   const n = rows.length || 1;
-  const sum = (f: (r: NbaPlayerGame) => number) => rows.reduce((s, r) => s + f(r), 0);
-  const avg = (f: (r: NbaPlayerGame) => number) => r1(sum(f) / n);
+  const sum = (f: (r: HoopsPlayerGame) => number) => rows.reduce((s, r) => s + f(r), 0);
+  const avg = (f: (r: HoopsPlayerGame) => number) => r1(sum(f) / n);
   // Usage: 100 × (FGA + 0.44·FTA + TOV) × (team minutes / 5) / (minutes × team (FGA + 0.44·FTA + TOV)), over his games.
   let tm = 0, tmMin = 0;
   for (const r of rows) {
@@ -107,20 +107,20 @@ function averages(rows: NbaPlayerGame[], team: Map<string, TeamTotals>): NbaAver
   };
 }
 
-async function teamTotals(season: number): Promise<Map<string, TeamTotals>> {
-  const games = await nbaTeamGames(season).catch(() => []);
+async function teamTotals(league: League, season: number): Promise<Map<string, TeamTotals>> {
+  const games = await teamGames(league, season).catch(() => []);
   return new Map(games.map((g) => [`${g.gameId}|${g.team}`, { fga: g.fga, fta: g.fta, tov: g.tov, minutes: g.minutes * 5 }]));
 }
 
-export async function getNbaPlayerTrends(season: number): Promise<NbaPlayerTrends> {
+export async function getHoopsPlayerTrends(league: League, season: number): Promise<HoopsPlayerTrends> {
   const [cur, prev, curTeams, prevTeams] = await Promise.all([
-    nbaPlayerGames(season),
-    nbaPlayerGames(season - 1).catch(() => [] as NbaPlayerGame[]),
-    teamTotals(season),
-    teamTotals(season - 1),
+    playerGames(league, season),
+    playerGames(league, season - 1).catch(() => [] as HoopsPlayerGame[]),
+    teamTotals(league, season),
+    teamTotals(league, season - 1),
   ]);
-  const group = (rows: NbaPlayerGame[]) => {
-    const m = new Map<string, NbaPlayerGame[]>();
+  const group = (rows: HoopsPlayerGame[]) => {
+    const m = new Map<string, HoopsPlayerGame[]>();
     for (const r of rows) m.set(r.playerId, [...(m.get(r.playerId) ?? []), r]);
     for (const list of m.values()) list.sort((a, b) => a.date.localeCompare(b.date));
     return m;
@@ -128,7 +128,7 @@ export async function getNbaPlayerTrends(season: number): Promise<NbaPlayerTrend
   const curBy = group(cur);
   const prevBy = group(prev);
 
-  const players: NbaPlayerTrend[] = [];
+  const players: HoopsPlayerTrend[] = [];
   for (const [id, rows] of curBy) {
     const season = averages(rows, curTeams);
     if (rows.length < 5 || season.min < 10) continue;
@@ -166,10 +166,10 @@ export async function getNbaPlayerTrends(season: number): Promise<NbaPlayerTrend
   players.sort((a, b) => b.season.pra - a.season.pra);
 
   // Role changes vs last season: minutes and usage, 10+ games in both.
-  const changes: NbaUsageChange[] = [];
+  const changes: HoopsUsageChange[] = [];
   for (const p of players) {
     if (!p.prior || p.season.games < 10) continue;
-    const add = (metric: NbaUsageChange['metric'], now: number | null, before: number | null, min: number) => {
+    const add = (metric: HoopsUsageChange['metric'], now: number | null, before: number | null, min: number) => {
       if (now == null || before == null) return;
       const delta = r1(now - before);
       if (Math.abs(delta) >= min) changes.push({ id: p.id, name: p.name, pos: p.pos, team: p.team, metric, now, before, delta });
@@ -177,16 +177,16 @@ export async function getNbaPlayerTrends(season: number): Promise<NbaPlayerTrend
     add('Minutes', p.season.min, p.prior.min, 5);
     add('Usage %', p.season.usage, p.prior.usage, 4);
   }
-  const best = new Map<string, NbaUsageChange>();
+  const best = new Map<string, HoopsUsageChange>();
   for (const c of changes) {
     const cur = best.get(c.id);
     if (!cur || Math.abs(c.delta) > Math.abs(cur.delta)) best.set(c.id, c);
   }
   const ranked = [...best.values()].sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
   return {
-    sport: 'nba',
+    sport: league,
     season,
-    seasonLabel: seasonLabel(season),
+    seasonLabel: seasonLabel(league, season),
     generatedAt: new Date().toISOString(),
     players,
     risers: ranked.filter((c) => c.delta > 0).slice(0, 8),

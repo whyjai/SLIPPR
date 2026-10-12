@@ -1,17 +1,29 @@
 /**
- * NBA matchup research for the next slate: team profiles, a ratings-based
+ * Basketball matchup research for the next slate: team profiles, a ratings-based
  * game estimate, the extremes in each defense's profile, and key players with
  * a (small) opponent-style adjustment.
  *
- * What the numbers are worth, measured by scripts/research/audit-nba.mts:
+ * What the numbers are worth (NBA), measured by scripts/research/audit-hoops.mts:
  *  - team pace / ratings / shot profile are stable (first 20 games vs rest r 0.6-0.8)
  *  - the ratings-based total and margin, first half of a season predicting the
  *    second: total r 0.30-0.41 (typical miss ~15 pts), margin r 0.39-0.46 (~12 pts)
  *  - opponent style moves a player's line only ~1-5% per SD; fit on 2024-25
  *    and tested on 2025-26 it cut player-line error by 0.1-0.9%. Shown, labeled small.
  */
-import { NBA_TEAMS, latestNbaSeason, nbaPlayerGames, nbaRoster, nbaTeamGames, nextNbaSlate, seasonFor, seasonLabel, type NbaPos } from './nba-data';
-import { teamStyles, type TeamStyle } from './nba-teams';
+import {
+  LEAGUES,
+  latestSeason,
+  nextSlate,
+  playerGames,
+  roster,
+  seasonFor,
+  seasonLabel,
+  teamGames,
+  teamNames,
+  type HoopsPos,
+  type League,
+} from './hoops-data';
+import { teamStyles, type TeamStyle } from './hoops-teams';
 
 export type StyleStat = 'pts' | 'reb' | 'ast' | 'fg3m' | 'pra';
 export type StyleKey = 'pace' | 'drtg' | 'oppThreeRate' | 'oppPaint';
@@ -27,19 +39,27 @@ export const STYLE_PREDICTORS: Record<StyleStat, StyleKey[]> = {
 
 /**
  * Fractional change in a player's line per +1 SD of the opponent's style, in
- * STYLE_PREDICTORS order. Fit on 2024-25 by scripts/research/audit-nba.mts
+ * STYLE_PREDICTORS order. NBA: fit on 2024-25 by scripts/research/audit-hoops.mts
  * (players 20+ mpg, opponent's first-half style vs the player's second-half
  * games) and tested on 2025-26. Cells whose test error got worse are zeroed:
  * F 3PM and PRA, C rebounds and 3PM. Even the kept ones cut error < 1%.
  */
-const STYLE_EFFECTS: Record<NbaPos, Record<StyleStat, number[]>> = {
+type Effects = Record<HoopsPos, Record<StyleStat, number[]>>;
+const NBA_EFFECTS: Effects = {
   G: { pts: [0.016, 0.017, 0.005], reb: [0.013, 0.021], ast: [0.027, 0.05], fg3m: [0.034, 0.038], pra: [0.015, 0.02, 0.01] },
   F: { pts: [0.012, 0.024, -0.005], reb: [0.009, 0.002], ast: [-0.012, 0.039], fg3m: [0, 0], pra: [0, 0, 0] },
   C: { pts: [0.034, 0.05, -0.012], reb: [0, 0], ast: [0.015, 0.052], fg3m: [0, 0], pra: [0.017, 0.05, -0.025] },
 };
 
-/** Current-season numbers are used once every team has this many games; before that, last season's. */
-const MIN_GAMES_FOR_CURRENT = 15;
+/**
+ * WNBA: none. Fit on 2025 and tested on 2026 (audit-hoops.mts wnba 2025 2026),
+ * opponent style didn't improve player lines (error -0.8% to +13.5%), so the
+ * WNBA shows plain averages.
+ */
+const ZERO = { pts: [0, 0, 0], reb: [0, 0], ast: [0, 0], fg3m: [0, 0], pra: [0, 0, 0] };
+const WNBA_EFFECTS: Effects = { G: ZERO, F: ZERO, C: ZERO };
+
+const STYLE_EFFECTS: Record<League, Effects> = { nba: NBA_EFFECTS, wnba: WNBA_EFFECTS };
 
 export type TeamLine = {
   team: string;
@@ -57,14 +77,14 @@ export type Averages = Record<StyleStat, number> & { min: number; games: number 
 export type PlayerLine = {
   id: string;
   name: string;
-  pos: NbaPos | null;
+  pos: HoopsPos | null;
   season: Averages;
   last10: Averages;
   /** % change the opponent's style implies for each stat (small by design, see header). */
   adj: Record<StyleStat, number>;
 };
 
-export type NbaGameCard = {
+export type GameCard = {
   id: string;
   tipoff: string;
   away: TeamLine;
@@ -74,16 +94,18 @@ export type NbaGameCard = {
   players: { away: PlayerLine[]; home: PlayerLine[] };
 };
 
-export type NbaSlate = {
+export type Slate = {
   date: string;
   basisSeason: number;
   basisLabel: string;
+  /** False when the league has no tested opponent-style adjustment (the WNBA). */
+  adjustments: boolean;
   /** True when the current season is too young and last season's numbers are used. */
   usingLastSeason: boolean;
   leaguePace: number;
   leagueRating: number;
   homeEdge: number;
-  games: NbaGameCard[];
+  games: GameCard[];
 };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
@@ -111,20 +133,22 @@ const PROFILE: Array<{ key: keyof TeamStyle; phrase: (place: string, v: number) 
   { key: 'forcedTovPct', phrase: (p, v) => `forces ${p} turnovers (${v} per 100 possessions)` },
 ];
 
-export async function getNbaSlate(): Promise<NbaSlate | null> {
-  const slate = await nextNbaSlate();
+export async function getSlate(league: League): Promise<Slate | null> {
+  const slate = await nextSlate(league);
   if (!slate) return null;
 
   // Which season's numbers describe these teams best right now.
-  const latest = await latestNbaSeason();
+  const latest = await latestSeason(league);
+  const cfg = LEAGUES[league];
   let basis = latest;
-  let styles = teamStyles(await nbaTeamGames(latest));
-  const young = latest === seasonFor() && Math.min(...Object.values(styles).map((s) => s.games)) < MIN_GAMES_FOR_CURRENT;
+  let styles = teamStyles(await teamGames(league, latest), cfg.regulation);
+  const young = latest === seasonFor(league) && Math.min(...Object.values(styles).map((s) => s.games)) < cfg.minGamesForCurrent;
   if (young) {
     basis = latest - 1;
-    styles = teamStyles(await nbaTeamGames(basis));
+    styles = teamStyles(await teamGames(league, basis), cfg.regulation);
   }
-  const all = Object.values(styles).filter((s) => NBA_TEAMS[s.team]);
+  const names = await teamNames(league, basis);
+  const all = Object.values(styles).filter((s) => names[s.team]);
   const lgPace = mean(all.map((s) => s.pace));
   const lgRtg = mean(all.map((s) => s.ortg));
   const keys = [...new Set(Object.values(STYLE_PREDICTORS).flat())];
@@ -134,16 +158,16 @@ export async function getNbaSlate(): Promise<NbaSlate | null> {
   const ortgRank = ranks(all, 'ortg', true);
   const drtgRank = ranks(all, 'drtg', false);
 
-  const teamGames = await nbaTeamGames(basis);
-  const ptsByKey = new Map(teamGames.map((g) => [`${g.gameId}|${g.team}`, g.pts]));
-  const homeEdge = mean(teamGames.filter((g) => g.home).map((g) => g.pts - (ptsByKey.get(`${g.gameId}|${g.opp}`) ?? g.pts)));
+  const basisGames = await teamGames(league, basis);
+  const ptsByKey = new Map(basisGames.map((g) => [`${g.gameId}|${g.team}`, g.pts]));
+  const homeEdge = mean(basisGames.filter((g) => g.home).map((g) => g.pts - (ptsByKey.get(`${g.gameId}|${g.opp}`) ?? g.pts)));
 
-  const players = await nbaPlayerGames(basis);
+  const players = await playerGames(league, basis);
   const line = (team: string): TeamLine => {
     const s = styles[team];
     return {
       team,
-      name: `${NBA_TEAMS[team].city} ${NBA_TEAMS[team].nickname}`,
+      name: `${names[team].city} ${names[team].nickname}`,
       pace: r1(s.pace),
       paceRank: paceRank.get(team)!,
       ortg: r1(s.ortg),
@@ -164,7 +188,7 @@ export async function getNbaSlate(): Promise<NbaSlate | null> {
       const k = most ? r : n - r + 1;
       const word = p.key === 'oppFtRate' ? (most ? 'most' : 'least') : most ? 'the most' : 'the fewest';
       const place = k === 1 ? word : p.key === 'oppFtRate' ? `${ordinal(k)}-${word}` : `the ${ordinal(k)}-${word.replace('the ', '')}`;
-      out.push(`${NBA_TEAMS[defense].nickname} defense ${p.phrase(place, r1(styles[defense][p.key] as number))}. ${NBA_TEAMS[offense].nickname} on offense.`);
+      out.push(`${names[defense].nickname} defense ${p.phrase(place, r1(styles[defense][p.key] as number))}. ${names[offense].nickname} on offense.`);
     }
     return out;
   };
@@ -180,10 +204,10 @@ export async function getNbaSlate(): Promise<NbaSlate | null> {
   });
 
   const keyPlayers = async (team: string, espnTeamId: string, opp: string): Promise<PlayerLine[]> => {
-    const roster = await nbaRoster(espnTeamId).catch(() => null);
+    const current = await roster(league, espnTeamId).catch(() => null);
     const byPlayer = new Map<string, typeof players>();
     for (const p of players) {
-      if (roster ? !roster.has(p.playerId) : p.team !== team) continue;
+      if (current ? !current.has(p.playerId) : p.team !== team) continue;
       byPlayer.set(p.playerId, [...(byPlayer.get(p.playerId) ?? []), p]);
     }
     const oppStyle = styles[opp];
@@ -195,7 +219,7 @@ export async function getNbaSlate(): Promise<NbaSlate | null> {
         const pos = last.pos;
         const adj = Object.fromEntries(
           STATS.map((stat) => {
-            const coef = pos ? STYLE_EFFECTS[pos][stat] : null;
+            const coef = pos ? STYLE_EFFECTS[league][pos][stat] : null;
             const z = STYLE_PREDICTORS[stat].map((k) => (oppStyle[k] - lgStyle[k]) / (sdStyle[k] || 1));
             return [stat, coef ? r1(100 * coef.reduce((a, c, i) => a + c * z[i], 0)) : 0];
           }),
@@ -204,11 +228,11 @@ export async function getNbaSlate(): Promise<NbaSlate | null> {
       })
       // In season, recent minutes say who plays now. From last season, whole-season minutes: its last
       // weeks are full of rested stars and tank rotations.
-      .sort((a, b) => (basis !== seasonFor() ? b.season.min * b.season.games - a.season.min * a.season.games : b.last10.min - a.last10.min))
+      .sort((a, b) => (basis !== seasonFor(league) ? b.season.min * b.season.games - a.season.min * a.season.games : b.last10.min - a.last10.min))
       .slice(0, 3);
   };
 
-  const games: NbaGameCard[] = [];
+  const games: GameCard[] = [];
   for (const g of slate.games) {
     const H = styles[g.home];
     const A = styles[g.away];
@@ -229,8 +253,9 @@ export async function getNbaSlate(): Promise<NbaSlate | null> {
   return {
     date: slate.date,
     basisSeason: basis,
-    basisLabel: seasonLabel(basis),
-    usingLastSeason: basis !== seasonFor(),
+    basisLabel: seasonLabel(league, basis),
+    adjustments: Object.values(STYLE_EFFECTS[league]).some((byStat) => Object.values(byStat).some((c) => c.some((x) => x !== 0))),
+    usingLastSeason: basis !== seasonFor(league),
     leaguePace: r1(lgPace),
     leagueRating: r1(lgRtg),
     homeEdge: r1(homeEdge),

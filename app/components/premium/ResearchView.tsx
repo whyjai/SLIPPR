@@ -6,7 +6,7 @@ import { Badge, Card, PageHeader, cn } from './ui';
 import type { MatchupNote, NflResearch, Position } from '@/lib/research/nfl-defense';
 import PlayerTrendsPanel from './PlayerTrendsPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
-import NbaResearchView from './NbaResearchView';
+import HoopsResearchView from './HoopsResearchView';
 import type { SchemeNote } from '@/lib/research/nfl-teams';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
@@ -30,12 +30,14 @@ function kickoffLabel(kickoff: string): string {
   return `${weekday} ${h12}:${String(mm).padStart(2, '0')} ${hh < 12 ? 'AM' : 'PM'} ET`;
 }
 
-type Sport = 'nfl' | 'nba';
+type Sport = 'nfl' | 'nba' | 'wnba';
+const SPORTS: Sport[] = ['nfl', 'nba', 'wnba'];
 
 export default function ResearchView() {
   const [sport, setSport] = useState<Sport>(() => {
     try {
-      return window.localStorage.getItem('research-sport') === 'nba' ? 'nba' : 'nfl';
+      const saved = window.localStorage.getItem('research-sport') as Sport | null;
+      return saved && SPORTS.includes(saved) ? saved : 'nfl';
     } catch {
       return 'nfl';
     }
@@ -50,7 +52,7 @@ export default function ResearchView() {
   };
   const sportSwitch = (
     <div className="flex gap-1 rounded-xl border border-white/[0.06] bg-white/[0.02] p-1">
-      {(['nfl', 'nba'] as Sport[]).map((s) => (
+      {SPORTS.map((s) => (
         <button
           key={s}
           onClick={() => choose(s)}
@@ -64,7 +66,11 @@ export default function ResearchView() {
       ))}
     </div>
   );
-  return sport === 'nba' ? <NbaResearchView sportSwitch={sportSwitch} /> : <NflResearchView sportSwitch={sportSwitch} />;
+  return sport === 'nfl' ? (
+    <NflResearchView sportSwitch={sportSwitch} />
+  ) : (
+    <HoopsResearchView key={sport} league={sport} sportSwitch={sportSwitch} />
+  );
 }
 
 function NflResearchView({ sportSwitch }: { sportSwitch: ReactNode }) {

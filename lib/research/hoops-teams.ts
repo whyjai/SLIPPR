@@ -1,14 +1,14 @@
 /**
- * NBA team tendencies from box scores: pace, efficiency and shot profile on
- * both ends. `teamStyles` is also what the matchup projections read.
+ * Basketball team tendencies from box scores: pace, efficiency and shot
+ * profile on both ends. `teamStyles` is also what the matchup projections read.
  */
-import { NBA_TEAMS, nbaTeamGames, seasonLabel, type NbaTeamGame } from './nba-data';
+import { LEAGUES, seasonLabel, teamGames, teamNames, type HoopsTeamGame, type League } from './hoops-data';
 import { rank, type NflTeamTendencies, type TendencyMetric } from './nfl-teams';
 
 export type TeamStyle = {
   team: string;
   games: number;
-  pace: number; // possessions per 48 minutes
+  pace: number; // possessions per regulation game length (48 NBA, 40 WNBA)
   ortg: number; // points per 100 possessions
   drtg: number; // points allowed per 100 possessions
   efg: number; // %
@@ -29,7 +29,7 @@ export type TeamStyle = {
 };
 
 /** Season (or any subset of games) → one style line per team. */
-export function teamStyles(games: NbaTeamGame[]): Record<string, TeamStyle> {
+export function teamStyles(games: HoopsTeamGame[], regulation = 48): Record<string, TeamStyle> {
   const byKey = new Map(games.map((g) => [`${g.gameId}|${g.team}`, g]));
   const acc = new Map<string, Record<string, number>>();
   for (const g of games) {
@@ -39,7 +39,7 @@ export function teamStyles(games: NbaTeamGame[]): Record<string, TeamStyle> {
     const add = (k: string, v: number) => (a[k] = (a[k] ?? 0) + v);
     add('n', 1);
     add('poss', g.poss);
-    add('pace', (g.poss * 48) / g.minutes);
+    add('pace', (g.poss * regulation) / g.minutes);
     add('pts', g.pts);
     add('oppPts', o.pts);
     for (const [k, v] of Object.entries({ fgm: g.fgm, fga: g.fga, fg3m: g.fg3m, fg3a: g.fg3a, fta: g.fta, oreb: g.oreb, dreb: g.dreb, ast: g.ast, tov: g.tov, paint: g.paint, fb: g.fastBreak })) {
@@ -79,8 +79,8 @@ export function teamStyles(games: NbaTeamGame[]): Record<string, TeamStyle> {
   return out;
 }
 
-export const NBA_OFFENSE_METRICS: TendencyMetric[] = [
-  { key: 'pace', label: 'Pace', unit: '', highIsFirst: true, hint: 'Possessions per 48 minutes. #1 = fastest.' },
+export const HOOPS_OFFENSE_METRICS: TendencyMetric[] = [
+  { key: 'pace', label: 'Pace', unit: '', highIsFirst: true, hint: 'Possessions per game, adjusted to regulation length. #1 = fastest.' },
   { key: 'ortg', label: 'Offensive rating', unit: '', highIsFirst: true, hint: 'Points scored per 100 possessions.' },
   { key: 'efg', label: 'eFG%', unit: '%', highIsFirst: true, hint: 'Effective field-goal %: a three counts 1.5 makes.' },
   { key: 'threeRate', label: '3PA rate', unit: '%', highIsFirst: true, hint: 'Share of shots taken from three.' },
@@ -92,7 +92,7 @@ export const NBA_OFFENSE_METRICS: TendencyMetric[] = [
   { key: 'astRate', label: 'Assist rate', unit: '%', highIsFirst: true, hint: 'Share of made field goals that were assisted.' },
 ];
 
-export const NBA_DEFENSE_METRICS: TendencyMetric[] = [
+export const HOOPS_DEFENSE_METRICS: TendencyMetric[] = [
   { key: 'drtg', label: 'Defensive rating', unit: '', highIsFirst: true, hint: 'Points allowed per 100 possessions. #1 = allows the most.' },
   { key: 'oppEfg', label: 'Opp. eFG%', unit: '%', highIsFirst: true, hint: 'Opponent effective field-goal %. #1 = allows the best shooting.' },
   { key: 'oppThreeRate', label: 'Opp. 3PA rate', unit: '%', highIsFirst: true, hint: 'Share of opponent shots from three. #1 = gives up the most threes.' },
@@ -103,34 +103,35 @@ export const NBA_DEFENSE_METRICS: TendencyMetric[] = [
   { key: 'oppFastBreak', label: 'Opp. fast-break points', unit: '', highIsFirst: true, hint: 'Fast-break points allowed per game. #1 = allows the most.' },
 ];
 
-export type NbaTeamTendencies = NflTeamTendencies & { sport: 'nba'; seasonLabel: string; gamesPlayed: number };
+export type HoopsTeamTendencies = NflTeamTendencies & { sport: League; seasonLabel: string; gamesPlayed: number };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
-export async function getNbaTeamTendencies(season: number): Promise<NbaTeamTendencies> {
-  const styles = teamStyles(await nbaTeamGames(season));
-  const rows = Object.values(styles).filter((s) => NBA_TEAMS[s.team]);
+export async function getHoopsTeamTendencies(league: League, season: number): Promise<HoopsTeamTendencies> {
+  const [games, names] = await Promise.all([teamGames(league, season), teamNames(league, season)]);
+  const styles = teamStyles(games, LEAGUES[league].regulation);
+  const rows = Object.values(styles).filter((s) => names[s.team]);
   const values = (keys: TendencyMetric[]) => (s: TeamStyle) =>
     Object.fromEntries(keys.map((m) => [m.key, r1(s[m.key as keyof TeamStyle] as number)])) as Record<string, number | null>;
-  const off = rank(rows.map((s) => ({ team: s.team, values: values(NBA_OFFENSE_METRICS)(s) })), NBA_OFFENSE_METRICS);
-  const def = rank(rows.map((s) => ({ team: s.team, values: values(NBA_DEFENSE_METRICS)(s) })), NBA_DEFENSE_METRICS);
-  const gamesPlayed = Math.max(0, ...rows.map((s) => s.games));
+  const off = rank(rows.map((s) => ({ team: s.team, values: values(HOOPS_OFFENSE_METRICS)(s) })), HOOPS_OFFENSE_METRICS);
+  const def = rank(rows.map((s) => ({ team: s.team, values: values(HOOPS_DEFENSE_METRICS)(s) })), HOOPS_DEFENSE_METRICS);
+  const gamesPlayed = rows.length ? Math.min(...rows.map((s) => s.games)) : 0;
   return {
-    sport: 'nba',
+    sport: league,
     season,
-    seasonLabel: seasonLabel(season),
+    seasonLabel: seasonLabel(league, season),
     gamesPlayed,
     throughWeek: gamesPlayed,
     chartedThroughWeek: gamesPlayed,
     chartedPartialGames: 0,
     hasCharting: false,
     coverageSeason: null,
-    offenseMetrics: NBA_OFFENSE_METRICS,
-    defenseMetrics: NBA_DEFENSE_METRICS,
+    offenseMetrics: HOOPS_OFFENSE_METRICS,
+    defenseMetrics: HOOPS_DEFENSE_METRICS,
     teams: rows
       .map((s) => ({
         team: s.team,
-        name: `${NBA_TEAMS[s.team].city} ${NBA_TEAMS[s.team].nickname}`,
+        name: `${names[s.team].city} ${names[s.team].nickname}`,
         games: s.games,
         offense: off.cells[s.team],
         defense: def.cells[s.team],

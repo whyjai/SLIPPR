@@ -1,19 +1,26 @@
 /**
- * NBA signal audit. For a pair of completed seasons it measures:
+ * Basketball signal audit (NBA or WNBA). For a pair of completed seasons it measures:
  *   1. how well early defense-vs-position (G/F/C) predicts the rest of the season
  *   2. how stable team tendencies are (first N games vs the rest)
  *   3. how much an opponent's style (pace, defensive rating, threes and paint
  *      points allowed) moves a player's line, fit on one season and tested on
- *      the next. Prints the STYLE_EFFECTS table lib/research/nba-matchups.ts uses.
+ *      the next. Prints the style-effects table lib/research/hoops-matchups.ts uses.
  *
- *   npx tsx scripts/research/audit-nba.mts 2025 2026   (fit season, test season)
+ *   npx tsx scripts/research/audit-hoops.mts nba 2025 2026    (league, fit season, test season)
+ *   npx tsx scripts/research/audit-hoops.mts wnba 2025 2026
  */
-import { nbaPlayerGames, nbaTeamGames, type NbaPlayerGame, type NbaPos, type NbaTeamGame } from '../../lib/research/nba-data';
-import { STYLE_PREDICTORS, type StyleKey, type StyleStat } from '../../lib/research/nba-matchups';
-import { teamStyles } from '../../lib/research/nba-teams';
+import { LEAGUES, isLeague, type League, playerGames, teamGames, type HoopsPlayerGame, type HoopsPos, type HoopsTeamGame } from '../../lib/research/hoops-data';
+import { STYLE_PREDICTORS, type StyleKey, type StyleStat } from '../../lib/research/hoops-matchups';
+import { teamStyles } from '../../lib/research/hoops-teams';
 
-const fitSeason = Number(process.argv[2] ?? 2025);
-const testSeason = Number(process.argv[3] ?? fitSeason + 1);
+const arg = process.argv[2] ?? 'nba';
+if (!isLeague(arg)) throw new Error('usage: audit-hoops.mts <nba|wnba> <fit season> <test season>');
+const league: League = arg;
+const fitSeason = Number(process.argv[3] ?? 2025);
+const testSeason = Number(process.argv[4] ?? fitSeason + 1);
+const { regulation, seasonGames } = LEAGUES[league];
+const half = Math.floor(seasonGames / 2);
+const cuts = [Math.round(seasonGames / 8), Math.round(seasonGames / 4), half];
 
 const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / (xs.length || 1);
 const sd = (xs: number[]) => Math.sqrt(mean(xs.map((x) => (x - mean(xs)) ** 2)));
@@ -54,8 +61,8 @@ function ols(X: number[][], y: number[]): number[] {
 }
 
 /** Split each team's season at game `cut` (by date). */
-function halves(teams: NbaTeamGame[], cut: number) {
-  const byTeam = new Map<string, NbaTeamGame[]>();
+function halves(teams: HoopsTeamGame[], cut: number) {
+  const byTeam = new Map<string, HoopsTeamGame[]>();
   for (const g of teams) byTeam.set(g.team, [...(byTeam.get(g.team) ?? []), g]);
   const idx = new Map<string, number>();
   for (const [t, gs] of byTeam) gs.sort((a, b) => a.date.localeCompare(b.date)).forEach((g, i) => idx.set(`${g.gameId}|${t}`, i));
@@ -63,7 +70,7 @@ function halves(teams: NbaTeamGame[], cut: number) {
   return { early, idx };
 }
 
-const STAT: Record<StyleStat, (p: NbaPlayerGame) => number> = {
+const STAT: Record<StyleStat, (p: HoopsPlayerGame) => number> = {
   pts: (p) => p.pts,
   reb: (p) => p.reb,
   ast: (p) => p.ast,
@@ -72,13 +79,13 @@ const STAT: Record<StyleStat, (p: NbaPlayerGame) => number> = {
 };
 const STATS = Object.keys(STAT) as StyleStat[];
 
-type Sample = { pos: NbaPos; stat: StyleStat; z: number[]; ratio: number; base: number; actual: number };
+type Sample = { pos: HoopsPos; stat: StyleStat; z: number[]; ratio: number; base: number; actual: number };
 
 /** Player-games from the second half of a season, with the opponent's first-half style z-scores. */
 async function samples(season: number): Promise<Sample[]> {
-  const [players, teams] = await Promise.all([nbaPlayerGames(season), nbaTeamGames(season)]);
-  const { early } = halves(teams, 41);
-  const styles = teamStyles(teams.filter((g) => early(g.gameId, g.team)));
+  const [players, teams] = await Promise.all([playerGames(league, season), teamGames(league, season)]);
+  const { early } = halves(teams, half);
+  const styles = teamStyles(teams.filter((g) => early(g.gameId, g.team)), regulation);
   const keys = [...new Set(Object.values(STYLE_PREDICTORS).flat())] as StyleKey[];
   const lg = Object.fromEntries(keys.map((k) => [k, mean(Object.values(styles).map((s) => s[k]))]));
   const sds = Object.fromEntries(keys.map((k) => [k, sd(Object.values(styles).map((s) => s[k]))]));
@@ -95,7 +102,7 @@ async function samples(season: number): Promise<Sample[]> {
   for (const p of players) {
     if (early(p.gameId, p.team) || !p.pos || !styles[p.opp]) continue;
     const b = base.get(p.playerId);
-    if (!b || b.n < 20 || b.min / b.n < 20) continue;
+    if (!b || b.n < half / 2 || b.min / b.n < regulation * 0.42) continue; // ~20 mpg NBA, ~17 WNBA
     for (const stat of STATS) {
       const avg = b[stat] / b.n;
       if (avg < 0.5) continue;
@@ -109,9 +116,9 @@ async function samples(season: number): Promise<Sample[]> {
 // ---------------------------------------------------------------------------
 // 1 + 2. Defense vs position and team tendencies: early vs rest (test season)
 {
-  const [players, teams] = await Promise.all([nbaPlayerGames(testSeason), nbaTeamGames(testSeason)]);
-  console.log(`1. Defense vs position (${testSeason}), per game allowed: first N games vs the rest (r)`);
-  for (const cut of [10, 20, 41]) {
+  const [players, teams] = await Promise.all([playerGames(league, testSeason), teamGames(league, testSeason)]);
+  console.log(`${LEAGUES[league].name}\n1. Defense vs position (${testSeason}), per game allowed: first N games vs the rest (r)`);
+  for (const cut of cuts) {
     const { early } = halves(teams, cut);
     const agg = (keep: (e: boolean) => boolean) => {
       const tot = new Map<string, number>();
@@ -121,18 +128,18 @@ async function samples(season: number): Promise<Sample[]> {
         (games.get(p.opp) ?? games.set(p.opp, new Set()).get(p.opp)!).add(p.gameId);
         for (const s of STATS) tot.set(`${p.opp}|${p.pos}|${s}`, (tot.get(`${p.opp}|${p.pos}|${s}`) ?? 0) + STAT[s](p));
       }
-      return (team: string, pos: NbaPos, s: StyleStat) => (tot.get(`${team}|${pos}|${s}`) ?? 0) / (games.get(team)?.size || 1);
+      return (team: string, pos: HoopsPos, s: StyleStat) => (tot.get(`${team}|${pos}|${s}`) ?? 0) / (games.get(team)?.size || 1);
     };
     const A = agg((e) => e), B = agg((e) => !e);
     const ts = [...new Set(teams.map((g) => g.team))];
-    const cells = (['G', 'F', 'C'] as NbaPos[]).flatMap((pos) => STATS.map((s) => `${pos} ${s} ${f2(pearson(ts.map((t) => A(t, pos, s)), ts.map((t) => B(t, pos, s))))}`));
+    const cells = (['G', 'F', 'C'] as HoopsPos[]).flatMap((pos) => STATS.map((s) => `${pos} ${s} ${f2(pearson(ts.map((t) => A(t, pos, s)), ts.map((t) => B(t, pos, s))))}`));
     console.log(`   N=${cut}: ${cells.join(' | ')}`);
   }
   console.log(`\n2. Team tendencies (${testSeason}): first N games vs the rest (r)`);
-  for (const cut of [10, 20, 41]) {
+  for (const cut of cuts) {
     const { early } = halves(teams, cut);
-    const A = teamStyles(teams.filter((g) => early(g.gameId, g.team)));
-    const B = teamStyles(teams.filter((g) => !early(g.gameId, g.team)));
+    const A = teamStyles(teams.filter((g) => early(g.gameId, g.team)), regulation);
+    const B = teamStyles(teams.filter((g) => !early(g.gameId, g.team)), regulation);
     const ts = Object.keys(A);
     const keys = ['pace', 'ortg', 'drtg', 'efg', 'oppEfg', 'threeRate', 'oppThreeRate', 'ftRate', 'oppFtRate', 'oppPaint', 'orebPct', 'forcedTovPct'] as const;
     console.log(`   N=${cut}: ${keys.map((k) => `${k} ${f2(pearson(ts.map((t) => A[t][k]), ts.map((t) => B[t][k])))}`).join(' | ')}`);
@@ -144,8 +151,8 @@ async function samples(season: number): Promise<Sample[]> {
 {
   const [fit, test] = await Promise.all([samples(fitSeason), samples(testSeason)]);
   const table: Record<string, Record<string, number[]>> = {};
-  console.log(`\n3. Style effects, fit ${fitSeason} → test ${testSeason} (players 20+ mpg; % change in his line per +1 SD of opponent style)`);
-  for (const pos of ['G', 'F', 'C'] as NbaPos[]) {
+  console.log(`\n3. Style effects, fit ${fitSeason} → test ${testSeason} (regulars; % change in his line per +1 SD of opponent style)`);
+  for (const pos of ['G', 'F', 'C'] as HoopsPos[]) {
     table[pos] = {};
     for (const stat of STATS) {
       const tr = fit.filter((s) => s.pos === pos && s.stat === stat);
@@ -164,4 +171,39 @@ async function samples(season: number): Promise<Sample[]> {
     }
   }
   console.log('\nSTYLE_EFFECTS =', JSON.stringify(table));
+}
+
+// ---------------------------------------------------------------------------
+// 4. Ratings-based game estimate: first part of a season predicting the rest.
+{
+  const mean2 = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / (xs.length || 1);
+  console.log(`\n4. Game estimate (pace + ratings + home edge) on later games, ${testSeason}`);
+  const teams = await teamGames(league, testSeason);
+  for (const cut of [cuts[1], half]) {
+    const { early } = halves(teams, cut);
+    const S = teamStyles(teams.filter((g) => early(g.gameId, g.team)), regulation);
+    const lgPace = mean2(Object.values(S).map((x) => x.pace));
+    const lgRtg = mean2(Object.values(S).map((x) => x.ortg));
+    const byKey = new Map(teams.map((g) => [`${g.gameId}|${g.team}`, g]));
+    const earlyHome = teams.filter((g) => g.home && early(g.gameId, g.team));
+    const homeEdge = mean2(earlyHome.map((g) => g.pts - (byKey.get(`${g.gameId}|${g.opp}`)?.pts ?? g.pts)));
+    const pt: number[] = [], at: number[] = [], pm: number[] = [], am: number[] = [], lt: number[] = [];
+    for (const h of teams) {
+      if (!h.home || early(h.gameId, h.team) || early(h.gameId, h.opp)) continue;
+      const a = byKey.get(`${h.gameId}|${h.opp}`);
+      const H = S[h.team], A = S[h.opp];
+      if (!a || !H || !A) continue;
+      const len = h.minutes / regulation;
+      const pace = H.pace + A.pace - lgPace;
+      const hp = (pace / 100) * (H.ortg + A.drtg - lgRtg) * len + homeEdge / 2;
+      const ap = (pace / 100) * (A.ortg + H.drtg - lgRtg) * len - homeEdge / 2;
+      pt.push(hp + ap); at.push(h.pts + a.pts); pm.push(hp - ap); am.push(h.pts - a.pts);
+      lt.push(((2 * lgPace * lgRtg) / 100) * len);
+    }
+    const mae = (p: number[], a: number[]) => mean2(p.map((x, i) => Math.abs(x - a[i])));
+    console.log(
+      `   first ${cut} → rest (${pt.length} games): total r ${f2(pearson(pt, at))}, miss ${mae(pt, at).toFixed(1)} vs league avg ${mae(lt, at).toFixed(1)}` +
+        ` | margin r ${f2(pearson(pm, am))}, miss ${mae(pm, am).toFixed(1)} vs pick'em ${mean2(am.map(Math.abs)).toFixed(1)}`,
+    );
+  }
 }
