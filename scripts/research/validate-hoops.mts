@@ -62,7 +62,7 @@ console.log(`${cfg.name} ${season}: ${teams.length / 2} games, ${players.length}
   try {
     await streamCsv(
       `https://github.com/sportsdataverse/sportsdataverse-data/releases/download/${league}_stats_team_season_stats/team_season_stats_${season}.csv`,
-      ['team_name', 'gp', 'season_type', 'measure_type', 'per_mode', 'pts', 'fga', 'fg3a', 'fta', 'oreb', 'tov', 'poss', 'pace', 'off_rating', 'def_rating'],
+      ['team_name', 'gp', 'season_type', 'measure_type', 'per_mode', 'pts', 'fga', 'fg3a', 'fta', 'oreb', 'tov', 'poss', 'pace', 'pace_per40', 'off_rating', 'def_rating'],
       (r) => {
         if (r.season_type !== 'regular-season' || r.per_mode !== 'totals') return;
         if (r.measure_type === 'base') base.set(r.team_name, r);
@@ -84,7 +84,8 @@ console.log(`${cfg.name} ${season}: ${teams.length / 2} games, ${players.length}
       const nba = (r: Row, k: string) => Number(r[k]) / Number(b.gp);
       for (const k of ['pts', 'fga', 'fg3a', 'fta', 'oreb', 'tov'] as const) d[k].push(100 * (per(k) / nba(b, k) - 1));
       d.poss.push(100 * (per('poss') / nba(a, 'poss') - 1));
-      d.pace.push(styles[abbr].pace - Number(a.pace));
+      // Our pace is per regulation game: 48 min NBA, 40 WNBA (the WNBA site's `pace` is per 48).
+      d.pace.push(styles[abbr].pace - Number(cfg.regulation === 40 ? a.pace_per40 : a.pace));
       d.ortg.push(styles[abbr].ortg - Number(a.off_rating));
       d.drtg.push(styles[abbr].drtg - Number(a.def_rating));
     }
@@ -96,7 +97,7 @@ console.log(`${cfg.name} ${season}: ${teams.length / 2} games, ${players.length}
       check(`${cfg.name}.com ${k} per game`, n === Object.keys(names).length && maxAbs(d[k]) <= tol, `worst team diff ${maxAbs(d[k]).toFixed(2)}% over ${n} teams`);
     }
     check(`${cfg.name}.com possessions per game`, maxAbs(d.poss) <= 2, `worst ${maxAbs(d.poss).toFixed(2)}%, mean ${(d.poss.reduce((a, b) => a + b, 0) / n).toFixed(2)}%`);
-    check(`${cfg.name}.com pace`, maxAbs(d.pace) <= 2, `worst ${maxAbs(d.pace).toFixed(2)} possessions per 48`);
+    check(`${cfg.name}.com pace`, maxAbs(d.pace) <= 2, `worst ${maxAbs(d.pace).toFixed(2)} possessions per ${cfg.regulation} min`);
     check(`${cfg.name}.com offensive rating`, maxAbs(d.ortg) <= 2, `worst ${maxAbs(d.ortg).toFixed(2)} pts per 100`);
     check(`${cfg.name}.com defensive rating`, maxAbs(d.drtg) <= 2, `worst ${maxAbs(d.drtg).toFixed(2)} pts per 100`);
   }
