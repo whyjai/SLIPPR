@@ -44,7 +44,8 @@ export function getSeasonAggregate(season: number): Promise<SeasonAggregate> {
 export type TendencyMetric = {
   key: string;
   label: string;
-  unit: '%' | 'sec' | 'pts' | '' | 'EPA';
+  /** 'avg': a three-decimal rate shown baseball-style (.312), e.g. wOBA. */
+  unit: '%' | 'sec' | 'pts' | '' | 'EPA' | 'avg';
   /** true: #1 = highest value. false: #1 = lowest (e.g. pace: fewest seconds per snap = fastest). */
   highIsFirst: boolean;
   hint: string;
@@ -154,7 +155,9 @@ export function rank(rows: Array<{ team: string; values: Record<string, number |
       out[r.team][m.key] = { value: r.values[m.key], rank: tie ? out[prev.team][m.key].rank : i + 1 };
     });
     for (const r of rows) out[r.team][m.key] ??= { value: null, rank: null };
-    avg[m.key] = valid.length ? r2(valid.reduce((s, r) => s + (r.values[m.key] as number), 0) / valid.length) : null;
+    // Three decimals for small-scale stats (wOBA .314); two otherwise.
+    const mean = valid.length ? valid.reduce((s, r) => s + (r.values[m.key] as number), 0) / valid.length : null;
+    avg[m.key] = mean == null ? null : Math.abs(mean) < 1 ? Math.round(mean * 1000) / 1000 : r2(mean);
   }
   return { cells: out, avg };
 }

@@ -7,6 +7,7 @@ import type { MatchupNote, NflResearch, Position } from '@/lib/research/nfl-defe
 import PlayerTrendsPanel from './PlayerTrendsPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
 import HoopsResearchView from './HoopsResearchView';
+import MlbResearchView from './MlbResearchView';
 import type { SchemeNote } from '@/lib/research/nfl-teams';
 
 const POSITIONS: Position[] = ['QB', 'RB', 'WR', 'TE'];
@@ -30,8 +31,8 @@ function kickoffLabel(kickoff: string): string {
   return `${weekday} ${h12}:${String(mm).padStart(2, '0')} ${hh < 12 ? 'AM' : 'PM'} ET`;
 }
 
-type Sport = 'nfl' | 'nba' | 'wnba';
-const SPORTS: Sport[] = ['nfl', 'nba', 'wnba'];
+type Sport = 'nfl' | 'nba' | 'wnba' | 'mlb';
+const SPORTS: Sport[] = ['nfl', 'nba', 'wnba', 'mlb'];
 
 export default function ResearchView() {
   const [sport, setSport] = useState<Sport>(() => {
@@ -66,6 +67,7 @@ export default function ResearchView() {
       ))}
     </div>
   );
+  if (sport === 'mlb') return <MlbResearchView sportSwitch={sportSwitch} />;
   return sport === 'nfl' ? (
     <NflResearchView sportSwitch={sportSwitch} />
   ) : (
