@@ -9,7 +9,8 @@ type Side = 'offense' | 'defense';
 
 function fmt(value: number | null, m: TendencyMetric): string {
   if (value == null) return '—';
-  if (m.unit !== 'EPA') value = Math.round(value * 10) / 10;
+  if (m.unit !== 'EPA' && m.unit !== 'avg') value = Math.round(value * 10) / 10;
+  if (m.unit === 'avg') return value.toFixed(3).replace(/^(-?)0\./, '$1.');
   if (m.unit === '%') return `${value}%`;
   if (m.unit === 'sec') return `${value}s`;
   if (m.unit === 'pts') return `${value > 0 ? '+' : ''}${value}`;
@@ -23,6 +24,8 @@ type Props = {
   endpoint?: string;
   defaultMetric?: { defense: string; offense: string };
   intro?: (data: NflTeamTendencies) => ReactNode;
+  /** Button labels for the two sides (MLB: Pitching / Hitting). */
+  sideLabels?: Record<Side, string>;
 };
 
 export default function TeamTendenciesPanel({
@@ -30,6 +33,7 @@ export default function TeamTendenciesPanel({
   endpoint = '/api/research/nfl/teams',
   defaultMetric = { defense: 'blitzRate', offense: 'neutralPassRate' },
   intro,
+  sideLabels = { defense: 'Defense', offense: 'Offense' },
 }: Props) {
   const [result, setResult] = useState<{ season: number; data?: NflTeamTendencies; error?: string } | null>(null);
   const [side, setSide] = useState<Side>('defense');
@@ -107,7 +111,7 @@ export default function TeamTendenciesPanel({
               side === s ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/[0.02] text-zinc-400 hover:text-zinc-200',
             )}
           >
-            {s}
+            {sideLabels[s]}
           </button>
         ))}
       </div>
@@ -169,7 +173,9 @@ export default function TeamTendenciesPanel({
               <span className="truncate text-zinc-200">{t.name}</span>
               <span className="text-right font-mono text-zinc-200">{fmt(cell.value, metric)}</span>
               <span className="text-right font-mono text-xs text-zinc-500">
-                {diff == null ? '' : `${diff > 0 ? '+' : ''}${metric.unit === 'EPA' ? diff.toFixed(2) : Math.round(diff * 10) / 10}`}
+                {diff == null
+                  ? ''
+                  : `${diff > 0 ? '+' : ''}${metric.unit === 'EPA' ? diff.toFixed(2) : metric.unit === 'avg' ? diff.toFixed(3).replace(/^(-?)0\./, '$1.') : Math.round(diff * 10) / 10}`}
               </span>
               <span className="text-right font-mono text-xs text-zinc-500">{t.games}</span>
             </div>
