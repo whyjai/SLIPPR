@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ArrowDownUp } from 'lucide-react';
 import { Card, cn } from './ui';
 import type { NflTeamTendencies, TendencyMetric } from '@/lib/research/nfl-teams';
@@ -17,15 +17,28 @@ function fmt(value: number | null, m: TendencyMetric): string {
   return `${value}`;
 }
 
-export default function TeamTendenciesPanel({ season }: { season: number }) {
+type Props = {
+  season: number;
+  /** Defaults to NFL; the NBA passes its own endpoint, starting metric and intro. */
+  endpoint?: string;
+  defaultMetric?: { defense: string; offense: string };
+  intro?: (data: NflTeamTendencies) => ReactNode;
+};
+
+export default function TeamTendenciesPanel({
+  season,
+  endpoint = '/api/research/nfl/teams',
+  defaultMetric = { defense: 'blitzRate', offense: 'neutralPassRate' },
+  intro,
+}: Props) {
   const [result, setResult] = useState<{ season: number; data?: NflTeamTendencies; error?: string } | null>(null);
   const [side, setSide] = useState<Side>('defense');
-  const [metricKey, setMetricKey] = useState('blitzRate');
+  const [metricKey, setMetricKey] = useState(defaultMetric.defense);
   const [firstOnTop, setFirstOnTop] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/research/nfl/teams?season=${season}`)
+    fetch(`${endpoint}?season=${season}`)
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
@@ -35,7 +48,7 @@ export default function TeamTendenciesPanel({ season }: { season: number }) {
     return () => {
       cancelled = true;
     };
-  }, [season]);
+  }, [season, endpoint]);
 
   const loading = result?.season !== season;
   const data = result?.data ?? null;
@@ -71,8 +84,14 @@ export default function TeamTendenciesPanel({ season }: { season: number }) {
     <section>
       <h2 className="mb-1 text-lg font-semibold">Team tendencies</h2>
       <p className="mb-4 text-sm text-zinc-500">
-        How each offense plays and how each defense lines up, from play-by-play and FTN charting (blitzers, box counts,
-        play-action, motion). Completed games through Week {data.throughWeek}.
+        {intro ? (
+          intro(data)
+        ) : (
+          <>
+            How each offense plays and how each defense lines up, from play-by-play and FTN charting (blitzers, box
+            counts, play-action, motion). Completed games through Week {data.throughWeek}.
+          </>
+        )}
       </p>
 
       <div className="mb-3 flex gap-2">
@@ -81,7 +100,7 @@ export default function TeamTendenciesPanel({ season }: { season: number }) {
             key={s}
             onClick={() => {
               setSide(s);
-              setMetricKey(s === 'offense' ? 'neutralPassRate' : 'blitzRate');
+              setMetricKey(s === 'offense' ? defaultMetric.offense : defaultMetric.defense);
             }}
             className={cn(
               'rounded-lg px-4 py-2 text-sm font-medium capitalize transition',

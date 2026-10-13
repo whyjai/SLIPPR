@@ -5,8 +5,9 @@
  * on the field.
  */
 
+import { cached } from './csv';
+
 const RELEASES = 'https://github.com/nflverse/nflverse-data/releases/download';
-const TTL_MS = 60 * 60 * 1000; // re-pull at most hourly per server instance
 
 export type PlayerWeek = {
   playerId: string;
@@ -67,19 +68,6 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
   const [header, ...body] = rows;
   return body.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ''])));
-}
-
-const cache = new Map<string, { at: number; data: Promise<unknown> }>();
-
-function cached<T>(key: string, load: () => Promise<T>): Promise<T> {
-  const hit = cache.get(key);
-  if (hit && Date.now() - hit.at < TTL_MS) return hit.data as Promise<T>;
-  const data = load().catch((err) => {
-    cache.delete(key); // don't pin a failed fetch for an hour
-    throw err;
-  });
-  cache.set(key, { at: Date.now(), data });
-  return data;
 }
 
 async function fetchCsv(path: string): Promise<Record<string, string>[]> {

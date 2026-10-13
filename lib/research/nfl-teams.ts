@@ -141,7 +141,7 @@ function rawTendencies(agg: SeasonAggregate, coverageAgg: SeasonAggregate | null
     });
 }
 
-function rank(rows: Array<{ team: string; values: Record<string, number | null> }>, metrics: TendencyMetric[]) {
+export function rank(rows: Array<{ team: string; values: Record<string, number | null> }>, metrics: TendencyMetric[]) {
   const out: Record<string, Record<string, Cell>> = {};
   for (const r of rows) out[r.team] = {};
   const avg: Record<string, number | null> = {};
