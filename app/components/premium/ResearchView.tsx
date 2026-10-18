@@ -6,6 +6,7 @@ import { Badge, Card, PageHeader, cn } from './ui';
 import type { MatchupNote, NflResearch, Position } from '@/lib/research/nfl-defense';
 import PlayerTrendsPanel from './PlayerTrendsPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
+import NflPropSheetPanel from './NflPropSheetPanel';
 import HoopsResearchView from './HoopsResearchView';
 import MlbResearchView from './MlbResearchView';
 import type { SchemeNote } from '@/lib/research/nfl-teams';
@@ -81,7 +82,7 @@ function NflResearchView({ sportSwitch }: { sportSwitch: ReactNode }) {
   const [pos, setPos] = useState<Position>('TE');
   const [metric, setMetric] = useState('receptions');
   const [softFirst, setSoftFirst] = useState(true);
-  const [view, setView] = useState<'matchups' | 'players' | 'teams'>('matchups');
+  const [view, setView] = useState<'matchups' | 'props' | 'players' | 'teams'>('matchups');
 
   useEffect(() => {
     let cancelled = false;
@@ -166,6 +167,7 @@ function NflResearchView({ sportSwitch }: { sportSwitch: ReactNode }) {
             [
               ['matchups', 'Matchups'],
               ['players', 'Player trends'],
+              ['props', 'Prop cheat sheet'],
               ['teams', 'Team tendencies'],
             ] as const
           ).map(([key, label]) => (
@@ -182,7 +184,9 @@ function NflResearchView({ sportSwitch }: { sportSwitch: ReactNode }) {
           ))}
         </div>
 
-        {view === 'players' ? (
+        {view === 'props' ? (
+          <NflPropSheetPanel season={season} />
+        ) : view === 'players' ? (
           <PlayerTrendsPanel season={season} />
         ) : view === 'teams' ? (
           <TeamTendenciesPanel season={season} />
