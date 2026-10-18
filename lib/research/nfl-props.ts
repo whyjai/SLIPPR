@@ -5,6 +5,7 @@
  * sample (scripts/research/audit-nfl-props.mts: fit on one season, tested on
  * the next, using only games before each week).
  */
+import SPREAD from '../../data/research/nfl-prop-spread.json';
 import { loadPlays, type Play } from './nfl-pbp';
 import { cached } from './csv';
 import { getNflPlayerTrends } from './nfl-players';
@@ -209,18 +210,26 @@ export const PROP_EFFECTS: Record<PropPos, Partial<Record<PropStat, number[]>>> 
 export const RECENT_WEIGHT = 0.25;
 
 /**
- * The spread of outcomes: quantiles (0, 5%, ..., 100%) of actual / baseline per
- * prop, from 2024. Checked on 2025, "X% chance over" landed within ~3 points
- * (said 25 → 23, 55 → 52, 74 → 74). Medians sit below 1 for yardage: a typical
- * game is under the average (RB rush yds ~0.86x, WR rec yds ~0.90x).
+ * The spread of outcomes: quantiles (0, 5%, ..., 100%) of actual / baseline,
+ * per position, stat and volume tercile (low-volume players swing more), pooled
+ * over 2021-2025. Tested on held-out seasons (calibrate-nfl-props.mts), it beat
+ * a single-season spread and landed "50%" lines at 49-50% (the old table: 45%).
  */
-export const RATIO_QUANTILES: Record<PropPos, Partial<Record<PropStat, number[]>>> = {"QB": {"passYds": [0, 0.449, 0.59, 0.648, 0.709, 0.772, 0.83, 0.872, 0.928, 0.967, 1.014, 1.051, 1.105, 1.152, 1.193, 1.232, 1.298, 1.362, 1.46, 1.634, 2.937], "passAtt": [0, 0.503, 0.636, 0.737, 0.786, 0.829, 0.862, 0.904, 0.936, 0.978, 1.02, 1.058, 1.112, 1.141, 1.181, 1.22, 1.271, 1.332, 1.386, 1.539, 2.239], "passTd": [0, 0, 0, 0, 0, 0.486, 0.6, 0.712, 0.787, 0.88, 1, 1.103, 1.175, 1.297, 1.465, 1.6, 1.806, 2, 2.278, 2.783, 4.414], "rushYds": [-0.69, 0, 0, 0.107, 0.203, 0.321, 0.418, 0.495, 0.583, 0.652, 0.751, 0.828, 0.946, 1.072, 1.278, 1.458, 1.67, 1.915, 2.273, 2.635, 4.681]}, "RB": {"rushYds": [-0.061, 0.071, 0.202, 0.298, 0.403, 0.485, 0.54, 0.597, 0.683, 0.78, 0.862, 0.94, 1.036, 1.13, 1.209, 1.324, 1.437, 1.596, 1.785, 2.193, 3.487], "carries": [0, 0.231, 0.342, 0.444, 0.563, 0.646, 0.698, 0.752, 0.832, 0.891, 0.944, 1, 1.056, 1.137, 1.217, 1.28, 1.364, 1.455, 1.567, 1.795, 3.525], "recYds": [-0.913, 0, 0, 0, 0, 0.167, 0.252, 0.332, 0.427, 0.559, 0.636, 0.75, 0.899, 1.078, 1.245, 1.399, 1.551, 1.846, 2.222, 3.052, 7.797], "receptions": [0, 0, 0, 0.276, 0.372, 0.421, 0.522, 0.6, 0.671, 0.75, 0.823, 0.92, 1, 1.122, 1.251, 1.371, 1.5, 1.699, 1.866, 2.308, 4.324]}, "WR": {"recYds": [-0.095, 0, 0.176, 0.272, 0.372, 0.452, 0.545, 0.64, 0.727, 0.826, 0.902, 0.981, 1.088, 1.195, 1.305, 1.405, 1.566, 1.729, 2.011, 2.433, 4.977], "receptions": [0, 0, 0.281, 0.386, 0.457, 0.544, 0.64, 0.732, 0.794, 0.857, 0.93, 0.984, 1.084, 1.159, 1.274, 1.371, 1.5, 1.646, 1.888, 2.161, 3.9], "targets": [0, 0.246, 0.333, 0.471, 0.564, 0.632, 0.704, 0.773, 0.838, 0.893, 0.96, 1.014, 1.076, 1.143, 1.224, 1.329, 1.455, 1.605, 1.767, 2.034, 4.333]}, "TE": {"recYds": [-0.173, 0, 0.189, 0.294, 0.44, 0.501, 0.59, 0.652, 0.748, 0.818, 0.926, 1.021, 1.134, 1.238, 1.361, 1.494, 1.694, 1.807, 2.041, 2.4, 3.542], "receptions": [0, 0, 0.261, 0.391, 0.471, 0.526, 0.6, 0.698, 0.787, 0.874, 0.97, 1.055, 1.14, 1.235, 1.371, 1.5, 1.6, 1.721, 1.911, 2.25, 4.174], "targets": [0, 0.25, 0.329, 0.454, 0.519, 0.59, 0.675, 0.766, 0.828, 0.932, 0.988, 1.059, 1.171, 1.241, 1.333, 1.443, 1.527, 1.693, 1.868, 2.118, 3.75]}};
+const SPREAD_TABLES = SPREAD.tables as Record<string, number[]>;
+const SPREAD_CUTS = SPREAD.cuts as Record<string, number[]>;
+
+function spreadFor(pos: PropPos, stat: PropStat, base: number): number[] | null {
+  const c = SPREAD_CUTS[`${pos}|${stat}`];
+  if (!c) return null;
+  const tercile = base < c[0] ? 0 : base < c[1] ? 1 : 2;
+  return SPREAD_TABLES[`${pos}|${stat}|${tercile}`] ?? null;
+}
 
 const QS = Array.from({ length: 21 }, (_, i) => i / 20);
 
-/** Chance the stat finishes over `line`, given the player's baseline (from RATIO_QUANTILES). */
+/** Chance the stat finishes over `line`, given the player's baseline. */
 export function chanceOver(pos: PropPos, stat: PropStat, base: number, line: number, adj = 0): number | null {
-  const qs = RATIO_QUANTILES[pos][stat];
+  const qs = spreadFor(pos, stat, base);
   if (!qs || base <= 0) return null;
   const x = line / (base * (1 + adj));
   if (x <= qs[0]) return 1;
@@ -237,10 +246,14 @@ export function chanceOver(pos: PropPos, stat: PropStat, base: number, line: num
 
 /** Value at quantile q (0-1) of the outcome spread. */
 export function outcomeAt(pos: PropPos, stat: PropStat, base: number, q: number, adj = 0): number | null {
-  const qs = RATIO_QUANTILES[pos][stat];
+  const qs = spreadFor(pos, stat, base);
   if (!qs) return null;
   return base * (1 + adj) * qs[Math.round(q * 20)];
 }
+
+/** @deprecated single-season table kept for the audit's comparison; the sheet uses SPREAD. */
+export const RATIO_QUANTILES: Record<PropPos, Partial<Record<PropStat, number[]>>> = {"QB": {"passYds": [0, 0.449, 0.59, 0.648, 0.709, 0.772, 0.83, 0.872, 0.928, 0.967, 1.014, 1.051, 1.105, 1.152, 1.193, 1.232, 1.298, 1.362, 1.46, 1.634, 2.937], "passAtt": [0, 0.503, 0.636, 0.737, 0.786, 0.829, 0.862, 0.904, 0.936, 0.978, 1.02, 1.058, 1.112, 1.141, 1.181, 1.22, 1.271, 1.332, 1.386, 1.539, 2.239], "passTd": [0, 0, 0, 0, 0, 0.486, 0.6, 0.712, 0.787, 0.88, 1, 1.103, 1.175, 1.297, 1.465, 1.6, 1.806, 2, 2.278, 2.783, 4.414], "rushYds": [-0.69, 0, 0, 0.107, 0.203, 0.321, 0.418, 0.495, 0.583, 0.652, 0.751, 0.828, 0.946, 1.072, 1.278, 1.458, 1.67, 1.915, 2.273, 2.635, 4.681]}, "RB": {"rushYds": [-0.061, 0.071, 0.202, 0.298, 0.403, 0.485, 0.54, 0.597, 0.683, 0.78, 0.862, 0.94, 1.036, 1.13, 1.209, 1.324, 1.437, 1.596, 1.785, 2.193, 3.487], "carries": [0, 0.231, 0.342, 0.444, 0.563, 0.646, 0.698, 0.752, 0.832, 0.891, 0.944, 1, 1.056, 1.137, 1.217, 1.28, 1.364, 1.455, 1.567, 1.795, 3.525], "recYds": [-0.913, 0, 0, 0, 0, 0.167, 0.252, 0.332, 0.427, 0.559, 0.636, 0.75, 0.899, 1.078, 1.245, 1.399, 1.551, 1.846, 2.222, 3.052, 7.797], "receptions": [0, 0, 0, 0.276, 0.372, 0.421, 0.522, 0.6, 0.671, 0.75, 0.823, 0.92, 1, 1.122, 1.251, 1.371, 1.5, 1.699, 1.866, 2.308, 4.324]}, "WR": {"recYds": [-0.095, 0, 0.176, 0.272, 0.372, 0.452, 0.545, 0.64, 0.727, 0.826, 0.902, 0.981, 1.088, 1.195, 1.305, 1.405, 1.566, 1.729, 2.011, 2.433, 4.977], "receptions": [0, 0, 0.281, 0.386, 0.457, 0.544, 0.64, 0.732, 0.794, 0.857, 0.93, 0.984, 1.084, 1.159, 1.274, 1.371, 1.5, 1.646, 1.888, 2.161, 3.9], "targets": [0, 0.246, 0.333, 0.471, 0.564, 0.632, 0.704, 0.773, 0.838, 0.893, 0.96, 1.014, 1.076, 1.143, 1.224, 1.329, 1.455, 1.605, 1.767, 2.034, 4.333]}, "TE": {"recYds": [-0.173, 0, 0.189, 0.294, 0.44, 0.501, 0.59, 0.652, 0.748, 0.818, 0.926, 1.021, 1.134, 1.238, 1.361, 1.494, 1.694, 1.807, 2.041, 2.4, 3.542], "receptions": [0, 0, 0.261, 0.391, 0.471, 0.526, 0.6, 0.698, 0.787, 0.874, 0.97, 1.055, 1.14, 1.235, 1.371, 1.5, 1.6, 1.721, 1.911, 2.25, 4.174], "targets": [0, 0.25, 0.329, 0.454, 0.519, 0.59, 0.675, 0.766, 0.828, 0.932, 0.988, 1.059, 1.171, 1.241, 1.333, 1.443, 1.527, 1.693, 1.868, 2.118, 3.75]}};
+
 
 /** Player's baseline for a stat from his earlier games (blend chosen by the audit). */
 export function baseline(values: number[], recentWeight = RECENT_WEIGHT): number | null {
@@ -320,7 +333,11 @@ export type PropGame = {
   sides: Array<{ offense: string; defense: DefenseContext; players: PropPlayer[]; out: Array<{ name: string; pos: string; status: string; note: string }> }>;
 };
 
+/** Bumped when the projection or spread changes, so the track record shows which version made each call. */
+export const PROP_MODEL = 'nfl-2: spread pooled 2021-25 by volume';
+
 export type NflPropSheet = {
+  model?: string;
   season: number;
   week: number | null;
   throughWeek: number;
@@ -497,6 +514,7 @@ export async function getNflPropSheet(season: number, opts: SheetOptions = {}): 
   };
 
   return {
+    model: PROP_MODEL,
     season,
     week,
     throughWeek,
