@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ArrowDownUp } from 'lucide-react';
 import { Badge, Card, PageHeader, cn } from './ui';
 import HoopsPlayerTrendsPanel from './HoopsPlayerTrendsPanel';
+import HoopsPropSheetPanel from './HoopsPropSheetPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
 import type { HoopsResearch } from '@/lib/research/hoops-defense';
 import type { GameCard as Game, PlayerLine, StyleStat, TeamLine } from '@/lib/research/hoops-matchups';
@@ -52,7 +53,7 @@ export default function HoopsResearchView({ league, sportSwitch }: { league: Lea
   const label = (season: number) => (league === 'nba' ? `${season - 1}-${String(season).slice(2)}` : `${season}`);
   const [season, setSeason] = useState<number | null>(null); // null = latest, resolved by the API
   const [result, setResult] = useState<{ key: number | null; data?: HoopsResearch; error?: string } | null>(null);
-  const [view, setView] = useState<'matchups' | 'players' | 'teams'>('matchups');
+  const [view, setView] = useState<'matchups' | 'props' | 'players' | 'teams'>('matchups');
   const [pos, setPos] = useState<Pos>('G');
   const [metric, setMetric] = useState<StyleStat>('pts');
   const [softFirst, setSoftFirst] = useState(true);
@@ -128,6 +129,7 @@ export default function HoopsResearchView({ league, sportSwitch }: { league: Lea
             [
               ['matchups', 'Matchups'],
               ['players', 'Player trends'],
+              ['props', 'Prop cheat sheet'],
               ['teams', 'Team tendencies'],
             ] as const
           ).map(([key, text]) => (
@@ -146,7 +148,9 @@ export default function HoopsResearchView({ league, sportSwitch }: { league: Lea
           ))}
         </div>
 
-        {view === 'players' && shown != null ? (
+        {view === 'props' ? (
+          <HoopsPropSheetPanel league={league} />
+        ) : view === 'players' && shown != null ? (
           <HoopsPlayerTrendsPanel league={league} season={shown} />
         ) : view === 'teams' && shown != null ? (
           <TeamTendenciesPanel
