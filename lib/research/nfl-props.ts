@@ -337,19 +337,44 @@ function rankMap(profiles: DefenseProfile[], f: Feature): Map<string, RankedValu
   return new Map(sorted.map((p, i) => [p.team, { value: Math.round(p.values[f] * 1000) / 1000, rank: i + 1 }]));
 }
 
-export async function getNflPropSheet(season: number): Promise<NflPropSheet> {
-  const [weeks, games, defGames, trends, status] = await Promise.all([
+export type SheetOptions = {
+  /**
+   * Build the sheet as of this date (YYYY-MM-DD, US Eastern game day): only games
+   * played before it count as data, and the slate is the week of the next game
+   * on or after it. Used to grade past sheets and to backtest. Default: today's data.
+   */
+  asOf?: string;
+  /** Apply today's rosters and injury report (default: only when not backtesting). */
+  status?: boolean;
+};
+
+export async function getNflPropSheet(season: number, opts: SheetOptions = {}): Promise<NflPropSheet> {
+  const useStatus = opts.status ?? !opts.asOf;
+  const [weeks, games, allDefGames, trends, status] = await Promise.all([
     playerWeeks(season),
     schedule(season),
     nflDefenseGames(season),
     getNflPlayerTrends(season),
-    nflPlayerStatus().catch(() => new Map<string, PlayerStatus>()),
+    useStatus ? nflPlayerStatus().catch(() => new Map<string, PlayerStatus>()) : Promise.resolve(new Map<string, PlayerStatus>()),
   ]);
-  const reg = weeks.filter((w) => w.seasonType === 'REG');
+  const regGames = games.filter((g) => g.gameType === 'REG');
+  const dayOf = new Map(regGames.map((g) => [g.gameId, g.gameday]));
+  const before = (gameId: string) => !opts.asOf || (dayOf.get(gameId) ?? '') < opts.asOf;
+  const reg = weeks.filter((w) => w.seasonType === 'REG' && before(w.gameId));
+  const defGames = allDefGames.filter((g) => before(g.gameId));
   const throughWeek = Math.max(0, ...reg.map((w) => w.week));
-  const open = games.filter((g) => g.gameType === 'REG' && g.homeScore == null);
-  const week = open.length ? Math.min(...open.map((g) => g.week)) : null;
-  const slate = open.filter((g) => g.week === week).sort((a, b) => `${a.gameday} ${a.gametime}`.localeCompare(`${b.gameday} ${b.gametime}`));
+  let week: number | null;
+  let slate: typeof games;
+  if (opts.asOf) {
+    const next = regGames.filter((g) => g.gameday >= opts.asOf!).sort((x, y) => x.gameday.localeCompare(y.gameday));
+    week = next[0]?.week ?? null;
+    slate = next.filter((g) => g.week === week);
+  } else {
+    const open = regGames.filter((g) => g.homeScore == null);
+    week = open.length ? Math.min(...open.map((g) => g.week)) : null;
+    slate = open.filter((g) => g.week === week);
+  }
+  slate = slate.sort((a, b) => `${a.gameday} ${a.gametime}`.localeCompare(`${b.gameday} ${b.gametime}`));
 
   const profiles = defenseProfiles(reg, defGames);
   const z = zScores(profiles);
@@ -421,7 +446,7 @@ export async function getNflPropSheet(season: number): Promise<NflPropSheet> {
       const last = l[l.length - 1];
       const pos = posOf(last.position)!;
       const u = usage.get(last.playerId);
-      const log3 = u?.log.filter((g) => g.season === season).slice(0, 3) ?? [];
+      const log3 = u?.log.filter((g) => g.season === season && (week == null || g.week < week || !opts.asOf)).slice(0, 3) ?? [];
       const props: PropLine[] = [];
       for (const stat of POS_STATS[pos]) {
         const values = l.map((w) => Number(w[STAT_COL[stat]] ?? 0));
