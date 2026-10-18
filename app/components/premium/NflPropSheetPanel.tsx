@@ -98,7 +98,14 @@ function PlayerRows({ p }: { p: PropPlayer }) {
                 <div className="font-sans text-[10px] text-zinc-500">
                   {p.snapPct != null && `${p.snapPct}% snaps`}
                   {p.share != null && ` · ${p.share}% tgt share`}
-                  {p.missedLast && <span className="text-amber-300"> · missed last game, check injury report</span>}
+                  {p.injury && (
+                    <span className="text-amber-300" title={p.injury.note}>
+                      {' '}
+                      · {p.injury.status}
+                    </span>
+                  )}
+                  {p.formerTeam && <span className="text-sky-300"> · stats with {p.formerTeam}</span>}
+                  {p.missedLast && !p.injury && <span className="text-zinc-400"> · missed last game</span>}
                 </div>
               </div>
             )}
@@ -146,6 +153,12 @@ function GameSheet({ g }: { g: PropGame }) {
             <p className="mb-2 text-sm font-semibold text-zinc-200">
               {s.offense} offense vs {s.defense.team} defense
             </p>
+            {(s.out ?? []).length > 0 && (
+              <p className="mb-2 text-xs text-rose-300/90">
+                Out: {(s.out ?? []).map((o) => `${o.name} (${o.pos}, ${o.status})`).join(', ')}. Their teammates&apos;
+                roles may grow beyond the averages below.
+              </p>
+            )}
             <DefenseBox d={s.defense} offense={s.offense} />
             <div className="mt-3 overflow-x-auto">
               <table className="w-full min-w-[720px] font-mono text-xs text-zinc-300">

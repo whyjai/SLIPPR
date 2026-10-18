@@ -8,6 +8,7 @@
 import { loadPlays, type Play } from './nfl-pbp';
 import { cached } from './csv';
 import { getNflPlayerTrends } from './nfl-players';
+import { isOut, nflPlayerStatus, type PlayerStatus } from './nfl-status';
 import { playerWeeks, schedule, TEAM_NAMES, type PlayerWeek } from './nflverse';
 
 export type PropPos = 'QB' | 'RB' | 'WR' | 'TE';
@@ -304,6 +305,10 @@ export type PropPlayer = {
   snapPct: number | null; // last 3 games
   share: number | null; // target share %, last 3 (not for QBs)
   missedLast: boolean; // didn't play the team's most recent game
+  /** Injury designation this week (ESPN), if any other than Active. */
+  injury: { status: string; note: string } | null;
+  /** Traded or signed: the team his stats came from. */
+  formerTeam: string | null;
   props: PropLine[];
 };
 
@@ -312,7 +317,7 @@ export type PropGame = {
   kickoff: string;
   away: string;
   home: string;
-  sides: Array<{ offense: string; defense: DefenseContext; players: PropPlayer[] }>;
+  sides: Array<{ offense: string; defense: DefenseContext; players: PropPlayer[]; out: Array<{ name: string; pos: string; status: string; note: string }> }>;
 };
 
 export type NflPropSheet = {
@@ -333,11 +338,12 @@ function rankMap(profiles: DefenseProfile[], f: Feature): Map<string, RankedValu
 }
 
 export async function getNflPropSheet(season: number): Promise<NflPropSheet> {
-  const [weeks, games, defGames, trends] = await Promise.all([
+  const [weeks, games, defGames, trends, status] = await Promise.all([
     playerWeeks(season),
     schedule(season),
     nflDefenseGames(season),
     getNflPlayerTrends(season),
+    nflPlayerStatus().catch(() => new Map<string, PlayerStatus>()),
   ]);
   const reg = weeks.filter((w) => w.seasonType === 'REG');
   const throughWeek = Math.max(0, ...reg.map((w) => w.week));
@@ -381,10 +387,25 @@ export async function getNflPropSheet(season: number): Promise<NflPropSheet> {
   const lastTeamWeek = new Map<string, number>();
   for (const w of reg) lastTeamWeek.set(w.team, Math.max(lastTeamWeek.get(w.team) ?? 0, w.week));
 
+  const currentTeam = (l: PlayerWeek[]) => status.get(l[0].playerId)?.team ?? l[l.length - 1].team;
+  const outFor = (team: string) =>
+    [...byPlayer.values()]
+      .filter((l) => currentTeam(l) === team && l.length >= 2 && isOut(status.get(l[0].playerId)?.injury?.status) && posOf(l[l.length - 1].position))
+      .map((l) => {
+        const inj = status.get(l[0].playerId)!.injury!;
+        return { name: l[l.length - 1].name, pos: posOf(l[l.length - 1].position)!, status: inj.status, note: inj.note, usage: avg(l.map((w) => Number(w.targets ?? 0) + Number(w.carries ?? 0) + Number(w.attempts ?? 0))) };
+      })
+      .filter((x) => x.usage >= 3)
+      .sort((a, b) => b.usage - a.usage)
+      .map((x) => ({ name: x.name, pos: x.pos, status: x.status, note: x.note }));
+
   const playersFor = (team: string, opp: string): PropPlayer[] => {
     const lastWeek = lastTeamWeek.get(team) ?? 0;
     const recent = (l: PlayerWeek[], k: string) => avg(l.filter((w) => w.week > lastWeek - 3).map((w) => Number(w[k] ?? 0)));
-    const roster = [...byPlayer.values()].filter((l) => l[l.length - 1].team === team && l.length >= 3);
+    // Current roster (ESPN, so this week's trades count), minus anyone ruled out.
+    const roster = [...byPlayer.values()].filter(
+      (l) => currentTeam(l) === team && l.length >= 3 && !isOut(status.get(l[0].playerId)?.injury?.status),
+    );
     const pick = (pos: PropPos, n: number, key: (l: PlayerWeek[]) => number) =>
       roster
         .filter((l) => posOf(l[l.length - 1].position) === pos)
@@ -439,7 +460,12 @@ export async function getNflPropSheet(season: number): Promise<NflPropSheet> {
         games: l.length,
         snapPct: log3.length && log3.some((g) => g.snapPct != null) ? Math.round(avg(log3.filter((g) => g.snapPct != null).map((g) => g.snapPct!))) : null,
         share: pos !== 'QB' && log3.length ? r1(avg(log3.map((g) => g.targetShare))) : null,
-        missedLast: last.week < lastWeek,
+        missedLast: last.week < (lastTeamWeek.get(last.team) ?? 0),
+        injury: (() => {
+          const i = status.get(last.playerId)?.injury;
+          return i && i.status !== 'Active' ? { status: i.status, note: i.note } : null;
+        })(),
+        formerTeam: last.team !== team ? last.team : null,
         props,
       };
     }).filter((p) => p.props.length > 0);
@@ -458,8 +484,8 @@ export async function getNflPropSheet(season: number): Promise<NflPropSheet> {
         away: g.away,
         home: g.home,
         sides: [
-          { offense: g.away, defense: context(g.home), players: playersFor(g.away, g.home) },
-          { offense: g.home, defense: context(g.away), players: playersFor(g.home, g.away) },
+          { offense: g.away, defense: context(g.home), players: playersFor(g.away, g.home), out: outFor(g.away) },
+          { offense: g.home, defense: context(g.away), players: playersFor(g.home, g.away), out: outFor(g.home) },
         ],
       })),
   };
