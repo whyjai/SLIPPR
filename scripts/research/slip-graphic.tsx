@@ -15,6 +15,9 @@ const fonts = [500, 600, 700, 800].map((w) => ({ name: 'Geist', data: FONT(`Geis
   .concat([500, 600].map((w) => ({ name: 'Geist Mono', data: FONT(`GeistMono-${w}.ttf`), weight: w as 500, style: 'normal' as const })));
 const BG = '#070709', FG = '#fafafa', MUTED = '#a1a1aa', DIM = '#71717a', BRIGHT = '#34d399', SKY = '#7dd3fc';
 const pct = (x: number) => `${Math.round(x * 100)}%`;
+const N = slip.legs.length;
+const WORDS = ['', 'it', 'both', 'all three', 'all four', 'all five', 'all six'];
+const tight = N > 4;
 
 function main() {
   const el = (
@@ -24,33 +27,33 @@ function main() {
           <div style={{ display: 'flex', width: 46, height: 46, borderRadius: 12, background: 'linear-gradient(180deg,#34d399,#059669)', alignItems: 'center', justifyContent: 'center', fontSize: 26, fontWeight: 800, color: '#022c22' }}>S</div>
           <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: 1 }}>SLIPPR</span>
         </div>
-        <span style={{ fontFamily: 'Geist Mono', fontSize: 20, color: DIM }}>SUN OCT 18 · TRACKED</span>
+        <span style={{ fontFamily: 'Geist Mono', fontSize: 20, color: DIM }}>{`${slip.dateLabel ?? 'SUN OCT 18'} · TRACKED`}</span>
       </div>
-      <span style={{ marginTop: 40, fontSize: 21, fontWeight: 600, color: BRIGHT, letterSpacing: 3 }}>STANDARD LINES · 4-PICK POWER</span>
+      <span style={{ marginTop: 40, fontSize: 21, fontWeight: 600, color: BRIGHT, letterSpacing: 3 }}>{`STANDARD LINES · ${N}-PICK POWER`}</span>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 20, marginTop: 8 }}>
-        <span style={{ fontSize: 96, fontWeight: 800, lineHeight: 1 }}>10x</span>
-        <span style={{ fontSize: 30, color: MUTED }}>pays · fair ~7.8x</span>
+        <span style={{ fontSize: 96, fontWeight: 800, lineHeight: 1 }}>{`${slip.payout.multiplier}x`}</span>
+        <span style={{ fontSize: 30, color: MUTED }}>{`pays · fair ~${(1 / slip.combined.ours).toFixed(1)}x`}</span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 40 }}>
-        {slip.legs.map((l: any) => (
-          <div key={l.player} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '22px 26px', borderRadius: 18, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: tight ? 12 : 16, marginTop: tight ? 30 : 40 }}>
+        {slip.legs.map((l: any, i: number) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: tight ? '16px 26px' : '22px 26px', borderRadius: 18, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <span style={{ fontSize: 34, fontWeight: 700 }}>{l.player}</span>
               <span style={{ fontSize: 21, color: DIM }}>{`${l.sport} · ${l.game} · ${l.team}`}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-              <span style={{ fontSize: 32, fontWeight: 700, color: SKY }}>{`UNDER ${l.line} ${l.label}`}</span>
+              <span style={{ fontSize: 32, fontWeight: 700, color: l.side === 'over' ? BRIGHT : SKY }}>{`${l.side.toUpperCase()} ${l.line} ${l.label}`}</span>
               <span style={{ fontFamily: 'Geist Mono', fontSize: 20, color: MUTED }}>{`model ${pct(l.ours)} · sharp ${pct(l.pinnacle)}`}</span>
             </div>
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 34, padding: '24px 28px', borderRadius: 18, background: 'linear-gradient(90deg, rgba(16,185,129,0.16), rgba(16,185,129,0.04))' }}>
-        <span style={{ fontSize: 26, fontWeight: 600 }}>All four hit</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: tight ? 26 : 34, padding: '24px 28px', borderRadius: 18, background: 'linear-gradient(90deg, rgba(16,185,129,0.16), rgba(16,185,129,0.04))' }}>
+        <span style={{ fontSize: 26, fontWeight: 600 }}>{`${WORDS[N] ?? 'All'} hit`.replace(/^./, (c) => c.toUpperCase())}</span>
         <span style={{ fontFamily: 'Geist Mono', fontSize: 30, color: BRIGHT }}>{`~${pct(slip.combined.ours)} · 1 in ${Math.round(1 / slip.combined.ours)}`}</span>
       </div>
       <span style={{ marginTop: 24, fontSize: 19, color: MUTED, lineHeight: 1.4 }}>
-        Each leg cleared 55% in both our calibrated model and the sharpest market's no-vig price. Pays 10x on a ~1-in-8 shot: value comes from the payout, not a lock. Lines must match your app.
+        {`${slip.note ?? "Each leg cleared 55% in both our calibrated model and the sharpest market's no-vig price."} Pays ${slip.payout.multiplier}x on a ~1-in-${Math.round(1 / slip.combined.ours)} shot: value comes from the payout, not a lock. Lines must match your app.`}
       </span>
       <div style={{ display: 'flex', flex: 1 }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 16, fontSize: 17, color: DIM }}>

@@ -1,0 +1,18 @@
+{
+  "id": "2026-10-19-6pick",
+  "createdAt": "2026-10-19T20:00:00Z",
+  "title": "Monday night 6-pick",
+  "dateLabel": "MON OCT 19",
+  "payout": { "type": "power", "multiplier": 37.5 },
+  "method": "Standard lines (Pinnacle's posted lines). The four legs where our model and Pinnacle's no-vig price both put the side at 55%+, plus our two strongest leans where Pinnacle is near 50/50. Skipped: big model-vs-market gaps from role changes (Rachaad White with Croskey-Merritt on IR; McCaffrey and Kittle with Deebo out).",
+  "note": "Four legs cleared 55% in both our model and the sharpest market; two are model leans the market prices near 50/50. Two QB TD unders and Purdy's yards all like a low-scoring game.",
+  "combined": { "ours": 0.06, "pinnacle": 0.03 },
+  "legs": [
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Mike Evans", "team": "SF", "stat": "receptions", "label": "Receptions", "side": "under", "line": 5.5, "ours": 0.71, "pinnacle": 0.60 },
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Jayden Daniels", "team": "WAS", "stat": "passTd", "label": "Pass TDs", "side": "under", "line": 1.5, "ours": 0.64, "pinnacle": 0.56 },
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Stefon Diggs", "team": "WAS", "stat": "receptions", "label": "Receptions", "side": "over", "line": 3.5, "ours": 0.60, "pinnacle": 0.58 },
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Brock Purdy", "team": "SF", "stat": "passTd", "label": "Pass TDs", "side": "under", "line": 2.5, "ours": 0.58, "pinnacle": 0.60 },
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Jayden Daniels", "team": "WAS", "stat": "rushYds", "label": "Rush Yds", "side": "over", "line": 38.5, "ours": 0.65, "pinnacle": 0.51 },
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Brock Purdy", "team": "SF", "stat": "passYds", "label": "Pass Yds", "side": "under", "line": 253.5, "ours": 0.58, "pinnacle": 0.50 }
+  ]
+}
