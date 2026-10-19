@@ -42,9 +42,12 @@ jobs:
             [ "$(date -u +%u)" = "2" ] && task=track || task=snapshot
           fi
           npx tsx scripts/research/grade-nfl-sheet.mts "$task" "$season"
+      - name: Grade tracked slips
+        if: always()
+        run: npx tsx scripts/research/grade-slips.mts || true
       - name: Commit
         run: |
           git config user.name "slippr-research-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/research/prop-sheets
+          git add data/research/prop-sheets data/research/slips
           git diff --cached --quiet || { git commit -m "Prop sheet: ${{ github.event.inputs.task || 'scheduled' }} $(date -u +%F)"; git pull --rebase -q; git push; }
