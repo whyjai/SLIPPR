@@ -1,0 +1,54 @@
+# Tracks the NBA and NHL prop cheat sheets daily: freezes the day's slate before tip-off
+# and grades earlier days once their box scores are published, committing both
+# to data/research/prop-sheets/.
+name: NBA + NHL prop sheet tracking
+
+on:
+  schedule:
+    - cron: '0 20 * * *' # 4pm ET: the day's sheet with the afternoon injury report
+    - cron: '0 13 * * *' # 9am ET: grade (box scores post overnight)
+  workflow_dispatch:
+    inputs:
+      task:
+        description: snapshot or track
+        default: track
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prop-sheet
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Snapshot or grade
+        run: |
+          task="${{ github.event.inputs.task }}"
+          if [ -z "$task" ]; then
+            [ "$(date -u +%H)" -ge 18 ] && task=snapshot || task=track
+          fi
+          echo "task=$task" >> "$GITHUB_ENV"
+          npx tsx scripts/research/grade-hoops-sheet.mts "$task" nba
+      - name: NHL snapshot or grade
+        if: always()
+        run: npx tsx scripts/research/grade-nhl-sheet.mts "$task"
+      - name: Grade tracked slips
+        if: always()
+        run: npx tsx scripts/research/grade-slips.mts || true
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "slippr-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/research/prop-sheets data/research/slips
+          git diff --cached --quiet || { git commit -m "NBA/NHL prop sheets: ${{ github.event.inputs.task || 'scheduled' }} $(date -u +%F)"; git pull --rebase -q; git push; }

@@ -1,0 +1,107 @@
+{
+ "league": "nhl",
+ "updatedAt": "2026-10-19T00:35:48.468Z",
+ "overall": {
+  "props": 0,
+  "lines": 0,
+  "overMedian": null,
+  "underAverage": null,
+  "insideMiddle50": null,
+  "brier": {
+   "sheet": null,
+   "ownHitRate": null,
+   "coinFlip": null
+  },
+  "calibration": [
+   {
+    "from": 0,
+    "to": 30,
+    "said": null,
+    "happened": null,
+    "n": 0
+   },
+   {
+    "from": 30,
+    "to": 45,
+    "said": null,
+    "happened": null,
+    "n": 0
+   },
+   {
+    "from": 45,
+    "to": 55,
+    "said": null,
+    "happened": null,
+    "n": 0
+   },
+   {
+    "from": 55,
+    "to": 70,
+    "said": null,
+    "happened": null,
+    "n": 0
+   },
+   {
+    "from": 70,
+    "to": 100,
+    "said": null,
+    "happened": null,
+    "n": 0
+   }
+  ]
+ },
+ "days": [
+  {
+   "date": "2026-10-19",
+   "pending": 242,
+   "dnp": 0,
+   "props": 0,
+   "lines": 0,
+   "overMedian": null,
+   "underAverage": null,
+   "insideMiddle50": null,
+   "brier": {
+    "sheet": null,
+    "ownHitRate": null,
+    "coinFlip": null
+   },
+   "calibration": [
+    {
+     "from": 0,
+     "to": 30,
+     "said": null,
+     "happened": null,
+     "n": 0
+    },
+    {
+     "from": 30,
+     "to": 45,
+     "said": null,
+     "happened": null,
+     "n": 0
+    },
+    {
+     "from": 45,
+     "to": 55,
+     "said": null,
+     "happened": null,
+     "n": 0
+    },
+    {
+     "from": 55,
+     "to": 70,
+     "said": null,
+     "happened": null,
+     "n": 0
+    },
+    {
+     "from": 70,
+     "to": 100,
+     "said": null,
+     "happened": null,
+     "n": 0
+    }
+   ]
+  }
+ ]
+}
