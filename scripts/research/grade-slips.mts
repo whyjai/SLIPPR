@@ -4,13 +4,14 @@
  *
  *   npx tsx scripts/research/grade-slips.mts
  *
- * Legs: NFL (nflverse), NHL (NHL stats API), NBA/WNBA (sportsdataverse), matched by
+ * Legs: NFL (nflverse), NHL (NHL stats API), NBA/WNBA (sportsdataverse), MLB (play-by-play), matched by
  * player name and game date. A leg with no box score yet is pending.
  */
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { playerGames, seasonFor } from '../../lib/research/hoops-data';
 import { nameKey, nhlGoalieGames, nhlSeasonFor, nhlSkaterGames } from '../../lib/research/nhl-data';
 import { playerWeeks, schedule } from '../../lib/research/nflverse';
+import { addPlay, emptyLine, mlbPeople, mlbPlays } from '../../lib/research/mlb-data';
 
 const DIR = 'data/research/slips';
 type Leg = { sport: string; game: string; gameDate: string; player: string; team: string; stat: string; side: 'over' | 'under'; line: number; ours: number };
@@ -42,6 +43,15 @@ async function actual(leg: Leg): Promise<number | null> {
     const g = (await playerGames(league, seasonFor(league, day)).catch(() => [])).find((r) => r.date === leg.gameDate && nameKey(r.name) === key);
     if (!g) return null;
     return leg.stat === 'pra' ? g.pts + g.reb + g.ast : Number(g[leg.stat as 'pts']);
+  }
+  if (leg.sport === 'MLB') {
+    const season = day.getUTCFullYear();
+    const id = [...(await mlbPeople(season)).values()].find((p) => nameKey(p.name) === key)?.id;
+    const plays = (await mlbPlays(season)).filter((p) => p.date === leg.gameDate && p.batter === id);
+    if (!plays.length) return null;
+    const line = emptyLine();
+    for (const p of plays) addPlay(line, p);
+    return Number(line[leg.stat as 'tb']);
   }
   return null;
 }

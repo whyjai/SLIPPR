@@ -6,6 +6,7 @@
  * Recipe and spreads come from scripts/research/calibrate-hoops-props.mts.
  */
 import NBA_SPREAD from '../../data/research/nba-prop-spread.json';
+import WNBA_SPREAD from '../../data/research/wnba-prop-spread.json';
 import { cached } from './csv';
 import { latestSeason, LEAGUES, nextSlate, playerGames, roster, seasonFor } from './hoops-data';
 import { blendBaseline, chanceOver, outcomeAt, type BaselineParams, type SpreadModel } from './props-engine';
@@ -29,8 +30,8 @@ export const HOOPS_MIN_BASE: Record<League, Record<HoopsStat, number>> = {
 // ---------------------------------------------------------------------------
 
 type SpreadFile = SpreadModel & { baseline: BaselineParams; earlyGames: number; fitSeasons: number[] };
-/** WNBA spreads are added when its calibration file exists; until then the NBA's stand in. */
-const SPREADS: Partial<Record<League, SpreadFile>> = { nba: NBA_SPREAD as unknown as SpreadFile };
+/** Each league's own calibration (scripts/research/calibrate-hoops-props.mts); the NBA's stands in for a league without one. */
+const SPREADS: Partial<Record<League, SpreadFile>> = { nba: NBA_SPREAD as unknown as SpreadFile, wnba: WNBA_SPREAD as unknown as SpreadFile };
 const spreadOf = (league: League) => SPREADS[league] ?? SPREADS.nba!;
 
 export const HOOPS_PROP_MODEL = 'hoops-1: baseline last 10 @0.5 + last season as 6 games; spread pooled 2022-26 by volume, early-season spread';
