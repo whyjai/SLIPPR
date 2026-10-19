@@ -18,6 +18,10 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 const N = slip.legs.length;
 const WORDS = ['', 'it', 'both', 'all three', 'all four', 'all five', 'all six'];
 const tight = N > 4;
+const compact = N > 8;
+const parlay = slip.payout.type === 'parlay';
+const odds = (x: number) => (1 / x >= 1000 ? `1 in ${Math.round(1 / x).toLocaleString('en-US')}` : `1 in ${Math.round(1 / x)}`);
+const sharpFair = Math.round(1 / slip.combined.pinnacle);
 
 function main() {
   const el = (
@@ -29,13 +33,25 @@ function main() {
         </div>
         <span style={{ fontFamily: 'Geist Mono', fontSize: 20, color: DIM }}>{`${slip.dateLabel ?? 'SUN OCT 18'} · TRACKED`}</span>
       </div>
-      <span style={{ marginTop: 40, fontSize: 21, fontWeight: 600, color: BRIGHT, letterSpacing: 3 }}>{`STANDARD LINES · ${N}-PICK POWER`}</span>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 20, marginTop: 8 }}>
-        <span style={{ fontSize: 96, fontWeight: 800, lineHeight: 1 }}>{`${slip.payout.multiplier}x`}</span>
-        <span style={{ fontSize: 30, color: MUTED }}>{`pays · fair ~${(1 / slip.combined.ours).toFixed(1)}x`}</span>
+      <span style={{ marginTop: compact ? 30 : 40, fontSize: 21, fontWeight: 600, color: BRIGHT, letterSpacing: 3 }}>{parlay ? `STANDARD LINES · ${N}-LEG PARLAY · ${(slip.payout.book ?? '').toUpperCase()}` : `STANDARD LINES · ${N}-PICK POWER`}</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 20, marginTop: compact ? 14 : 8 }}>
+        <span style={{ fontSize: compact ? 72 : 96, fontWeight: 800, lineHeight: 1 }}>{`${slip.payout.estimated ? '~' : ''}${slip.payout.multiplier.toLocaleString('en-US')}x`}</span>
+        <span style={{ fontSize: 30, color: MUTED }}>{parlay ? `est. payout · sharp fair ~${sharpFair.toLocaleString('en-US')}x` : `pays · fair ~${(1 / slip.combined.ours).toFixed(1)}x`}</span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: tight ? 12 : 16, marginTop: tight ? 30 : 40 }}>
-        {slip.legs.map((l: any, i: number) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: compact ? 6 : tight ? 12 : 16, marginTop: compact ? 26 : tight ? 30 : 40 }}>
+        {compact && slip.legs.map((l: any, i: number) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 22px', borderRadius: 12, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+              <span style={{ fontSize: 25, fontWeight: 700 }}>{l.player}</span>
+              <span style={{ fontSize: 17, color: DIM }}>{`${l.sport} · ${l.team}`}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
+              <span style={{ fontSize: 23, fontWeight: 700, color: l.side === 'over' ? BRIGHT : SKY }}>{`${l.side === 'over' ? 'O' : 'U'} ${l.line} ${l.label}`}</span>
+              <span style={{ fontFamily: 'Geist Mono', fontSize: 17, color: MUTED, width: 92, justifyContent: 'flex-end', display: 'flex' }}>{`${pct(l.ours)}/${pct(l.pinnacle)}`}</span>
+            </div>
+          </div>
+        ))}
+        {!compact && slip.legs.map((l: any, i: number) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: tight ? '16px 26px' : '22px 26px', borderRadius: 18, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <span style={{ fontSize: 34, fontWeight: 700 }}>{l.player}</span>
@@ -48,12 +64,14 @@ function main() {
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: tight ? 26 : 34, padding: '24px 28px', borderRadius: 18, background: 'linear-gradient(90deg, rgba(16,185,129,0.16), rgba(16,185,129,0.04))' }}>
-        <span style={{ fontSize: 26, fontWeight: 600 }}>{`${WORDS[N] ?? 'All'} hit`.replace(/^./, (c) => c.toUpperCase())}</span>
-        <span style={{ fontFamily: 'Geist Mono', fontSize: 30, color: BRIGHT }}>{`~${pct(slip.combined.ours)} · 1 in ${Math.round(1 / slip.combined.ours)}`}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: compact ? 16 : tight ? 26 : 34, padding: compact ? '16px 28px' : '24px 28px', borderRadius: 18, background: 'linear-gradient(90deg, rgba(16,185,129,0.16), rgba(16,185,129,0.04))' }}>
+        <span style={{ fontSize: 26, fontWeight: 600 }}>{`${WORDS[N] ?? `All ${N}`} hit`.replace(/^./, (c) => c.toUpperCase())}</span>
+        <span style={{ fontFamily: 'Geist Mono', fontSize: 30, color: BRIGHT }}>{compact ? `ours ${odds(slip.combined.ours)} · sharp ${odds(slip.combined.pinnacle)}` : `~${pct(slip.combined.ours)} · 1 in ${Math.round(1 / slip.combined.ours)}`}</span>
       </div>
-      <span style={{ marginTop: 24, fontSize: 19, color: MUTED, lineHeight: 1.4 }}>
-        {`${slip.note ?? "Each leg cleared 55% in both our calibrated model and the sharpest market's no-vig price."} Pays ${slip.payout.multiplier}x on a ~1-in-${Math.round(1 / slip.combined.ours)} shot: value comes from the payout, not a lock. Lines must match your app.`}
+      <span style={{ marginTop: compact ? 14 : 24, fontSize: compact ? 17 : 19, color: MUTED, lineHeight: 1.4 }}>
+        {parlay
+          ? `Each leg: our model / sharp market chance. ${slip.note} A lottery ticket: big payout because it rarely hits. Payout estimated; lines must match your app.`
+          : `${slip.note ?? "Each leg cleared 55% in both our calibrated model and the sharpest market's no-vig price."} Pays ${slip.payout.multiplier}x on a ~1-in-${Math.round(1 / slip.combined.ours)} shot: value comes from the payout, not a lock. Lines must match your app.`}
       </span>
       <div style={{ display: 'flex', flex: 1 }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 16, fontSize: 17, color: DIM }}>
