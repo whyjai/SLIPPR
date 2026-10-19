@@ -1,0 +1,5900 @@
+{
+ "model": "nhl-1: baseline last 5 @0.25 + last season as 40 games; spread pooled 2021-26 by volume (saves: last 2 seasons), early-season spread",
+ "league": "nhl",
+ "season": 2026,
+ "date": "2026-10-19",
+ "generatedAt": "2026-10-19T00:35:43.223Z",
+ "games": [
+  {
+   "id": "2026020137",
+   "tipoff": "2026-10-19T23:00:00Z",
+   "away": "ANA",
+   "home": "NYR",
+   "sides": [
+    {
+     "team": "ANA",
+     "opp": "NYR",
+     "players": [
+      {
+       "id": "8481605",
+       "name": "Jackson LaCombe",
+       "pos": "D",
+       "minutes": 24.6,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.7,
+         "median": 1.1,
+         "low": 1,
+         "high": 2.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 48,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0.7,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 16,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8483482",
+       "name": "Tristan Luneau",
+       "pos": "D",
+       "minutes": 20.8,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 18,
+           "hits": 2,
+           "games": 8
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484153",
+       "name": "Leo Carlsson",
+       "pos": "C",
+       "minutes": 19.3,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.5,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 44,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1,
+         "median": 1,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475798",
+       "name": "Mikael Granlund",
+       "pos": "C",
+       "minutes": 19.3,
+       "gamesThisSeason": 6,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "day-to-day"
+       },
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2,
+         "median": 1.9,
+         "low": 0.9,
+         "high": 2.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 17,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 26,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484762",
+       "name": "Beckett Sennecke",
+       "pos": "R",
+       "minutes": 18,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.4,
+         "median": 2.1,
+         "low": 1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 70,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 17,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 26,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8483521",
+       "name": "Noah Warren",
+       "pos": "D",
+       "minutes": 17.8,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 7
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 0,
+           "games": 7
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 3,
+           "games": 7
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8483445",
+       "name": "Cutter Gauthier",
+       "pos": "L",
+       "minutes": 17.3,
+       "gamesThisSeason": 6,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 3.7,
+         "median": 3.1,
+         "low": 1.6,
+         "high": 4.9,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 66,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 46,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 19,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8481563",
+       "name": "Drew Helleson",
+       "pos": "D",
+       "minutes": 17,
+       "gamesThisSeason": 2,
+       "injury": null,
+       "props": [
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475324",
+       "name": "Nick Jensen",
+       "pos": "D",
+       "minutes": 17,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480843",
+       "name": "Lukas Dostal",
+       "pos": "G · started 4 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 6,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 24.1,
+         "median": 23.9,
+         "low": 19.6,
+         "high": 29.1,
+         "lines": [
+          {
+           "line": 20.5,
+           "chance": 70,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 23.5,
+           "chance": 52,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 26.5,
+           "chance": 37,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Ryan Poehling",
+       "status": "Injured Reserve",
+       "note": "Poehling (knee) is expected to miss 6-8 weeks with an MCL sprain."
+      },
+      {
+       "name": "Ian Moore",
+       "status": "Injured Reserve",
+       "note": "Head coach Joel Quenneville said Friday that Moore (lower body) is still \"a ways from skating,\" Patrick Present of The Hockey News reports."
+      }
+     ]
+    },
+    {
+     "team": "NYR",
+     "opp": "ANA",
+     "players": [
+      {
+       "id": "8479323",
+       "name": "Adam Fox",
+       "pos": "D",
+       "minutes": 23.2,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.6,
+         "median": 1,
+         "low": 0.9,
+         "high": 2.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.8,
+         "median": 0,
+         "low": 0,
+         "high": 1.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478882",
+       "name": "Vladislav Gavrikov",
+       "pos": "D",
+       "minutes": 23.1,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476459",
+       "name": "Mika Zibanejad",
+       "pos": "C",
+       "minutes": 20.9,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.5,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 44,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 31,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 41,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476468",
+       "name": "J.T. Miller",
+       "pos": "C",
+       "minutes": 19.9,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.9,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 56,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 30,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.7,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 17,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 41,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480434",
+       "name": "Sean Durzi",
+       "pos": "D",
+       "minutes": 19.5,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 7,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8482109",
+       "name": "Alexis Lafrenière",
+       "pos": "L",
+       "minutes": 17.9,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 2.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 31,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 18,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 31,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8481604",
+       "name": "Pavel Dorofeyev",
+       "pos": "R",
+       "minutes": 17.6,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.8,
+         "median": 2.5,
+         "low": 1.3,
+         "high": 3.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 73,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 50,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0.7,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 15,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 31,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8482157",
+       "name": "Will Cuylle",
+       "pos": "L",
+       "minutes": 16.6,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 2.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 31,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 10,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484210",
+       "name": "Gabe Perreault",
+       "pos": "R",
+       "minutes": 16.1,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.6,
+         "median": 1.1,
+         "low": 0.9,
+         "high": 2.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 11,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8482193",
+       "name": "Dylan Garand",
+       "pos": "G · started 4 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 5,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 20.6,
+         "median": 20.4,
+         "low": 16.7,
+         "high": 24.9,
+         "lines": [
+          {
+           "line": 16.5,
+           "chance": 77,
+           "hits": 7,
+           "games": 8
+          },
+          {
+           "line": 19.5,
+           "chance": 55,
+           "hits": 6,
+           "games": 8
+          },
+          {
+           "line": 22.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 8
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Joonas Korpisalo",
+       "status": "Injured Reserve",
+       "note": "Korpisalo (lower body) will miss at least four more weeks, per Elliotte Friedman of Sportsnet on Saturday."
+      },
+      {
+       "name": "Igor Shesterkin",
+       "status": "Injured Reserve",
+       "note": "Shesterkin will require surgery and a lengthy rehab process to address his season-ending right knee injury, Vince Z. Mercogliano of The Athletic reports Sunday."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "2026020138",
+   "tipoff": "2026-10-19T23:00:00Z",
+   "away": "COL",
+   "home": "PHI",
+   "sides": [
+    {
+     "team": "COL",
+     "opp": "PHI",
+     "players": [
+      {
+       "id": "8480069",
+       "name": "Cale Makar",
+       "pos": "D",
+       "minutes": 24.4,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 46,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1.1,
+         "median": 1.1,
+         "low": 0,
+         "high": 1.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 25,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.8,
+         "median": 0,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478038",
+       "name": "Devon Toews",
+       "pos": "D",
+       "minutes": 22.2,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.7,
+         "median": 1.1,
+         "low": 0.9,
+         "high": 2.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477492",
+       "name": "Nathan MacKinnon",
+       "pos": "C",
+       "minutes": 22.1,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 4.4,
+         "median": 3.8,
+         "low": 1.9,
+         "high": 5.9,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 72,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 57,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 43,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1.7,
+         "median": 1.6,
+         "low": 0,
+         "high": 2.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 58,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 53,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.7,
+         "median": 0,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 1,
+         "median": 0,
+         "low": 0,
+         "high": 1.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480039",
+       "name": "Martin Necas",
+       "pos": "C",
+       "minutes": 21.4,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.5,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 45,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1.3,
+         "median": 1.2,
+         "low": 0,
+         "high": 1.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 58,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 38,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.8,
+         "median": 0,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475754",
+       "name": "Brock Nelson",
+       "pos": "C",
+       "minutes": 19.5,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.3,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 83,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 58,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 34,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 18,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475172",
+       "name": "Nazem Kadri",
+       "pos": "C",
+       "minutes": 19.3,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.8,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 72,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 48,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 14,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477476",
+       "name": "Artturi Lehkonen",
+       "pos": "L",
+       "minutes": 18.6,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.1,
+         "median": 1.9,
+         "low": 1,
+         "high": 3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 33,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0.7,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 16,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8470613",
+       "name": "Brent Burns",
+       "pos": "D",
+       "minutes": 18.5,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 2.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 31,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 7,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476312",
+       "name": "Josh Manson",
+       "pos": "D",
+       "minutes": 17.6,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.5,
+         "median": 1,
+         "low": 0.8,
+         "high": 2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 46,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 7,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478406",
+       "name": "Mackenzie Blackwood",
+       "pos": "G · started 3 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 6,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 22.9,
+         "median": 22.6,
+         "low": 18.6,
+         "high": 27.7,
+         "lines": [
+          {
+           "line": 19.5,
+           "chance": 69,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 51,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 35,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Zachary L'Heureux",
+       "status": "Out",
+       "note": "out"
+      },
+      {
+       "name": "Nicolas Roy",
+       "status": "Out",
+       "note": "out"
+      }
+     ]
+    },
+    {
+     "team": "PHI",
+     "opp": "COL",
+     "players": [
+      {
+       "id": "8477948",
+       "name": "Travis Sanheim",
+       "pos": "D",
+       "minutes": 24.5,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8482142",
+       "name": "Jamie Drysdale",
+       "pos": "D",
+       "minutes": 21.7,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8481533",
+       "name": "Trevor Zegras",
+       "pos": "C",
+       "minutes": 18.7,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2,
+         "median": 1.9,
+         "low": 0.9,
+         "high": 2.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0.7,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 16,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 23,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 40,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477989",
+       "name": "Christian Dvorak",
+       "pos": "C",
+       "minutes": 18.3,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.7,
+         "median": 1.1,
+         "low": 0.9,
+         "high": 2.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 12,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8482159",
+       "name": "Tyson Foerster",
+       "pos": "R",
+       "minutes": 17.3,
+       "gamesThisSeason": 10,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "day-to-day"
+       },
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.1,
+         "median": 1.9,
+         "low": 1,
+         "high": 3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 33,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 33,
+           "hits": 1,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 9,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 31,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476461",
+       "name": "Sean Couturier",
+       "pos": "C",
+       "minutes": 16.8,
+       "gamesThisSeason": 10,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "day-to-day"
+       },
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480015",
+       "name": "Owen Tippett",
+       "pos": "R",
+       "minutes": 16.8,
+       "gamesThisSeason": 9,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "day-to-day"
+       },
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 46,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 11,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480220",
+       "name": "Noah Cates",
+       "pos": "L",
+       "minutes": 15.6,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 0,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 23,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484387",
+       "name": "Matvei Michkov",
+       "pos": "R",
+       "minutes": 14.8,
+       "gamesThisSeason": 10,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.8,
+         "median": 1.2,
+         "low": 1,
+         "high": 2.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 78,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 48,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 13,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478435",
+       "name": "Dan Vladar",
+       "pos": "G · started 3 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 5,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 23.3,
+         "median": 23.1,
+         "low": 19,
+         "high": 28.3,
+         "lines": [
+          {
+           "line": 19.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 53,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Travis Konecny",
+       "status": "Injured Reserve",
+       "note": "Konecny (lower body) was placed on injured reserve Sunday, according to the NHL media site."
+      },
+      {
+       "name": "Rasmus Ristolainen",
+       "status": "Injured Reserve",
+       "note": "Ristolainen (upper body) won't travel with the Flyers ahead of Thursday's game against the Red Wings but is closing in on a return, Charlie O'Connor of PHLY Sports reports."
+      },
+      {
+       "name": "Cam York",
+       "status": "Injured Reserve",
+       "note": "ir"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "2026020139",
+   "tipoff": "2026-10-19T23:30:00Z",
+   "away": "SJS",
+   "home": "TOR",
+   "sides": [
+    {
+     "team": "SJS",
+     "opp": "TOR",
+     "players": [
+      {
+       "id": "8476885",
+       "name": "Jacob Trouba",
+       "pos": "D",
+       "minutes": 22.7,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 2.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 32,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484801",
+       "name": "Macklin Celebrini",
+       "pos": "C",
+       "minutes": 21.5,
+       "gamesThisSeason": 6,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 3.6,
+         "median": 3,
+         "low": 1.5,
+         "high": 4.8,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 76,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 65,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 45,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1.5,
+         "median": 1.4,
+         "low": 0,
+         "high": 2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 58,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.9,
+         "median": 0,
+         "low": 0,
+         "high": 1.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477498",
+       "name": "Darnell Nurse",
+       "pos": "D",
+       "minutes": 21,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.1,
+         "median": 1.9,
+         "low": 1,
+         "high": 3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 33,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475200",
+       "name": "Dmitry Orlov",
+       "pos": "D",
+       "minutes": 20.8,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477505",
+       "name": "Alexander Wennberg",
+       "pos": "C",
+       "minutes": 20.5,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 13,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484227",
+       "name": "Will Smith",
+       "pos": "C",
+       "minutes": 18.5,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.4,
+         "median": 2.1,
+         "low": 1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 70,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 43,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 18,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 26,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478975",
+       "name": "Mason Marchment",
+       "pos": "L",
+       "minutes": 17.2,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.8,
+         "median": 1.2,
+         "low": 1,
+         "high": 2.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 48,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 12,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480748",
+       "name": "Kiefer Sherwood",
+       "pos": "L",
+       "minutes": 17,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.2,
+         "median": 2,
+         "low": 1,
+         "high": 3.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 58,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 34,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8484911",
+       "name": "Collin Graf",
+       "pos": "R",
+       "minutes": 16.1,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 10,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477968",
+       "name": "Alex Nedeljkovic",
+       "pos": "G · started 3 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 3,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 25.6,
+         "median": 24.8,
+         "low": 20.1,
+         "high": 29.7,
+         "lines": [
+          {
+           "line": 21.5,
+           "chance": 67,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 24.5,
+           "chance": 52,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 27.5,
+           "chance": 36,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": []
+    },
+    {
+     "team": "TOR",
+     "opp": "SJS",
+     "players": [
+      {
+       "id": "8478178",
+       "name": "Darren Raddysh",
+       "pos": "D",
+       "minutes": 22.9,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.8,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 48,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 19,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476931",
+       "name": "Jake McCabe",
+       "pos": "D",
+       "minutes": 22,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8479318",
+       "name": "Auston Matthews",
+       "pos": "C",
+       "minutes": 21,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 3.6,
+         "median": 3.1,
+         "low": 1.5,
+         "high": 4.8,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 76,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 65,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 46,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1,
+         "median": 1,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 22,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476853",
+       "name": "Morgan Rielly",
+       "pos": "D",
+       "minutes": 20.7,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.7,
+         "median": 1.1,
+         "low": 0.9,
+         "high": 2.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475171",
+       "name": "Oliver Ekman-Larsson",
+       "pos": "D",
+       "minutes": 20,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 0,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 7,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477939",
+       "name": "William Nylander",
+       "pos": "R",
+       "minutes": 19.7,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 45,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1.2,
+         "median": 1.2,
+         "low": 0,
+         "high": 1.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 58,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 35,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.8,
+         "median": 0,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8480893",
+       "name": "Kirill Marchenko",
+       "pos": "R",
+       "minutes": 18.9,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.8,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 72,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 49,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 20,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8483565",
+       "name": "Nick Blankenburg",
+       "pos": "D",
+       "minutes": 16.6,
+       "gamesThisSeason": 4,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 7,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478458",
+       "name": "Jack Roslovic",
+       "pos": "C",
+       "minutes": 16,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.3,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 83,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 58,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 35,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 11,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 26,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475683",
+       "name": "Sergei Bobrovsky",
+       "pos": "G · started 4 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 6,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 22.2,
+         "median": 22,
+         "low": 18.1,
+         "high": 26.9,
+         "lines": [
+          {
+           "line": 18.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 21.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 24.5,
+           "chance": 36,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "John Tavares",
+       "status": "Injured Reserve",
+       "note": "ir"
+      },
+      {
+       "name": "Chris Tanev",
+       "status": "Injured Reserve",
+       "note": "The Maple Leafs announced Thursday that Tanev (lower body) is considered week-to-week, Mark Masters of TSN reports."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "2026020140",
+   "tipoff": "2026-10-20T01:00:00Z",
+   "away": "PIT",
+   "home": "UTA",
+   "sides": [
+    {
+     "team": "PIT",
+     "opp": "UTA",
+     "players": [
+      {
+       "id": "8474578",
+       "name": "Erik Karlsson",
+       "pos": "D",
+       "minutes": 23.4,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.2,
+         "median": 2,
+         "low": 1,
+         "high": 3.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 58,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 34,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 19,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.7,
+         "median": 0,
+         "low": 0,
+         "high": 1.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8471724",
+       "name": "Kris Letang",
+       "pos": "D",
+       "minutes": 21.4,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 28,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8475810",
+       "name": "Bryan Rust",
+       "pos": "R",
+       "minutes": 19.8,
+       "gamesThisSeason": 6,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.4,
+         "median": 2,
+         "low": 1,
+         "high": 3.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 70,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 42,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 18,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8471675",
+       "name": "Sidney Crosby",
+       "pos": "C",
+       "minutes": 19.3,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.3,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 83,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 58,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 35,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1,
+         "median": 1,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 23,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476483",
+       "name": "Rickard Rakell",
+       "pos": "R",
+       "minutes": 19.1,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.7,
+         "median": 2.3,
+         "low": 1.1,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 47,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 43,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 14,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 26,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8479398",
+       "name": "Samuel Girard",
+       "pos": "D",
+       "minutes": 18.2,
+       "gamesThisSeason": 9,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "day-to-day"
+       },
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 7,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8471215",
+       "name": "Evgeni Malkin",
+       "pos": "C",
+       "minutes": 17.6,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 45,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1,
+         "median": 1,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 23,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8485414",
+       "name": "Ben Kindel",
+       "pos": "C",
+       "minutes": 15.4,
+       "gamesThisSeason": 8,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.1,
+         "median": 1.9,
+         "low": 1,
+         "high": 3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 33,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8483808",
+       "name": "Andrei Kuzmenko",
+       "pos": "L",
+       "minutes": 14.6,
+       "gamesThisSeason": 5,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 32,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 8,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8481668",
+       "name": "Arturs Silovs",
+       "pos": "G · started 2 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 5,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 23.5,
+         "median": 23.3,
+         "low": 19.1,
+         "high": 28.5,
+         "lines": [
+          {
+           "line": 19.5,
+           "chance": 73,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 54,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 38,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Justin Brazeau",
+       "status": "Injured Reserve",
+       "note": "Brazeau (lower body) was placed on injured reserve by the Penguins on Sunday."
+      },
+      {
+       "name": "Trevor van Riemsdyk",
+       "status": "Injured Reserve",
+       "note": "ir"
+      }
+     ]
+    },
+    {
+     "team": "UTA",
+     "opp": "PIT",
+     "players": [
+      {
+       "id": "8479410",
+       "name": "Mikhail Sergachev",
+       "pos": "D",
+       "minutes": 24,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.1,
+         "median": 1.9,
+         "low": 1,
+         "high": 3.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 33,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 17,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.6,
+         "median": 0,
+         "low": 0,
+         "high": 1.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477346",
+       "name": "MacKenzie Weegar",
+       "pos": "D",
+       "minutes": 22.2,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.9,
+         "median": 1.7,
+         "low": 0.9,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 82,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 30,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478507",
+       "name": "John Marino",
+       "pos": "D",
+       "minutes": 20.2,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 33,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 9,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8476389",
+       "name": "Vincent Trocheck",
+       "pos": "C",
+       "minutes": 19.8,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.6,
+         "median": 1.1,
+         "low": 0.9,
+         "high": 2.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 47,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.7,
+         "median": 0.7,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 15,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8477951",
+       "name": "Nick Schmaltz",
+       "pos": "C",
+       "minutes": 19.5,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 46,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 20,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8479343",
+       "name": "Clayton Keller",
+       "pos": "R",
+       "minutes": 18.8,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 2.7,
+         "median": 2.3,
+         "low": 1.1,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 92,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 72,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 47,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 1.1,
+         "median": 1,
+         "low": 0,
+         "high": 1.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 25,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 26,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.8,
+         "median": 0,
+         "low": 0,
+         "high": 1.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 38,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8483431",
+       "name": "Logan Cooley",
+       "pos": "C",
+       "minutes": 17.5,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.7,
+         "median": 1.1,
+         "low": 1,
+         "high": 2.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 48,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.8,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 56,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 18,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8482699",
+       "name": "Dylan Guenther",
+       "pos": "R",
+       "minutes": 17.2,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 3,
+         "median": 2.6,
+         "low": 1.3,
+         "high": 4,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 73,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 35,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.9,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 20,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.4,
+         "median": 0,
+         "low": 0,
+         "high": 0.8,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 36,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478474",
+       "name": "Lawson Crouse",
+       "pos": "L",
+       "minutes": 16.3,
+       "gamesThisSeason": 9,
+       "injury": null,
+       "props": [
+        {
+         "stat": "shots",
+         "label": "Shots on goal",
+         "base": 1.7,
+         "median": 1.1,
+         "low": 1,
+         "high": 2.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 77,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 48,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "points",
+         "label": "Points",
+         "base": 0.5,
+         "median": 0,
+         "low": 0,
+         "high": 0.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 10,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "goals",
+         "label": "Goals",
+         "base": 0.3,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 22,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "assists",
+         "label": "Assists",
+         "base": 0.2,
+         "median": 0,
+         "low": 0,
+         "high": 0,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 17,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8478872",
+       "name": "Karel Vejmelka",
+       "pos": "G · started 4 of last 5",
+       "minutes": 60,
+       "gamesThisSeason": 7,
+       "injury": null,
+       "props": [
+        {
+         "stat": "saves",
+         "label": "Saves",
+         "base": 22.8,
+         "median": 22.6,
+         "low": 18.5,
+         "high": 27.5,
+         "lines": [
+          {
+           "line": 19.5,
+           "chance": 69,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 50,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 35,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Michael Carcone",
+       "status": "Out",
+       "note": "Carcone is week-to-week due to his upper-body injury, the team announced Saturday."
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "snapshotAt": "2026-10-19T00:35:43.223Z"
+}

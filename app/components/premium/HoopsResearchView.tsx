@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ArrowDownUp } from 'lucide-react';
 import { Badge, Card, PageHeader, cn } from './ui';
 import HoopsPlayerTrendsPanel from './HoopsPlayerTrendsPanel';
-import HoopsPropSheetPanel from './HoopsPropSheetPanel';
+import PropSheetPanel from './PropSheetPanel';
 import TeamTendenciesPanel from './TeamTendenciesPanel';
 import type { HoopsResearch } from '@/lib/research/hoops-defense';
 import type { GameCard as Game, PlayerLine, StyleStat, TeamLine } from '@/lib/research/hoops-matchups';
@@ -149,7 +149,7 @@ export default function HoopsResearchView({ league, sportSwitch }: { league: Lea
         </div>
 
         {view === 'props' ? (
-          <HoopsPropSheetPanel league={league} />
+          <PropSheetPanel league={league} />
         ) : view === 'players' && shown != null ? (
           <HoopsPlayerTrendsPanel league={league} season={shown} />
         ) : view === 'teams' && shown != null ? (

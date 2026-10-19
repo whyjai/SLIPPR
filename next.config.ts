@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/research/nfl/props/track": ["./data/research/prop-sheets/*-track.json"],
     "/api/research/[league]/props/track": ["./data/research/prop-sheets/*-track.json"],
+    "/api/research/nhl/props/track": ["./data/research/prop-sheets/nhl-track.json"],
   },
 };
 
