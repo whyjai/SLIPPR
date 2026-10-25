@@ -13,6 +13,12 @@ import { nameKey, TEAM_NAMES } from '../../lib/research/nflverse';
 import { nflWeekProjections, usageChanceOver, USAGE_MODEL_NAME } from '../../lib/research/nfl-usage';
 import type { PropStat } from '../../lib/research/nfl-props';
 
+// Ranking: start from the sharp price and move only part of the way toward the model. Picking legs
+// where a model is most confident selects its errors (our first 18 tracked legs: model said ~65%,
+// they hit 56%, Pinnacle had said ~59%), so the model's view is shrunk toward the market.
+const MODEL_WEIGHT = 0.3;
+const MAX_GAP = 0.15; // bigger model-vs-market gaps usually mean the model is missing news
+
 const asOf = process.argv[2] ?? new Date(Date.now() - 5 * 3600_000).toISOString().slice(0, 10);
 const MARKET: Record<string, PropStat> = {
   Receptions: 'receptions', 'Receiving Yards': 'recYds', 'Rushing Yards': 'rushYds', 'Rush Attempts': 'carries',
@@ -46,9 +52,10 @@ for (const x of pin) {
   rows.push({
     game: `${hit.g.away} @ ${hit.g.home}`, gameday: hit.g.gameday, kickoff: x.startTime, player: hit.p.name, team: hit.p.team, pos: hit.p.pos, injury: hit.p.injury,
     stat, market: x.market, line: x.line, proj: Math.round(proj * 10) / 10, side, ours: Math.round(ours * 1000) / 1000, pinnacle: Math.round(sharp * 1000) / 1000, pinnacleOver: x.overProb, pinnacleId: x.id,
+    blend: Math.round((sharp + MODEL_WEIGHT * (ours - sharp)) * 1000) / 1000, flagged: Math.abs(ours - sharp) > MAX_GAP,
   });
 }
-rows.sort((a, b) => Math.min(b.ours, b.pinnacle) - Math.min(a.ours, a.pinnacle));
+rows.sort((a, b) => Number(a.flagged) - Number(b.flagged) || b.blend - a.blend);
 const stamp = new Date().toISOString();
 const path = `data/research/lines/nfl-${stamp.slice(0, 10)}-${stamp.slice(11, 16).replace(':', '')}.json`;
 writeFileSync(path, JSON.stringify({ model: USAGE_MODEL_NAME, asOf, savedAt: stamp, rows }, null, 1));
@@ -56,4 +63,4 @@ console.log(`${games.length} games · ${pin.length} Pinnacle NFL props · ${rows
 console.log(`saved ${path}\n`);
 for (const g of games) for (const s of g.sides) if (s.out.length) console.log(`${s.team} missing: ${s.out.join(', ')}`);
 console.log('');
-for (const r of rows) console.log(`${String(Math.round(100 * r.ours)).padStart(3)}% ours ${String(Math.round(100 * r.pinnacle)).padStart(3)}% pin  ${r.game.padEnd(10)} ${r.player.padEnd(22)} ${r.side.padEnd(5)} ${String(r.line).padStart(6)} ${r.market.padEnd(16)} proj ${r.proj}${r.injury ? ` [${r.injury}]` : ''}`);
+for (const r of rows) console.log(`${r.flagged ? '!' : ' '}${String(Math.round(100 * r.blend)).padStart(3)}% blend ${String(Math.round(100 * r.ours)).padStart(3)}% ours ${String(Math.round(100 * r.pinnacle)).padStart(3)}% pin  ${r.game.padEnd(10)} ${r.player.padEnd(22)} ${r.side.padEnd(5)} ${String(r.line).padStart(6)} ${r.market.padEnd(16)} proj ${r.proj}${r.injury ? ` [${r.injury}]` : ''}`);
