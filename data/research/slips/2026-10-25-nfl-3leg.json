@@ -1,0 +1,64 @@
+{
+ "id": "2026-10-25-nfl-3leg",
+ "createdAt": "2026-10-25T03:00:49.958Z",
+ "title": "NFL Week 7 3-leg",
+ "dateLabel": "SUN OCT 25",
+ "payout": {
+  "type": "parlay",
+  "multiplier": 7.02,
+  "book": "best price"
+ },
+ "method": "Three of the cheat sheet best plays, from three different games.",
+ "note": "Three cheat-sheet plays from three different games.",
+ "combined": {
+  "ours": 0.163,
+  "pinnacle": 0.1288
+ },
+ "legs": [
+  {
+   "sport": "NFL",
+   "game": "TB @ CAR",
+   "gameDate": "2026-10-25",
+   "player": "Chris Godwin Jr.",
+   "team": "TB",
+   "stat": "receptions",
+   "label": "Receptions",
+   "side": "under",
+   "line": 4.5,
+   "ours": 0.551,
+   "pinnacle": 0.506,
+   "price": -110,
+   "book": "draftkings"
+  },
+  {
+   "sport": "NFL",
+   "game": "DEN @ ARI",
+   "gameDate": "2026-10-25",
+   "player": "RJ Harvey",
+   "team": "DEN",
+   "stat": "receptions",
+   "label": "Receptions",
+   "side": "under",
+   "line": 3.5,
+   "ours": 0.539,
+   "pinnacle": 0.5,
+   "price": -106,
+   "book": "fanduel"
+  },
+  {
+   "sport": "NFL",
+   "game": "IND @ MIN",
+   "gameDate": "2026-10-25",
+   "player": "Josh Downs",
+   "team": "IND",
+   "stat": "receptions",
+   "label": "Receptions",
+   "side": "under",
+   "line": 4.5,
+   "ours": 0.549,
+   "pinnacle": 0.509,
+   "price": -112,
+   "book": "fanduel"
+  }
+ ]
+}

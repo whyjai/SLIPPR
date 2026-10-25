@@ -16,7 +16,7 @@
  * each game uses only earlier games; fit on 2021-2023, tested on 2024-2025).
  */
 import { cached } from './csv';
-import { pfrToGsis, playerWeeks, schedule, snapCounts } from './nflverse';
+import { nameKey, pfrToGsis, playerWeeks, schedule, snapCounts } from './nflverse';
 import { POS_STATS, type PropPos, type PropStat } from './nfl-props';
 import MODEL from '../../data/research/nfl-usage-model.json';
 import { chanceOver as spreadChance, outcomeAt as spreadOutcome, type SpreadModel } from './props-engine';
@@ -320,8 +320,12 @@ export type WeekGame = {
   sides: Array<{ team: string; implied: number | null; volume: { tgt: number; car: number; att: number } | null; out: string[]; players: WeekPlayer[] }>;
 };
 
-/** Usage projections for every game from `asOf` (YYYY-MM-DD) through the rest of that week. */
-export async function nflWeekProjections(season: number, asOf: string): Promise<WeekGame[]> {
+/**
+ * Usage projections for every game from `asOf` (YYYY-MM-DD) through the rest of that week.
+ * `starters`: name keys of the QBs expected to start (e.g. the QBs a sportsbook posts
+ * passing props for); otherwise the active QB with the most recent attempts starts.
+ */
+export async function nflWeekProjections(season: number, asOf: string, opts: { starters?: Set<string> } = {}): Promise<WeekGame[]> {
   const p = USAGE_MODEL.params;
   const [cur, prev, sched, status] = await Promise.all([
     nflUsageData(season),
@@ -377,7 +381,8 @@ export async function nflWeekProjections(season: number, asOf: string): Promise<
         .map((sh) => ({ tgt: sh.tgt >= 0.1 ? sh.tgt : 0, car: sh.car >= 0.1 ? sh.car : 0, att: 0 }));
       const adj = redistribute(shares, missing, p.rho);
       // One starting QB: the active QB with the largest share of attempts takes them all.
-      const qbs = [...adj].filter(([id]) => byPlayer.get(id)!.at(-1)!.pos === 'QB').sort((a, b) => b[1].att - a[1].att);
+      const named = (id: string) => (opts.starters?.has(nameKey(byPlayer.get(id)!.at(-1)!.name)) ? 1 : 0);
+      const qbs = [...adj].filter(([id]) => byPlayer.get(id)!.at(-1)!.pos === 'QB').sort((a, b) => named(b[0]) - named(a[0]) || b[1].att - a[1].att);
       for (const [i, [id, sh]] of qbs.entries()) adj.set(id, { ...sh, att: i === 0 ? Math.max(sh.att, 0.97) : 0 });
 
       const players: WeekPlayer[] = [];

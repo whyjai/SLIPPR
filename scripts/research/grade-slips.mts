@@ -15,7 +15,7 @@ import { playerWeeks, schedule } from '../../lib/research/nflverse';
 import { addPlay, emptyLine, mlbPeople, mlbPlays } from '../../lib/research/mlb-data';
 
 const DIR = 'data/research/slips';
-type Leg = { sport: string; game: string; gameDate: string; player: string; team: string; stat: string; side: 'over' | 'under'; line: number; ours: number };
+type Leg = { price?: number; sport: string; game: string; gameDate: string; player: string; team: string; stat: string; side: 'over' | 'under'; line: number; ours: number };
 type Slip = { id: string; title: string; payout: { type: string; multiplier: number }; combined: { ours: number }; legs: Leg[] };
 
 const NFL_COL: Record<string, string> = { receptions: 'receptions', recYds: 'receiving_yards', rushYds: 'rushing_yards', carries: 'carries', passYds: 'passing_yards', passAtt: 'attempts', passTd: 'passing_tds', targets: 'targets' };
@@ -94,11 +94,24 @@ for (const slip of slips) {
   graded.push({ id: slip.id, title: slip.title, multiplier: slip.payout.multiplier, chance: slip.combined.ours, result, legs });
   console.log(`${slip.id}: ${result.toUpperCase()} · ${legs.map((l) => `${l.player} ${l.side} ${l.line} → ${l.actual ?? '?'} ${l.result}`).join(' | ')}`);
 }
-const done = graded.filter((s) => s.result !== 'pending');
+// Singles cards (payout.type 'singles'): 1 unit per leg at its American price, scored separately.
+const decimal = (am: number) => (am < 0 ? 1 + 100 / -am : 1 + am / 100);
+const singleLegs = graded.filter((s) => slips.find((x) => x.id === s.id)!.payout.type === 'singles').flatMap((s) => s.legs) as Array<{ result: string; price?: number; ours: number }>;
+const settledSingles = singleLegs.filter((l) => l.result !== 'pending' && l.price != null);
+const singles = {
+  picks: singleLegs.length,
+  settled: settledSingles.length,
+  hit: settledSingles.filter((l) => l.result === 'hit').length,
+  expectedHits: Math.round(settledSingles.reduce((a, l) => a + l.ours, 0) * 100) / 100,
+  units: Math.round(settledSingles.reduce((a, l) => a + (l.result === 'hit' ? decimal(l.price!) - 1 : -1), 0) * 100) / 100,
+};
+const parlays = graded.filter((s) => slips.find((x) => x.id === s.id)!.payout.type !== 'singles');
+const done = parlays.filter((s) => s.result !== 'pending');
 const won = done.filter((s) => s.result === 'won');
 const summary = {
   updatedAt: new Date().toISOString(),
-  slips: graded.length,
+  singles,
+  slips: parlays.length,
   settled: done.length,
   won: won.length,
   // Units at 1 per slip: a win returns the multiplier.
@@ -109,3 +122,4 @@ const summary = {
 };
 writeFileSync(`${DIR}/track.json`, JSON.stringify(summary, null, 1));
 console.log(`\n${summary.won}/${summary.settled} slips won · ${summary.units} units · expected wins ${summary.expectedWins}`);
+console.log(`singles: ${singles.hit}/${singles.settled} hit (expected ${singles.expectedHits}) · ${singles.units} units`);
