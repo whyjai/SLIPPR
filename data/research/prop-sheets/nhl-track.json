@@ -1,105 +1,105 @@
 {
  "league": "nhl",
- "updatedAt": "2026-10-19T00:35:48.468Z",
+ "updatedAt": "2026-10-25T02:36:39.415Z",
  "overall": {
-  "props": 0,
-  "lines": 0,
-  "overMedian": null,
-  "underAverage": null,
-  "insideMiddle50": null,
+  "props": 226,
+  "lines": 383,
+  "overMedian": 0.372,
+  "underAverage": 0.633,
+  "insideMiddle50": 0.735,
   "brier": {
-   "sheet": null,
-   "ownHitRate": null,
-   "coinFlip": null
+   "sheet": 0.187,
+   "ownHitRate": 0.204,
+   "coinFlip": 0.25
   },
   "calibration": [
    {
     "from": 0,
     "to": 30,
-    "said": null,
-    "happened": null,
-    "n": 0
+    "said": 20,
+    "happened": 0.2,
+    "n": 135
    },
    {
     "from": 30,
     "to": 45,
-    "said": null,
-    "happened": null,
-    "n": 0
+    "said": 36,
+    "happened": 0.359,
+    "n": 92
    },
    {
     "from": 45,
     "to": 55,
-    "said": null,
-    "happened": null,
-    "n": 0
+    "said": 48,
+    "happened": 0.469,
+    "n": 32
    },
    {
     "from": 55,
     "to": 70,
-    "said": null,
-    "happened": null,
-    "n": 0
+    "said": 58,
+    "happened": 0.6,
+    "n": 55
    },
    {
     "from": 70,
     "to": 100,
-    "said": null,
-    "happened": null,
-    "n": 0
+    "said": 80,
+    "happened": 0.841,
+    "n": 69
    }
   ]
  },
  "days": [
   {
    "date": "2026-10-19",
-   "pending": 242,
-   "dnp": 0,
-   "props": 0,
-   "lines": 0,
-   "overMedian": null,
-   "underAverage": null,
-   "insideMiddle50": null,
+   "pending": 0,
+   "dnp": 16,
+   "props": 226,
+   "lines": 383,
+   "overMedian": 0.372,
+   "underAverage": 0.633,
+   "insideMiddle50": 0.735,
    "brier": {
-    "sheet": null,
-    "ownHitRate": null,
-    "coinFlip": null
+    "sheet": 0.187,
+    "ownHitRate": 0.204,
+    "coinFlip": 0.25
    },
    "calibration": [
     {
      "from": 0,
      "to": 30,
-     "said": null,
-     "happened": null,
-     "n": 0
+     "said": 20,
+     "happened": 0.2,
+     "n": 135
     },
     {
      "from": 30,
      "to": 45,
-     "said": null,
-     "happened": null,
-     "n": 0
+     "said": 36,
+     "happened": 0.359,
+     "n": 92
     },
     {
      "from": 45,
      "to": 55,
-     "said": null,
-     "happened": null,
-     "n": 0
+     "said": 48,
+     "happened": 0.469,
+     "n": 32
     },
     {
      "from": 55,
      "to": 70,
-     "said": null,
-     "happened": null,
-     "n": 0
+     "said": 58,
+     "happened": 0.6,
+     "n": 55
     },
     {
      "from": 70,
      "to": 100,
-     "said": null,
-     "happened": null,
-     "n": 0
+     "said": 80,
+     "happened": 0.841,
+     "n": 69
     }
    ]
   }

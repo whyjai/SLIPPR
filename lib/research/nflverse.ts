@@ -33,6 +33,9 @@ export type Game = {
   home: string;
   awayScore: number | null;
   homeScore: number | null;
+  /** Closing (or current) spread, home perspective: positive = home favored by that many points. */
+  spreadLine: number | null;
+  totalLine: number | null;
 };
 
 /** Minimal RFC 4180 parser: quoted fields, escaped quotes, commas inside quotes. */
@@ -122,6 +125,8 @@ export function schedule(season: number): Promise<Game[]> {
         home: r.home_team,
         awayScore: r.away_score === '' || r.away_score === 'NA' ? null : Number(r.away_score),
         homeScore: r.home_score === '' || r.home_score === 'NA' ? null : Number(r.home_score),
+        spreadLine: r.spread_line === '' || r.spread_line === 'NA' ? null : Number(r.spread_line),
+        totalLine: r.total_line === '' || r.total_line === 'NA' ? null : Number(r.total_line),
       }));
   });
 }
