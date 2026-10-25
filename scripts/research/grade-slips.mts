@@ -4,11 +4,12 @@
  *
  *   npx tsx scripts/research/grade-slips.mts
  *
- * Legs: NFL (nflverse), NHL (NHL stats API), NBA/WNBA (sportsdataverse), MLB (play-by-play), matched by
+ * Legs: NFL (nflverse), NHL (NHL stats API), NBA/WNBA (sportsdataverse, ESPN box score fallback for games it lacks
+ * such as the postseason), MLB (play-by-play), matched by
  * player name and game date. A leg with no box score yet is pending.
  */
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { playerGames, seasonFor } from '../../lib/research/hoops-data';
+import { LEAGUES, playerGames, seasonFor, type League } from '../../lib/research/hoops-data';
 import { nameKey, nhlGoalieGames, nhlSeasonFor, nhlSkaterGames } from '../../lib/research/nhl-data';
 import { playerWeeks, schedule } from '../../lib/research/nflverse';
 import { addPlay, emptyLine, mlbPeople, mlbPlays } from '../../lib/research/mlb-data';
@@ -18,6 +19,31 @@ type Leg = { sport: string; game: string; gameDate: string; player: string; team
 type Slip = { id: string; title: string; payout: { type: string; multiplier: number }; combined: { ours: number }; legs: Leg[] };
 
 const NFL_COL: Record<string, string> = { receptions: 'receptions', recYds: 'receiving_yards', rushYds: 'rushing_yards', carries: 'carries', passYds: 'passing_yards', passAtt: 'attempts', passTd: 'passing_tds', targets: 'targets' };
+
+// ESPN box score labels for each hoops stat ('3PT' is "made-attempted").
+const ESPN_COL: Record<string, string> = { pts: 'PTS', reb: 'REB', ast: 'AST', fg3m: '3PT', stl: 'STL', blk: 'BLK', tov: 'TO', oreb: 'OREB', min: 'MIN' };
+
+/** The player's stat from ESPN's box score of a completed game on that date, or null. */
+async function espnHoopsStat(league: League, leg: Leg): Promise<number | null> {
+  const espn = LEAGUES[league].espn;
+  const board = await fetch(`${espn}/scoreboard?dates=${leg.gameDate.replaceAll('-', '')}`).then((r) => r.json()).catch(() => null);
+  const key = nameKey(leg.player);
+  for (const ev of board?.events ?? []) {
+    if (!ev.status?.type?.completed) continue;
+    const summary = await fetch(`${espn}/summary?event=${ev.id}`).then((r) => r.json()).catch(() => null);
+    for (const team of summary?.boxscore?.players ?? []) {
+      for (const block of team.statistics ?? []) {
+        const row = (block.athletes ?? []).find((a: any) => nameKey(a.athlete?.displayName ?? '') === key);
+        if (!row) continue;
+        if (row.didNotPlay || !row.stats?.length) return null;
+        const col = (label: string) => parseFloat(row.stats[block.labels.indexOf(label)]);
+        const val = leg.stat === 'pra' ? col('PTS') + col('REB') + col('AST') : col(ESPN_COL[leg.stat]);
+        return Number.isFinite(val) ? val : null;
+      }
+    }
+  }
+  return null;
+}
 
 async function actual(leg: Leg): Promise<number | null> {
   const day = new Date(`${leg.gameDate}T12:00:00Z`);
@@ -41,7 +67,7 @@ async function actual(leg: Leg): Promise<number | null> {
   if (leg.sport === 'NBA' || leg.sport === 'WNBA') {
     const league = leg.sport === 'NBA' ? 'nba' : 'wnba';
     const g = (await playerGames(league, seasonFor(league, day)).catch(() => [])).find((r) => r.date === leg.gameDate && nameKey(r.name) === key);
-    if (!g) return null;
+    if (!g) return espnHoopsStat(league, leg);
     return leg.stat === 'pra' ? g.pts + g.reb + g.ast : Number(g[leg.stat as 'pts']);
   }
   if (leg.sport === 'MLB') {

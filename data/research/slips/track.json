@@ -1,13 +1,13 @@
 {
- "updatedAt": "2026-10-25T02:36:28.026Z",
+ "updatedAt": "2026-10-25T02:57:59.458Z",
  "slips": 4,
- "settled": 3,
+ "settled": 4,
  "won": 0,
- "units": -3,
- "expectedWins": 0.19,
+ "units": -4,
+ "expectedWins": 0.31,
  "legs": {
-  "settled": 21,
-  "hit": 15
+  "settled": 31,
+  "hit": 20
  },
  "graded": [
   {
@@ -98,8 +98,8 @@
      "line": 3.5,
      "ours": 0.73,
      "pinnacle": 0.6,
-     "actual": null,
-     "result": "pending"
+     "actual": 1,
+     "result": "hit"
     },
     {
      "sport": "WNBA",
@@ -113,8 +113,8 @@
      "line": 2.5,
      "ours": 0.71,
      "pinnacle": 0.61,
-     "actual": null,
-     "result": "pending"
+     "actual": 5,
+     "result": "hit"
     },
     {
      "sport": "NHL",
@@ -158,8 +158,8 @@
      "line": 4.5,
      "ours": 0.72,
      "pinnacle": 0.59,
-     "actual": null,
-     "result": "pending"
+     "actual": 2,
+     "result": "hit"
     },
     {
      "sport": "NHL",
@@ -218,8 +218,8 @@
      "line": 7.5,
      "ours": 0.73,
      "pinnacle": 0.56,
-     "actual": null,
-     "result": "pending"
+     "actual": 11,
+     "result": "miss"
     },
     {
      "sport": "NHL",
@@ -318,7 +318,7 @@
    "title": "Monday night 6-pick, NFL + MLB + WNBA",
    "multiplier": 37.5,
    "chance": 0.117,
-   "result": "pending",
+   "result": "lost",
    "legs": [
     {
      "sport": "WNBA",
@@ -332,8 +332,8 @@
      "line": 3.5,
      "ours": 0.73,
      "pinnacle": 0.6,
-     "actual": null,
-     "result": "pending"
+     "actual": 1,
+     "result": "hit"
     },
     {
      "sport": "WNBA",
@@ -347,8 +347,8 @@
      "line": 7.5,
      "ours": 0.73,
      "pinnacle": 0.56,
-     "actual": null,
-     "result": "pending"
+     "actual": 11,
+     "result": "miss"
     },
     {
      "sport": "WNBA",
@@ -362,8 +362,8 @@
      "line": 2.5,
      "ours": 0.71,
      "pinnacle": 0.61,
-     "actual": null,
-     "result": "pending"
+     "actual": 5,
+     "result": "hit"
     },
     {
      "sport": "NFL",
