@@ -12,7 +12,7 @@
 import { writeFileSync } from 'node:fs';
 import { baseline, minBase, POS_STATS, type PropPos, type PropStat } from '../../lib/research/nfl-props';
 import {
-  DEFAULT_PARAMS, dot, nflUsageData, ols, playerShares, positionMeans, projectPlayer, redistribute, volumeFeatures,
+  DEFAULT_PARAMS, defenseVsPosition, dot, nflUsageData, ols, playerShares, positionMeans, projectPlayer, redistribute, volumeFeatures,
   type PosMeans, type Shares, type TeamGame, type UsageGame, type UsageParams, type VolumeModel,
 } from '../../lib/research/nfl-usage';
 import { buildSpread, chanceOver, type SpreadModel } from '../../lib/research/props-engine';
@@ -74,7 +74,9 @@ const STAT_OF: Record<PropStat, (g: UsageGame) => number> = {
   carries: (g) => g.car, recYds: (g) => g.recYds, receptions: (g) => g.rec, targets: (g) => g.tgt,
 };
 
-type Sample = { season: number; pos: PropPos; stat: PropStat; key: string; old: number; neu: number; actual: number; vac: number };
+type Sample = { season: number; pos: PropPos; stat: PropStat; key: string; old: number; neu: number; actual: number; vac: number; dvp: number };
+const dvpCache = new Map<string, ReturnType<typeof defenseVsPosition>>();
+const dvpAt = (s: number, w: number) => dvpCache.get(`${s}|${w}`) ?? dvpCache.set(`${s}|${w}`, defenseVsPosition(data.get(s)!.players, w)).get(`${s}|${w}`)!;
 
 function run(seasons: number[], p: UsageParams, volModel: VolumeModel): Sample[] {
   const out: Sample[] = [];
@@ -123,7 +125,7 @@ function run(seasons: number[], p: UsageParams, volModel: VolumeModel): Sample[]
             const old = baseline(cur.map(STAT_OF[stat]));
             const neu = proj[stat];
             if (old == null || neu == null || old < minBase(g.pos, stat) || neu <= 0) continue;
-            out.push({ season: s, pos: g.pos, stat, key: `${g.pos}|${stat}`, old, neu, actual: STAT_OF[stat](g), vac: stat === 'carries' || stat === 'rushYds' ? vacC : vacT });
+            out.push({ season: s, pos: g.pos, stat, key: `${g.pos}|${stat}`, old, neu, actual: STAT_OF[stat](g), vac: stat === 'carries' || stat === 'rushYds' ? vacC : vacT, dvp: dvpAt(s, w).get(`${g.opp}|${g.pos}|${stat}`)?.ratio ?? 1 });
           }
         }
       }
@@ -215,12 +217,33 @@ console.log(`   all: Brier ${allOld.brier.toFixed(4)} → ${allNew.brier.toFixed
 console.log(`   calibration current: ${binStr(allOld)}`);
 console.log(`   calibration usage:   ${binStr(allNew)}`);
 
+// --- 4. Defense vs position ---------------------------------------------------
+// Does what the opponent has allowed to this position (shrunk ratio vs league) improve the projection?
+// projection × ratio^beta, beta per prop chosen on 2021-2023, judged on 2024-2025.
+const BETAS = [0, 0.25, 0.5, 0.75, 1];
+const dvpBeta: Record<string, number> = {};
+console.log('\n4. Defense vs position: projection × (opp allowed to position / league)^beta');
+for (const k of keys(fitS)) {
+  const f = fitS.filter((x) => x.key === k);
+  dvpBeta[k] = BETAS.reduce((b, beta) => (mae(f, (x) => x.neu * x.dvp ** beta) < mae(f, (x) => x.neu * x.dvp ** b) ? beta : b), 0);
+  const t = testS.filter((x) => x.key === k);
+  const m0 = mae(t, (x) => x.neu), m1 = mae(t, (x) => x.neu * x.dvp ** dvpBeta[k]);
+  console.log(`   ${k.padEnd(15)} beta ${dvpBeta[k].toFixed(2)} · test MAE ${m0.toFixed(2)} → ${m1.toFixed(2)} (${(100 * (m1 / m0 - 1)).toFixed(1)}%)`);
+}
+const adjOf = (x: Sample) => x.neu * x.dvp ** (dvpBeta[x.key] ?? 0);
+const sAdj = buildSpread(fitS.map((x) => ({ key: x.key, base: adjOf(x), actual: x.actual })));
+const allAdj = score(testS, sAdj, adjOf);
+console.log(`   all: Brier ${allNew.brier.toFixed(4)} → ${allAdj.brier.toFixed(4)} · calibration ${binStr(allAdj)}`);
+// Strong matchups only (opponent allows 15%+ more or less than average): does the adjustment help where it bites?
+const strong = testS.filter((x) => Math.abs(x.dvp - 1) >= 0.15);
+console.log(`   strong matchups (n=${strong.length}): MAE ${mae(strong, (x) => x.neu).toFixed(2)} → ${mae(strong, adjOf).toFixed(2)}`);
+
 // Production: volume and spread refit on every season, with the chosen parameters.
 const prodVol = fitVol([...FIT, ...TEST]);
 const prodSamples = run([...FIT, ...TEST], best, prodVol);
-const prodSpread = buildSpread(prodSamples.map((x) => ({ key: x.key, base: x.neu, actual: x.actual })));
+const prodSpread = buildSpread(prodSamples.map((x) => ({ key: x.key, base: adjOf(x), actual: x.actual })));
 writeFileSync(
   'data/research/nfl-usage-model.json',
-  JSON.stringify({ fitSeasons: [...FIT, ...TEST], params: best, volume: prodVol, means: positionMeans([...FIT, ...TEST].flatMap((s) => data.get(s)!.players)), test: rows, spread: prodSpread }),
+  JSON.stringify({ fitSeasons: [...FIT, ...TEST], params: best, dvpBeta, dvpTest: { brierBefore: allNew.brier, brierAfter: allAdj.brier }, volume: prodVol, means: positionMeans([...FIT, ...TEST].flatMap((s) => data.get(s)!.players)), test: rows, spread: prodSpread }),
 );
 console.log('\nwrote data/research/nfl-usage-model.json');

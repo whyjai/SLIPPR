@@ -1,0 +1,284 @@
+{
+ "id": "2026-10-25-nfl-confirmed",
+ "title": "NFL Week 7 confirmed props (no failed check), singles",
+ "createdAt": "2026-10-25T07:12:48.967Z",
+ "payout": {
+  "type": "singles",
+  "multiplier": 0
+ },
+ "combined": {
+  "ours": 0
+ },
+ "legs": [
+  {
+   "sport": "NFL",
+   "game": "NYG @ HOU",
+   "gameDate": "2026-10-25",
+   "player": "C.J. Stroud",
+   "team": "HOU",
+   "stat": "rushYds",
+   "side": "over",
+   "line": 9.5,
+   "ours": 0.543,
+   "price": -112,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "pass",
+    "form": "pass",
+    "matchup": "pass",
+    "script": "neutral",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 17 vs line 9.5 · our chance 64%, market 50%",
+    "Over 9.5 in 4 of 6 games (last 5: 29, 10, 12, 5, 5) · avg 13",
+    "NYG allows 28 rush yds/g to QBs, 5th most (avg 17)",
+    "out: David Montgomery, Jared Wayne"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "DEN @ ARI",
+   "gameDate": "2026-10-25",
+   "player": "Tyler Allgeier",
+   "team": "ARI",
+   "stat": "recYds",
+   "side": "under",
+   "line": 11.5,
+   "ours": 0.556,
+   "price": -118,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "pass",
+    "form": "pass",
+    "matchup": "neutral",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 9.5 vs line 11.5 · our chance 66%, market 51%",
+    "Under 11.5 in 6 of 6 games (last 5: 9, 10, 7, 9, 10) · avg 9",
+    "DEN allows 33 rec yds/g to RBs, 15th most (avg 31)",
+    "5% of targets, 33% of carries · 52% snaps last 3 · ARI implied 19.5 pts (below the 22.5 average) · out: Jeremiyah Love"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "NYG @ HOU",
+   "gameDate": "2026-10-25",
+   "player": "Tyrone Tracy Jr.",
+   "team": "NYG",
+   "stat": "rushYds",
+   "side": "under",
+   "line": 23.5,
+   "ours": 0.533,
+   "price": -108,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "neutral",
+    "form": "pass",
+    "matchup": "pass",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 22 vs line 23.5 · our chance 62%, market 50%",
+    "Under 23.5 in 6 of 6 games (last 5: 0, 3, -1, 6, 18) · avg 6.7",
+    "HOU allows 76 rush yds/g to RBs, 5th fewest (avg 90)",
+    "6% of targets, 21% of carries · 25% snaps last 3 · NYG underdog by 10.5: fewer late carries · out: Theo Johnson"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "IND @ MIN",
+   "gameDate": "2026-10-25",
+   "player": "Josh Downs",
+   "team": "IND",
+   "stat": "recYds",
+   "side": "under",
+   "line": 49.5,
+   "ours": 0.54,
+   "price": -113,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "pass",
+    "form": "pass",
+    "matchup": "pass",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 44 vs line 49.5 · our chance 63%, market 50%",
+    "Under 49.5 in 4 of 6 games (last 5: 72, 77, 16, 47, 40) · avg 48",
+    "MIN allows 133 rec yds/g to WRs, 7th fewest (avg 151)",
+    "21% of targets · 83% snaps last 3 · IND implied 17.5 pts (below the 22.5 average) · out: Tyler Warren"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "MIA @ NYJ",
+   "gameDate": "2026-10-25",
+   "player": "Caleb Douglas",
+   "team": "MIA",
+   "stat": "receptions",
+   "side": "over",
+   "line": 2.5,
+   "ours": 0.541,
+   "price": -114,
+   "book": "fanduel",
+   "checks": {
+    "model": "pass",
+    "market": "pass",
+    "form": "neutral",
+    "matchup": "neutral",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 3.4 vs line 2.5 · our chance 62%, market 51%",
+    "Over 2.5 in 1 of 2 games (last 5: 5, 2) · avg 3.5",
+    "NYJ allows 11 rec/g to WRs, 16th fewest (avg 12)",
+    "19% of targets · 89% snaps last 3 · MIA underdog by 4.5: more passing · out: Ryan Miller"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "PIT @ NO",
+   "gameDate": "2026-10-25",
+   "player": "Kendre Miller",
+   "team": "NO",
+   "stat": "rushYds",
+   "side": "under",
+   "line": 36.5,
+   "ours": 0.526,
+   "price": -108,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "neutral",
+    "form": "pass",
+    "matchup": "neutral",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 35 vs line 36.5 · our chance 61%, market 49%",
+    "Under 36.5 in 4 of 5 games (last 5: 30, 14, 9, 30, 70) · avg 31",
+    "PIT allows 86 rush yds/g to RBs, 16th fewest (avg 90)",
+    "4% of targets, 35% of carries · 34% snaps last 3 · NO underdog by 3: fewer late carries"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "CIN @ BAL",
+   "gameDate": "2026-10-25",
+   "player": "Dohnte Meyers",
+   "team": "CIN",
+   "stat": "recYds",
+   "side": "over",
+   "line": 14.5,
+   "ours": 0.527,
+   "price": -108,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "neutral",
+    "form": "pass",
+    "matchup": "pass",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 25 vs line 14.5 · our chance 60%, market 50%",
+    "Over 14.5 in 3 of 5 games (last 5: 18, 0, 29, 82, 12) · avg 28",
+    "BAL allows 176 rec yds/g to WRs, 6th most (avg 151)",
+    "9% of targets · 58% snaps last 3 · CIN implied 24.8 pts (above the 22.5 average) · out: Tanner Hudson"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "DEN @ ARI",
+   "gameDate": "2026-10-25",
+   "player": "Jacoby Brissett",
+   "team": "ARI",
+   "stat": "rushYds",
+   "side": "over",
+   "line": 6.5,
+   "ours": 0.538,
+   "price": -113,
+   "book": "fanduel",
+   "checks": {
+    "model": "pass",
+    "market": "pass",
+    "form": "pass",
+    "matchup": "pass",
+    "script": "neutral",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 16 vs line 6.5 · our chance 61%, market 51%",
+    "Over 6.5 in 4 of 6 games (last 5: 7, 4, 18, 19, 2) · avg 11",
+    "DEN allows 24 rush yds/g to QBs, 6th most (avg 17)",
+    "out: Jeremiyah Love"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "TB @ CAR",
+   "gameDate": "2026-10-25",
+   "player": "Chris Godwin Jr.",
+   "team": "TB",
+   "stat": "recYds",
+   "side": "under",
+   "line": 45.5,
+   "ours": 0.53,
+   "price": -110,
+   "book": "draftkings",
+   "checks": {
+    "model": "pass",
+    "market": "neutral",
+    "form": "pass",
+    "matchup": "neutral",
+    "script": "pass",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 42 vs line 45.5 · our chance 61%, market 50%",
+    "Under 45.5 in 5 of 6 games (last 5: 46, 25, 31, 37, 37) · avg 36",
+    "CAR allows 148 rec yds/g to WRs, 16th fewest (avg 151)",
+    "18% of targets · 90% snaps last 3 · TB implied 20.8 pts (below the 22.5 average) · out: Emeka Egbuka"
+   ]
+  },
+  {
+   "sport": "NFL",
+   "game": "MIA @ NYJ",
+   "gameDate": "2026-10-25",
+   "player": "Mason Taylor",
+   "team": "NYJ",
+   "stat": "recYds",
+   "side": "over",
+   "line": 17.5,
+   "ours": 0.537,
+   "price": -113,
+   "book": "fanduel",
+   "checks": {
+    "model": "pass",
+    "market": "pass",
+    "form": "neutral",
+    "matchup": "pass",
+    "script": "neutral",
+    "health": "pass"
+   },
+   "why": [
+    "Projection 25 vs line 17.5 · our chance 62%, market 50%",
+    "Over 17.5 in 2 of 4 games (last 5: -2, 0, 24, 33) · avg 14",
+    "MIA allows 76 rec yds/g to TEs, 4th most (avg 53)",
+    "14% of targets · 53% snaps last 3"
+   ]
+  }
+ ]
+}

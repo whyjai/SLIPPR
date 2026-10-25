@@ -287,13 +287,59 @@ export function positionMeans(games: UsageGame[]): PosMeans {
 }
 
 // ---------------------------------------------------------------------------
+// Defense vs position
+// ---------------------------------------------------------------------------
+
+const STAT_VALUE: Record<PropStat, (g: UsageGame) => number> = {
+  passYds: (g) => g.passYds, passAtt: (g) => g.att, passTd: (g) => g.passTd, rushYds: (g) => g.rushYds,
+  carries: (g) => g.car, recYds: (g) => g.recYds, receptions: (g) => g.rec, targets: (g) => g.tgt,
+};
+export const statValue = (g: UsageGame, stat: PropStat) => STAT_VALUE[stat](g);
+const DVP_STATS = Object.keys(STAT_VALUE) as PropStat[];
+export type DvpCell = { games: number; perGame: number; league: number; ratio: number; rank: number };
+/** Pseudo-games of league average mixed into each defense's numbers, so a few games don't swing the ratio. */
+export const DVP_SHRINK = 4;
+
+/**
+ * What each defense has allowed to each position before `beforeWeek` of a season, per game:
+ * key `${defense}|${pos}|${stat}`. `ratio` is shrunk toward 1 (league average); rank 1 allows the most.
+ */
+export function defenseVsPosition(players: UsageGame[], beforeWeek: number): Map<string, DvpCell> {
+  const games = new Map<string, Set<string>>();
+  const sums = new Map<string, number>();
+  for (const g of players) {
+    if (g.week >= beforeWeek) continue;
+    (games.get(g.opp) ?? games.set(g.opp, new Set()).get(g.opp)!).add(g.gameId);
+    for (const st of DVP_STATS) {
+      const k = `${g.opp}|${g.pos}|${st}`;
+      sums.set(k, (sums.get(k) ?? 0) + STAT_VALUE[st](g));
+    }
+  }
+  const teamGames = [...games.values()].reduce((a, s) => a + s.size, 0);
+  const out = new Map<string, DvpCell>();
+  if (!teamGames) return out;
+  for (const pos of ['QB', 'RB', 'WR', 'TE'] as PropPos[]) {
+    for (const st of DVP_STATS) {
+      const total = [...games.keys()].reduce((a, d) => a + (sums.get(`${d}|${pos}|${st}`) ?? 0), 0);
+      const league = total / teamGames;
+      const cells = [...games].map(([d, gs]) => {
+        const sum = sums.get(`${d}|${pos}|${st}`) ?? 0;
+        return { d, cell: { games: gs.size, perGame: sum / gs.size, league, ratio: league > 0 ? (sum + DVP_SHRINK * league) / ((gs.size + DVP_SHRINK) * league) : 1, rank: 0 } };
+      });
+      cells.sort((a, b) => b.cell.perGame - a.cell.perGame).forEach((c, i) => { c.cell.rank = i + 1; out.set(`${c.d}|${pos}|${st}`, c.cell); });
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // This week's projections
 // ---------------------------------------------------------------------------
 
 
-type ModelFile = { params: UsageParams; volume: VolumeModel; means: PosMeans; spread: SpreadModel };
+type ModelFile = { params: UsageParams; volume: VolumeModel; means: PosMeans; spread: SpreadModel; dvpBeta?: Record<string, number> };
 export const USAGE_MODEL = MODEL as unknown as ModelFile;
-export const USAGE_MODEL_NAME = 'nfl-usage-1: team volume from implied total + spread, recency-weighted shares, shrunk efficiency; fit 2021-25';
+export const USAGE_MODEL_NAME = 'nfl-usage-2: team volume from implied total + spread, recency-weighted shares, shrunk efficiency, defense vs position; fit 2021-25';
 
 /** Chance a usage projection finishes over a line, from the spread of actual / projection on 2021-2025. */
 export const usageChanceOver = (pos: PropPos, stat: PropStat, proj: number, line: number) => spreadChance(USAGE_MODEL.spread, `${pos}|${stat}`, proj, line);
@@ -344,6 +390,7 @@ export async function nflWeekProjections(season: number, asOf: string, opts: { s
   for (const g of [...prev.players, ...cur.players.filter((x) => x.week < week)]) (byPlayer.get(g.id) ?? byPlayer.set(g.id, []).get(g.id)!).push(g);
   for (const l of byPlayer.values()) l.sort((a, b) => a.season - b.season || a.week - b.week);
   const prior = cur.teams.filter((t) => t.week < week && (t.att || t.car));
+  const dvp = defenseVsPosition(cur.players, week);
   // His team today: ESPN's roster; failing that, his team this season (not a team he left last year).
   const teamNow = (id: string) => {
     const st = status.get(id)?.team;
@@ -393,7 +440,8 @@ export async function nflWeekProjections(season: number, asOf: string, opts: { s
         if (last.pos === 'QB' && sh.att === 0) continue;
         const proj = projectPlayer(last.pos, h, sh, volume, implied, USAGE_MODEL.means, season, p);
         const kept: Projection = {};
-        for (const st of POS_STATS[last.pos]) if (proj[st] != null) kept[st] = proj[st];
+        // Defense vs position: what this opponent allows the position, to the power fit in the backtest (small).
+        for (const st of POS_STATS[last.pos]) if (proj[st] != null) kept[st] = proj[st]! * (dvp.get(`${opp}|${last.pos}|${st}`)?.ratio ?? 1) ** (USAGE_MODEL.dvpBeta?.[`${last.pos}|${st}`] ?? 0);
         players.push({ id, name: last.name, pos: last.pos, team, injury: status.get(id)?.injury?.status ?? null, shares: sh, proj: kept });
       }
       const name = (id: string) => byPlayer.get(id)?.at(-1)?.name ?? id;

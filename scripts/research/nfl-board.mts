@@ -1,7 +1,9 @@
 /**
  * NFL Sunday board: every DraftKings/FanDuel player prop next to the usage
  * model, with the market's no-vig chance, a blend (market moved 30% toward the
- * model), and Fliff's price on the same prop.
+ * model), and Fliff's price on the same prop. Each prop carries its receipts: the
+ * player's game log against the line, his role, what the opponent allows his
+ * position, the game script, and six checks that each pass, fail or stay neutral.
  *
  *   npx tsx scripts/research/nfl-board.mts <YYYY-MM-DD> <oddsapi-nfl-*.json>...
  *
@@ -10,7 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import type { PropStat } from '../../lib/research/nfl-props';
 import { nameKey, TEAM_NAMES } from '../../lib/research/nflverse';
-import { nflWeekProjections, usageChanceOver, USAGE_MODEL_NAME } from '../../lib/research/nfl-usage';
+import { defenseVsPosition, nflUsageData, nflWeekProjections, statValue, usageChanceOver, USAGE_MODEL_NAME } from '../../lib/research/nfl-usage';
 
 const MODEL_WEIGHT = 0.3; // how far to move from the market toward the model
 const MAX_GAP = 0.15; // flag: model and market this far apart usually means the model is missing news
@@ -61,6 +63,18 @@ const players = new Map<string, { g: (typeof games)[number]; p: (typeof games)[n
 for (const g of games) for (const s of g.sides) for (const p of s.players) players.set(nameKey(p.name), { g, p, opp: s.team === g.home ? g.away : g.home });
 const nick = (abbr: string) => TEAM_NAMES[abbr]?.nickname ?? abbr;
 
+// Receipts: this season's game logs and what each defense has allowed each position before this week.
+const week = games[0]?.week ?? 1;
+const season = await nflUsageData(2026);
+const logs = new Map<string, typeof season.players>();
+for (const g of season.players) if (g.week < week && g.snap > 0) (logs.get(g.id) ?? logs.set(g.id, []).get(g.id)!).push(g);
+for (const l of logs.values()) l.sort((a, b) => a.week - b.week);
+const dvp = defenseVsPosition(season.players, week);
+const ordinal = (n: number) => `${n}${n % 100 >= 11 && n % 100 <= 13 ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] ?? 'th')}`;
+const UNIT: Record<PropStat, string> = { passYds: 'pass yds', passAtt: 'pass att', passTd: 'pass TDs', rushYds: 'rush yds', carries: 'carries', receptions: 'rec', recYds: 'rec yds', targets: 'targets' };
+type Check = 'pass' | 'fail' | 'neutral';
+const fmt = (x: number) => (Math.abs(x) >= 10 ? Math.round(x).toString() : (Math.round(x * 10) / 10).toString());
+
 const rows = [];
 const unmatched = new Set<string>();
 const keys = new Set([...(quotes.get('draftkings')?.keys() ?? []), ...(quotes.get('fanduel')?.keys() ?? [])]);
@@ -101,7 +115,59 @@ for (const k of keys) {
     .filter((o): o is { book: 'draftkings' | 'fanduel' | 'fliff'; price: number } => o.price != null)
     .sort((a, b) => decimal(b.price) - decimal(a.price));
   const best = offers[0] ? { ...offers[0], ev: Math.round((s(blendOver) * decimal(offers[0].price) - 1) * 1000) / 1000 } : null;
+  // --- Receipts and checks for the side we'd play.
+  const over = side === 'over';
+  const log = logs.get(hit.p.id) ?? [];
+  const vals = log.map((g) => statValue(g, stat));
+  const hits = vals.filter((v) => (over ? v > line : v < line)).length;
+  const last5 = vals.slice(-5), hits5 = last5.filter((v) => (over ? v > line : v < line)).length;
+  const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  const snapL3 = log.slice(-3).reduce((a, g) => a + g.snap, 0) / Math.max(1, Math.min(3, log.length));
+  const d = dvp.get(`${hit.opp}|${hit.p.pos}|${stat}`);
+  const sideInfo = hit.g.sides.find((x) => x.team === hit.p.team)!;
+  const teamSpread = hit.g.spread == null ? null : hit.p.team === hit.g.home ? hit.g.spread : -hit.g.spread; // + = favored
+  const rushStat = stat === 'rushYds' || stat === 'carries';
+  const yardStat = stat === 'passYds' || stat === 'recYds';
+  // Game script: favorites run more; underdogs throw more; yardage follows the team's implied points.
+  let script: Check = 'neutral', scriptWhy = '';
+  if (rushStat && hit.p.pos === 'QB') {
+    // QB runs are scrambles and designed runs, not clock-killing carries: no script read.
+  } else if (rushStat && teamSpread != null && Math.abs(teamSpread) >= 1.5) {
+    const up = teamSpread > 0;
+    script = up === over ? 'pass' : 'fail';
+    scriptWhy = `${hit.p.team} ${up ? 'favored' : 'underdog'} by ${Math.abs(teamSpread)}: ${up ? 'more' : 'fewer'} late carries`;
+  } else if (!rushStat && !yardStat && teamSpread != null && Math.abs(teamSpread) >= 1.5) {
+    const up = teamSpread < 0;
+    script = up === over ? 'pass' : 'fail';
+    scriptWhy = `${hit.p.team} ${up ? 'underdog' : 'favored'} by ${Math.abs(teamSpread)}: ${up ? 'more' : 'less'} passing`;
+  } else if (yardStat && sideInfo.implied != null && Math.abs(sideInfo.implied - 22.5) >= 1.5) {
+    const up = sideInfo.implied > 22.5;
+    script = up === over ? 'pass' : 'fail';
+    scriptWhy = `${hit.p.team} implied ${sideInfo.implied.toFixed(1)} pts (${up ? 'above' : 'below'} the 22.5 average)`;
+  }
+  const checks: Record<string, Check> = {
+    model: s(ours) >= 0.52 ? 'pass' : s(ours) < 0.5 ? 'fail' : 'neutral',
+    market: s(market) >= 0.5 ? 'pass' : s(market) < 0.47 ? 'fail' : 'neutral',
+    form: vals.length < 3 ? 'neutral' : hits / vals.length >= 0.55 ? 'pass' : hits / vals.length <= 0.45 ? 'fail' : 'neutral',
+    matchup: !d ? 'neutral' : d.ratio >= 1.05 ? (over ? 'pass' : 'fail') : d.ratio <= 0.95 ? (over ? 'fail' : 'pass') : 'neutral',
+    script,
+    health: hit.p.injury && hit.p.injury !== 'Active' ? 'fail' : 'pass',
+  };
+  const allowsMost = d && d.rank <= 16;
+  const why = {
+    log: last5, games: vals.length, hits, hits5, avg: avg == null ? null : Math.round(avg * 10) / 10,
+    targetShare: Math.round(hit.p.shares.tgt * 1000) / 10, carryShare: Math.round(hit.p.shares.car * 1000) / 10, snapL3: Math.round(snapL3 * 100),
+    matchup: d ? { perGame: Math.round(d.perGame * 10) / 10, league: Math.round(d.league * 10) / 10, rank: d.rank, ratio: Math.round(d.ratio * 100) / 100 } : null,
+    implied: sideInfo.implied, teamSpread, teammatesOut: sideInfo.out,
+    lines: [
+      `Projection ${fmt(proj)} vs line ${line} · our chance ${Math.round(100 * s(ours))}%, market ${Math.round(100 * s(market))}%`,
+      vals.length ? `${over ? 'Over' : 'Under'} ${line} in ${hits} of ${vals.length} games (last 5: ${last5.map(fmt).join(', ')}) · avg ${fmt(avg!)}` : 'No games this season',
+      d ? `${hit.opp} allows ${fmt(d.perGame)} ${UNIT[stat]}/g to ${hit.p.pos}s, ${allowsMost ? ordinal(d.rank) + ' most' : ordinal(33 - d.rank) + ' fewest'} (avg ${fmt(d.league)})` : '',
+      [hit.p.pos === 'QB' ? '' : `${Math.round(hit.p.shares.tgt * 100)}% of targets${hit.p.shares.car > 0.05 ? `, ${Math.round(hit.p.shares.car * 100)}% of carries` : ''} · ${Math.round(snapL3 * 100)}% snaps last 3`, scriptWhy, sideInfo.out.length ? `out: ${sideInfo.out.join(', ')}` : ''].filter(Boolean).join(' · '),
+    ].filter(Boolean),
+  };
   rows.push({
+    checks, passes: Object.values(checks).filter((c) => c === 'pass').length, fails: Object.values(checks).filter((c) => c === 'fail').length, why,
     best,
     game: `${hit.g.away} @ ${hit.g.home}`, kickoff: e.commence_time, player: hit.p.name, team: hit.p.team, opp: hit.opp, pos: hit.p.pos, injury: hit.p.injury,
     stat, label: LABEL[stat], line, proj: Math.round(proj * 10) / 10, side,
@@ -117,6 +183,12 @@ console.log(`${rows.length} props · unmatched ${[...unmatched].slice(0, 12).joi
 const pct = (x: number) => `${Math.round(100 * x)}%`.padStart(4);
 console.log('  EV  blend mkt  ours  game        player                 side   line  prop        proj   best price');
 for (const r of rows.slice(0, 45)) console.log(`${r.flagged ? '!' : ' '}${r.best ? `${(100 * r.best.ev).toFixed(1)}%`.padStart(6) : '     —'} ${pct(r.blend)} ${pct(r.market)} ${pct(r.ours)}  ${r.game.padEnd(10)} ${r.player.padEnd(22)} ${r.side.padEnd(5)} ${String(r.line).padStart(6)}  ${r.label.padEnd(10)} ${String(r.proj).padStart(6)}  ${r.best ? `${r.best.book} ${r.best.price > 0 ? '+' : ''}${r.best.price}` : '—'}${r.injury && r.injury !== 'Active' ? ` [${r.injury}]` : ''}`);
+console.log('\nTop plays with receipts (no failed check, 4+ passed):');
+const mark = (c: string) => (c === 'pass' ? '+' : c === 'fail' ? 'x' : '.');
+for (const r of rows.filter((x) => !x.flagged && x.best && x.best.ev > 0 && x.fails === 0 && x.passes >= 4).slice(0, 15)) {
+  console.log(`  ${r.player} ${r.side} ${r.line} ${r.label} · ${r.best!.book} ${r.best!.price} EV ${(100 * r.best!.ev).toFixed(1)}% · checks ${Object.entries(r.checks).map(([k, c]) => `${k}${mark(c)}`).join(' ')}`);
+  for (const l of r.why.lines) console.log(`      ${l}`);
+}
 console.log('\nFliff prices that beat the market (EV ≥ +3%):');
 for (const r of [...rows].filter((x) => !x.flagged && x.fliff && x.fliff.ev >= 0.03).sort((a, b) => b.fliff!.ev - a.fliff!.ev).slice(0, 25))
   console.log(`  ${r.player.padEnd(22)} ${r.side} ${r.fliff!.line} ${r.label.padEnd(10)} Fliff ${r.fliff!.price > 0 ? '+' : ''}${r.fliff!.price} · chance ${pct(r.fliff!.chance)} · EV +${(100 * r.fliff!.ev).toFixed(1)}%  (DK ${r.line}, mkt ${pct(r.market)})`);

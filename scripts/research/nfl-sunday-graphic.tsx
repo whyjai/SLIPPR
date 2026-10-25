@@ -1,6 +1,6 @@
 /* eslint-disable */
 // Renders the NFL Sunday prop board (scripts/research/nfl-board.mts) as 1080x1350 PNGs:
-// page 1 the best plays by expected value, pages 2-3 every game's key lines.
+// pages 1-2 the confirmed plays (positive EV, no failed check) with their receipts, pages 3-4 every game's key lines.
 //   npx tsx scripts/research/nfl-sunday-graphic.tsx <nfl-board-*.json> <output dir> [week label]
 import { readFileSync, writeFileSync } from 'node:fs';
 import React from 'react';
@@ -48,39 +48,53 @@ function Frame({ kicker, title, page, children }: { kicker: string; title: strin
   );
 }
 
-// Page 1: best plays, one per player.
+// Pages 1-2: confirmed plays, one per player: positive EV at the best price, no failed check, 4+ passed.
+const CHECKS: Array<[string, string]> = [['model', 'MODEL'], ['market', 'MARKET'], ['form', 'FORM'], ['matchup', 'MATCHUP'], ['script', 'SCRIPT'], ['health', 'HEALTH']];
 const seen = new Set<string>();
-const top = clean.filter((r) => r.best.ev >= 0.01 && !seen.has(r.player) && seen.add(r.player)).slice(0, 11);
-const page1 = (
-  <Frame kicker={`NFL ${WEEK} · SUNDAY PROP CHEAT SHEET`} title="Best plays on the board" page="1 / 3">
-    <div style={{ display: 'flex', marginTop: 22, padding: '0 18px 8px', fontSize: 15, color: DIM, letterSpacing: 1.5 }}>
-      <span style={{ width: 300 }}>PLAYER</span>
-      <span style={{ width: 290 }}>PICK</span>
-      <span style={{ width: 90, justifyContent: 'flex-end', display: 'flex' }}>PROJ</span>
-      <span style={{ width: 110, justifyContent: 'flex-end', display: 'flex' }}>CHANCE</span>
-      <span style={{ width: 178, justifyContent: 'flex-end', display: 'flex' }}>BEST PRICE · EV</span>
-    </div>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-      {top.map((r, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '9px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
-            <span style={{ fontSize: 24, fontWeight: 700 }}>{short(r.player)}</span>
-            <span style={{ fontSize: 15, color: DIM }}>{`${r.pos} · ${r.team} vs ${r.opp}${r.injury === 'Questionable' ? ' · QUESTIONABLE' : ''}`}</span>
-          </div>
-          <span style={{ width: 290, fontSize: 23, fontWeight: 700, color: sideColor(r.side) }}>{`${r.side === 'over' ? 'O' : 'U'} ${r.line} ${r.label}`}</span>
-          <span style={{ width: 90, justifyContent: 'flex-end', display: 'flex', fontFamily: 'Geist Mono', fontSize: 20, color: MUTED }}>{String(r.proj)}</span>
-          <span style={{ width: 110, justifyContent: 'flex-end', display: 'flex', fontFamily: 'Geist Mono', fontSize: 22, color: FG }}>{pct(r.blend)}</span>
-          <span style={{ width: 178, justifyContent: 'flex-end', display: 'flex', fontFamily: 'Geist Mono', fontSize: 18, color: BRIGHT }}>{`${BOOK[r.best.book]} ${am(r.best.price)} · +${(100 * r.best.ev).toFixed(1)}%`}</span>
+const confirmed = clean.filter((r) => r.best.ev > 0 && r.fails === 0 && r.passes >= 4 && !seen.has(r.player) && seen.add(r.player)).slice(0, 10);
+function PlayCard({ r, i }: { r: Row; i: number }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', padding: '10px 18px', borderRadius: 14, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline' }}>
+        <span style={{ display: 'flex', width: 34, fontFamily: 'Geist Mono', fontSize: 18, color: DIM }}>{`${i}`}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
+          <span style={{ fontSize: 24, fontWeight: 700 }}>{short(r.player)}</span>
+          <span style={{ fontSize: 14, color: DIM }}>{`${r.pos} · ${r.team} vs ${r.opp}`}</span>
         </div>
-      ))}
+        <span style={{ display: 'flex', width: 330, fontSize: 24, fontWeight: 800, color: sideColor(r.side) }}>{`${r.side === 'over' ? 'OVER' : 'UNDER'} ${r.line} ${r.label}`}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1 }}>
+          <span style={{ fontFamily: 'Geist Mono', fontSize: 19, color: BRIGHT }}>{`${BOOK[r.best.book]} ${am(r.best.price)}`}</span>
+          <span style={{ fontFamily: 'Geist Mono', fontSize: 14, color: MUTED }}>{`${pct(r.blend)} · EV +${(100 * r.best.ev).toFixed(1)}%`}</span>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 6, marginTop: 6, marginLeft: 34 }}>
+        {CHECKS.map(([k, label]) => {
+          const c = r.checks[k];
+          const col = c === 'pass' ? BRIGHT : c === 'fail' ? '#f87171' : DIM;
+          return <span key={k} style={{ display: 'flex', fontSize: 11, fontWeight: 700, letterSpacing: 1, color: col, padding: '3px 8px', borderRadius: 6, border: `1px solid ${col}55`, background: c === 'pass' ? 'rgba(52,211,153,0.08)' : 'transparent' }}>{`${c === 'pass' ? '+' : c === 'fail' ? 'x' : '-'} ${label}`}</span>;
+        })}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 5, marginLeft: 34 }}>
+        {r.why.lines.map((l: string, j: number) => <span key={j} style={{ fontSize: 15, color: j === 0 ? FG : MUTED, lineHeight: 1.3 }}>{l}</span>)}
+      </div>
     </div>
-    <span style={{ marginTop: 14, fontSize: 16, color: MUTED, lineHeight: 1.4 }}>
-      Chance: DraftKings + FanDuel no-vig price, moved 30% toward our usage model (game total and spread, player share, efficiency). EV at the best price across DK, FD and Fliff. Small edges: play singles or 2-3 leg slips; check inactives 90 min before kickoff.
-    </span>
+  );
+}
+const playsPage = (rs: Row[], from: number, page: string, title: string) => (
+  <Frame kicker={`NFL ${WEEK} · CONFIRMED PROP PLAYS`} title={title} page={page}>
+    {from === 1 && <span style={{ marginTop: 12, fontSize: 15, color: MUTED, lineHeight: 1.4 }}>Each play has a positive expected return at the best price across DK, FD and Fliff, at least 4 of 6 checks passed and none failed. Grey = no clear read either way. What each check means: page 2.</span>}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
+      {rs.map((r, i) => <PlayCard key={i} r={r} i={from + i} />)}
+    </div>
+    {from > 1 && (
+      <span style={{ marginTop: 10, fontSize: 14, color: DIM, lineHeight: 1.35 }}>
+        Checks: MODEL our usage projection agrees · MARKET the books' no-vig price leans this way · FORM this side hit in 55%+ of his games · MATCHUP the opponent allows 5%+ more (over) or less (under) than average to his position · SCRIPT spread or team total favors this side · HEALTH not on the injury report. Matchup alone is weak evidence: in our 2024-25 backtest it improved projections by under 0.5%.
+      </span>
+    )}
   </Frame>
 );
 
-// Pages 2-3: every game, the QBs' passing line and each team's best skill-position line.
+// Pages 3-4: every game, the QBs' passing line and each team's best skill-position line.
 const games = board.games as Array<{ game: string; gameday: string; gametime: string; total: number; spread: number; out: Record<string, string[]> }>;
 const keyLines = (game: string) => {
   const g = clean.filter((r) => r.game === game);
@@ -126,7 +140,12 @@ const gamePage = (gs: typeof games, page: string, title: string) => (
   </Frame>
 );
 const sorted = [...games].filter((g) => clean.some((r) => r.game === g.game)).sort((a, b) => (a.gameday + a.gametime).localeCompare(b.gameday + b.gametime));
-const pages = [page1, gamePage(sorted.slice(0, 6), '2 / 3', 'Paris & 1 PM games'), gamePage(sorted.slice(6), '3 / 3', '1 PM, late & night games')];
+const pages = [
+  playsPage(confirmed.slice(0, 5), 1, '1 / 4', 'Best plays, with receipts'),
+  playsPage(confirmed.slice(5, 10), 6, '2 / 4', 'More confirmed plays'),
+  gamePage(sorted.slice(0, 6), '3 / 4', 'Paris & 1 PM games'),
+  gamePage(sorted.slice(6), '4 / 4', '1 PM, late & night games'),
+];
 
 async function main() {
   for (const [i, el] of pages.entries()) {
