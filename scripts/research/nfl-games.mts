@@ -34,8 +34,7 @@ function run(p: Params) {
       for (const m of [r, off, def]) for (const [t, v] of m) m.set(t, v * p.carry);
       season = g.season;
     }
-    const neutral = g.gameType !== 'REG' && g.week >= 22; // Super Bowl
-    const margin = (r.get(g.home) ?? 0) - (r.get(g.away) ?? 0) + (neutral ? 0 : p.hfa);
+    const margin = (r.get(g.home) ?? 0) - (r.get(g.away) ?? 0) + (g.neutral ? 0 : p.hfa);
     const total = avg + (off.get(g.home) ?? 0) + (off.get(g.away) ?? 0) + (def.get(g.home) ?? 0) + (def.get(g.away) ?? 0);
     preds.set(g.gameId, { margin, total });
     if (g.homeScore == null || g.awayScore == null) continue;
@@ -101,6 +100,18 @@ console.log('params', P, `blend weight spread ${wM.toFixed(2)} total ${wT.toFixe
 console.log(`test 2019-${SEASON}: spread RMSE blend ${testM.rmse.toFixed(3)} vs market ${testM.rmseMkt.toFixed(3)} · 3+ pt disagreements ATS ${testM.picks} picks, ${(100 * testM.hitRate!).toFixed(1)}%`);
 console.log(`                total  RMSE blend ${testT.rmse.toFixed(3)} vs market ${testT.rmseMkt.toFixed(3)} · 3+ pt disagreements O/U ${testT.picks} picks, ${(100 * testT.hitRate!).toFixed(1)}%`);
 
+// Win-chance calibration on the test seasons: blended margin through the normal curve vs how often that side won.
+const bins = new Map<number, { n: number; p: number; won: number }>();
+for (const g of test) {
+  if (g.homeScore === g.awayScore) continue;
+  const m = g.spreadLine! + wM * (preds.get(g.gameId)!.margin - g.spreadLine!);
+  const pFav = Phi(Math.abs(m) / MARGIN_SD), favWon = Math.sign(g.homeScore! - g.awayScore!) === Math.sign(m || 1);
+  const k = Math.min(9, Math.floor(pFav * 10));
+  const b = bins.get(k) ?? { n: 0, p: 0, won: 0 };
+  b.n++; b.p += pFav; b.won += Number(favWon); bins.set(k, b);
+}
+console.log('win chance calibration (favorite): ' + [...bins].sort((a, b) => a[0] - b[0]).map(([, b]) => `${Math.round((100 * b.p) / b.n)}%→${Math.round((100 * b.won) / b.n)}% (${b.n})`).join(', '));
+
 // This week.
 const week = games.filter((g) => g.season === SEASON && g.week === WEEK && g.homeScore == null);
 type Odds = { home_team: string; away_team: string; commence_time: string; bookmakers: Array<{ key: string; markets: Array<{ key: string; outcomes: Array<{ name: string; price: number; point?: number }> }> }> };
@@ -155,7 +166,8 @@ for (const g of week) {
       const fair = fairAt(m.key, o.name, o.point);
       const shift = curve(m.key, o.name, o.point, margin, total) - curve(m.key, o.name, o.point, mktMargin, mktTotal);
       const p = Math.min(0.99, Math.max(0.01, fair != null ? fair + shift : curve(m.key, o.name, o.point, margin, total)));
-      bets.push({ market: m.key, label, book: b.key, price: o.price, chance: Math.round(p * 1000) / 1000, fair: fair != null, ev: Math.round((p * decimal(o.price) - 1) * 1000) / 1000, breakeven: Math.round(implied(o.price) * 1000) / 1000 });
+      const pm = fair ?? curve(m.key, o.name, o.point, mktMargin, mktTotal);
+      bets.push({ market: m.key, label, book: b.key, price: o.price, chance: Math.round(p * 1000) / 1000, fair: fair != null, marketEv: Math.round((pm * decimal(o.price) - 1) * 1000) / 1000, ev: Math.round((p * decimal(o.price) - 1) * 1000) / 1000, breakeven: Math.round(implied(o.price) * 1000) / 1000 });
     }
   }
   // Best price per bet across books, then the best bet in each market.
@@ -163,7 +175,7 @@ for (const g of week) {
   for (const b of bets) { const k = `${b.market}|${b.label}`; if (!byLabel.has(k) || b.ev > byLabel.get(k)!.ev) byLabel.set(k, b); }
   const bestPer = (mk: string) => [...byLabel.values()].filter((b) => b.market === mk && (mk !== 'h2h' || true)).sort((a, b) => b.ev - a.ev)[0] ?? null;
   const row = {
-    game: `${g.away} @ ${g.home}`, gameday: g.gameday, gametime: g.gametime,
+    game: `${g.away} @ ${g.home}`, gameday: g.gameday, gametime: g.gametime, neutral: g.neutral, qbs: { [g.away]: g.awayQb, [g.home]: g.homeQb },
     market: { homeMargin: Math.round(mktMargin * 10) / 10, total: Math.round(mktTotal * 10) / 10 },
     ratings: { homeMargin: Math.round(pr.margin * 10) / 10, total: Math.round(pr.total * 10) / 10 },
     pred: {

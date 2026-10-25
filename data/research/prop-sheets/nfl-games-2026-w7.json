@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T04:42:11.140Z",
+ "generatedAt": "2026-10-25T06:37:23.665Z",
  "params": {
   "k": 0.1,
   "kt": 0.08,
@@ -8,15 +8,15 @@
   "cap": 21
  },
  "weights": {
-  "spread": 0.06205183192430197,
+  "spread": 0.07220186603003544,
   "total": 0.041133333121582606
  },
  "test": {
   "spread": {
-   "rmse": 12.680359347749926,
+   "rmse": 12.681493280571983,
    "rmseMkt": 12.676903032546711,
-   "picks": 711,
-   "hitRate": 0.5189873417721519
+   "picks": 703,
+   "hitRate": 0.5149359886201992
   },
   "total": {
    "rmse": 13.120575679240739,
@@ -30,18 +30,23 @@
    "game": "PIT @ NO",
    "gameday": "2026-10-25",
    "gametime": "09:30",
+   "neutral": true,
+   "qbs": {
+    "PIT": "Aaron Rodgers",
+    "NO": "Tyler Shough"
+   },
    "market": {
     "homeMargin": -3,
     "total": 43.5
    },
    "ratings": {
-    "homeMargin": -0.3,
+    "homeMargin": -2.8,
     "total": 45.1
    },
    "pred": {
-    "homeMargin": -2.8,
+    "homeMargin": -3,
     "total": 43.6,
-    "homeWin": 0.417,
+    "homeWin": 0.412,
     "score": {
      "PIT": 23,
      "NO": 20
@@ -54,20 +59,22 @@
      "label": "NO ML",
      "book": "fanduel",
      "price": 138,
-     "chance": 0.41,
+     "chance": 0.405,
      "fair": true,
-     "ev": -0.024,
+     "marketEv": -0.036,
+     "ev": -0.035,
      "breakeven": 0.42
     },
     "spreads": {
      "market": "spreads",
-     "label": "NO +3",
-     "book": "draftkings",
-     "price": -108,
-     "chance": 0.507,
-     "fair": true,
-     "ev": -0.023,
-     "breakeven": 0.519
+     "label": "PIT -3.5",
+     "book": "fliff",
+     "price": 100,
+     "chance": 0.485,
+     "fair": false,
+     "marketEv": -0.03,
+     "ev": -0.03,
+     "breakeven": 0.5
     },
     "totals": {
      "market": "totals",
@@ -76,6 +83,7 @@
      "price": -110,
      "chance": 0.502,
      "fair": true,
+     "marketEv": -0.045,
      "ev": -0.042,
      "breakeven": 0.524
     }
@@ -85,12 +93,17 @@
    "game": "SF @ ATL",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "SF": "Brock Purdy",
+    "ATL": "Michael Penix Jr."
+   },
    "market": {
     "homeMargin": -2.5,
     "total": 50.5
    },
    "ratings": {
-    "homeMargin": -1.8,
+    "homeMargin": -1.9,
     "total": 47.9
    },
    "pred": {
@@ -111,6 +124,7 @@
      "price": 130,
      "chance": 0.43,
      "fair": true,
+     "marketEv": -0.014,
      "ev": -0.011,
      "breakeven": 0.435
     },
@@ -121,6 +135,7 @@
      "price": 100,
      "chance": 0.488,
      "fair": true,
+     "marketEv": -0.026,
      "ev": -0.023,
      "breakeven": 0.5
     },
@@ -131,6 +146,7 @@
      "price": -115,
      "chance": 0.527,
      "fair": false,
+     "marketEv": -0.008,
      "ev": -0.014,
      "breakeven": 0.535
     }
@@ -140,18 +156,23 @@
    "game": "CIN @ BAL",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "CIN": "Joe Burrow",
+    "BAL": "Tyler Huntley"
+   },
    "market": {
     "homeMargin": -2.7,
     "total": 46.5
    },
    "ratings": {
-    "homeMargin": 4.9,
+    "homeMargin": 4.8,
     "total": 50.1
    },
    "pred": {
-    "homeMargin": -2.3,
+    "homeMargin": -2.2,
     "total": 46.6,
-    "homeWin": 0.433,
+    "homeWin": 0.435,
     "score": {
      "CIN": 24,
      "BAL": 22
@@ -164,9 +185,10 @@
      "label": "BAL ML",
      "book": "fanduel",
      "price": 132,
-     "chance": 0.435,
+     "chance": 0.437,
      "fair": true,
-     "ev": 0.009,
+     "marketEv": -0.023,
+     "ev": 0.013,
      "breakeven": 0.431
     },
     "spreads": {
@@ -174,9 +196,10 @@
      "label": "BAL +2.5",
      "book": "fliff",
      "price": 100,
-     "chance": 0.495,
+     "chance": 0.497,
      "fair": true,
-     "ev": -0.011,
+     "marketEv": -0.039,
+     "ev": -0.007,
      "breakeven": 0.5
     },
     "totals": {
@@ -186,6 +209,7 @@
      "price": -105,
      "chance": 0.499,
      "fair": true,
+     "marketEv": -0.034,
      "ev": -0.025,
      "breakeven": 0.512
     }
@@ -195,6 +219,11 @@
    "game": "TB @ CAR",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "TB": "Jalon Daniels",
+    "CAR": "Bryce Young"
+   },
    "market": {
     "homeMargin": 2.8,
     "total": 44.5
@@ -221,6 +250,7 @@
      "price": 135,
      "chance": 0.414,
      "fair": true,
+     "marketEv": -0.027,
      "ev": -0.026,
      "breakeven": 0.426
     },
@@ -231,7 +261,8 @@
      "price": 105,
      "chance": 0.477,
      "fair": true,
-     "ev": -0.023,
+     "marketEv": -0.023,
+     "ev": -0.022,
      "breakeven": 0.488
     },
     "totals": {
@@ -241,6 +272,7 @@
      "price": -108,
      "chance": 0.5,
      "fair": true,
+     "marketEv": -0.041,
      "ev": -0.038,
      "breakeven": 0.519
     }
@@ -250,18 +282,23 @@
    "game": "NYG @ HOU",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "NYG": "J.J. McCarthy",
+    "HOU": "C.J. Stroud"
+   },
    "market": {
     "homeMargin": 10.3,
     "total": 42.5
    },
    "ratings": {
-    "homeMargin": 7,
+    "homeMargin": 6.9,
     "total": 44.2
    },
    "pred": {
     "homeMargin": 10,
     "total": 42.6,
-    "homeWin": 0.772,
+    "homeWin": 0.771,
     "score": {
      "NYG": 16,
      "HOU": 26
@@ -274,9 +311,10 @@
      "label": "NYG ML",
      "book": "fanduel",
      "price": 385,
-     "chance": 0.204,
+     "chance": 0.205,
      "fair": true,
-     "ev": -0.012,
+     "marketEv": -0.034,
+     "ev": -0.008,
      "breakeven": 0.206
     },
     "spreads": {
@@ -284,9 +322,10 @@
      "label": "NYG +10.5",
      "book": "fliff",
      "price": -115,
-     "chance": 0.521,
+     "chance": 0.522,
      "fair": true,
-     "ev": -0.026,
+     "marketEv": -0.037,
+     "ev": -0.024,
      "breakeven": 0.535
     },
     "totals": {
@@ -296,6 +335,7 @@
      "price": -112,
      "chance": 0.512,
      "fair": true,
+     "marketEv": -0.035,
      "ev": -0.031,
      "breakeven": 0.528
     }
@@ -305,6 +345,11 @@
    "game": "IND @ MIN",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "IND": "Daniel Jones",
+    "MIN": "Kyler Murray"
+   },
    "market": {
     "homeMargin": 6.5,
     "total": 41.5
@@ -331,7 +376,8 @@
      "price": 260,
      "chance": 0.273,
      "fair": true,
-     "ev": -0.017,
+     "marketEv": -0.019,
+     "ev": -0.016,
      "breakeven": 0.278
     },
     "spreads": {
@@ -341,6 +387,7 @@
      "price": -110,
      "chance": 0.503,
      "fair": true,
+     "marketEv": -0.041,
      "ev": -0.04,
      "breakeven": 0.524
     },
@@ -351,6 +398,7 @@
      "price": -110,
      "chance": 0.504,
      "fair": true,
+     "marketEv": -0.045,
      "ev": -0.038,
      "breakeven": 0.524
     }
@@ -360,6 +408,11 @@
    "game": "MIA @ NYJ",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "MIA": "Malik Willis",
+    "NYJ": "Geno Smith"
+   },
    "market": {
     "homeMargin": 4.5,
     "total": 39.5
@@ -369,9 +422,9 @@
     "total": 42.9
    },
    "pred": {
-    "homeMargin": 4.4,
+    "homeMargin": 4.3,
     "total": 39.6,
-    "homeWin": 0.627,
+    "homeWin": 0.626,
     "score": {
      "MIA": 18,
      "NYJ": 22
@@ -384,9 +437,10 @@
      "label": "MIA ML",
      "book": "fanduel",
      "price": 190,
-     "chance": 0.341,
+     "chance": 0.342,
      "fair": true,
-     "ev": -0.01,
+     "marketEv": -0.021,
+     "ev": -0.008,
      "breakeven": 0.345
     },
     "spreads": {
@@ -396,7 +450,8 @@
      "price": -104,
      "chance": 0.497,
      "fair": true,
-     "ev": -0.026,
+     "marketEv": -0.034,
+     "ev": -0.025,
      "breakeven": 0.51
     },
     "totals": {
@@ -406,6 +461,7 @@
      "price": -105,
      "chance": 0.497,
      "fair": true,
+     "marketEv": -0.039,
      "ev": -0.03,
      "breakeven": 0.512
     }
@@ -415,6 +471,11 @@
    "game": "CLE @ TEN",
    "gameday": "2026-10-25",
    "gametime": "13:00",
+   "neutral": false,
+   "qbs": {
+    "CLE": "Deshaun Watson",
+    "TEN": "Cam Ward"
+   },
    "market": {
     "homeMargin": -2,
     "total": 37
@@ -439,9 +500,10 @@
      "label": "TEN ML",
      "book": "fliff",
      "price": 115,
-     "chance": 0.458,
+     "chance": 0.459,
      "fair": true,
-     "ev": -0.015,
+     "marketEv": -0.021,
+     "ev": -0.014,
      "breakeven": 0.465
     },
     "spreads": {
@@ -449,9 +511,10 @@
      "label": "TEN +2.5",
      "book": "fliff",
      "price": -110,
-     "chance": 0.507,
+     "chance": 0.508,
      "fair": true,
-     "ev": -0.032,
+     "marketEv": -0.037,
+     "ev": -0.031,
      "breakeven": 0.524
     },
     "totals": {
@@ -461,6 +524,7 @@
      "price": -118,
      "chance": 0.52,
      "fair": true,
+     "marketEv": -0.044,
      "ev": -0.039,
      "breakeven": 0.541
     }
@@ -470,6 +534,11 @@
    "game": "DEN @ ARI",
    "gameday": "2026-10-25",
    "gametime": "16:05",
+   "neutral": false,
+   "qbs": {
+    "DEN": "Bo Nix",
+    "ARI": "Jacoby Brissett"
+   },
    "market": {
     "homeMargin": -4.5,
     "total": 43.5
@@ -496,7 +565,8 @@
      "price": 190,
      "chance": 0.337,
      "fair": true,
-     "ev": -0.023,
+     "marketEv": -0.028,
+     "ev": -0.022,
      "breakeven": 0.345
     },
     "spreads": {
@@ -506,7 +576,8 @@
      "price": -110,
      "chance": 0.504,
      "fair": true,
-     "ev": -0.038,
+     "marketEv": -0.041,
+     "ev": -0.037,
      "breakeven": 0.524
     },
     "totals": {
@@ -516,6 +587,7 @@
      "price": 100,
      "chance": 0.491,
      "fair": true,
+     "marketEv": -0.022,
      "ev": -0.017,
      "breakeven": 0.5
     }
@@ -525,6 +597,11 @@
    "game": "GB @ DET",
    "gameday": "2026-10-25",
    "gametime": "16:25",
+   "neutral": false,
+   "qbs": {
+    "GB": "Jordan Love",
+    "DET": "Jared Goff"
+   },
    "market": {
     "homeMargin": 3.5,
     "total": 55
@@ -536,7 +613,7 @@
    "pred": {
     "homeMargin": 3.5,
     "total": 54.8,
-    "homeWin": 0.603,
+    "homeWin": 0.604,
     "score": {
      "GB": 26,
      "DET": 29
@@ -549,9 +626,10 @@
      "label": "GB ML",
      "book": "fanduel",
      "price": 160,
-     "chance": 0.376,
+     "chance": 0.375,
      "fair": true,
-     "ev": -0.023,
+     "marketEv": -0.021,
+     "ev": -0.024,
      "breakeven": 0.385
     },
     "spreads": {
@@ -559,9 +637,10 @@
      "label": "DET -3.5",
      "book": "draftkings",
      "price": -105,
-     "chance": 0.493,
+     "chance": 0.494,
      "fair": true,
-     "ev": -0.037,
+     "marketEv": -0.039,
+     "ev": -0.036,
      "breakeven": 0.512
     },
     "totals": {
@@ -571,6 +650,7 @@
      "price": -105,
      "chance": 0.495,
      "fair": true,
+     "marketEv": -0.045,
      "ev": -0.033,
      "breakeven": 0.512
     }
@@ -580,6 +660,11 @@
    "game": "LA @ LV",
    "gameday": "2026-10-25",
    "gametime": "16:25",
+   "neutral": false,
+   "qbs": {
+    "LA": "Matthew Stafford",
+    "LV": "Kirk Cousins"
+   },
    "market": {
     "homeMargin": -3.2,
     "total": 48.5
@@ -604,8 +689,9 @@
      "label": "LA ML",
      "book": "fanduel",
      "price": -174,
-     "chance": 0.61,
+     "chance": 0.611,
      "fair": true,
+     "marketEv": -0.04,
      "ev": -0.039,
      "breakeven": 0.635
     },
@@ -616,7 +702,8 @@
      "price": 100,
      "chance": 0.482,
      "fair": true,
-     "ev": -0.037,
+     "marketEv": -0.039,
+     "ev": -0.036,
      "breakeven": 0.5
     },
     "totals": {
@@ -626,6 +713,7 @@
      "price": -110,
      "chance": 0.506,
      "fair": true,
+     "marketEv": -0.035,
      "ev": -0.033,
      "breakeven": 0.524
     }
@@ -635,6 +723,11 @@
    "game": "KC @ SEA",
    "gameday": "2026-10-25",
    "gametime": "20:20",
+   "neutral": false,
+   "qbs": {
+    "KC": "Patrick Mahomes",
+    "SEA": "Sam Darnold"
+   },
    "market": {
     "homeMargin": 3,
     "total": 42.5
@@ -646,7 +739,7 @@
    "pred": {
     "homeMargin": 3.1,
     "total": 42.5,
-    "homeWin": 0.591,
+    "homeWin": 0.592,
     "score": {
      "KC": 20,
      "SEA": 23
@@ -659,9 +752,10 @@
      "label": "SEA ML",
      "book": "draftkings",
      "price": -142,
-     "chance": 0.576,
+     "chance": 0.577,
      "fair": true,
-     "ev": -0.018,
+     "marketEv": -0.024,
+     "ev": -0.017,
      "breakeven": 0.587
     },
     "spreads": {
@@ -671,7 +765,8 @@
      "price": 100,
      "chance": 0.482,
      "fair": false,
-     "ev": -0.036,
+     "marketEv": -0.03,
+     "ev": -0.037,
      "breakeven": 0.5
     },
     "totals": {
@@ -681,6 +776,7 @@
      "price": -105,
      "chance": 0.496,
      "fair": true,
+     "marketEv": -0.034,
      "ev": -0.032,
      "breakeven": 0.512
     }
@@ -690,18 +786,23 @@
    "game": "DAL @ PHI",
    "gameday": "2026-10-26",
    "gametime": "20:15",
+   "neutral": false,
+   "qbs": {
+    "DAL": "Dak Prescott",
+    "PHI": "Jalen Hurts"
+   },
    "market": {
     "homeMargin": -4.5,
     "total": 44.5
    },
    "ratings": {
-    "homeMargin": 4.1,
+    "homeMargin": 3.9,
     "total": 47.7
    },
    "pred": {
-    "homeMargin": -4,
+    "homeMargin": -3.9,
     "total": 44.6,
-    "homeWin": 0.384,
+    "homeWin": 0.387,
     "score": {
      "DAL": 24,
      "PHI": 20
@@ -714,9 +815,10 @@
      "label": "PHI ML",
      "book": "fanduel",
      "price": 190,
-     "chance": 0.352,
+     "chance": 0.354,
      "fair": true,
-     "ev": 0.02,
+     "marketEv": -0.023,
+     "ev": 0.026,
      "breakeven": 0.345
     },
     "spreads": {
@@ -724,9 +826,10 @@
      "label": "PHI +4.5",
      "book": "fanduel",
      "price": -105,
-     "chance": 0.508,
+     "chance": 0.51,
      "fair": true,
-     "ev": -0.008,
+     "marketEv": -0.039,
+     "ev": -0.004,
      "breakeven": 0.512
     },
     "totals": {
@@ -736,6 +839,7 @@
      "price": -102,
      "chance": 0.486,
      "fair": true,
+     "marketEv": -0.046,
      "ev": -0.038,
      "breakeven": 0.505
     }
