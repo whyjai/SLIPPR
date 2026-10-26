@@ -105,12 +105,18 @@ const singles = {
   expectedHits: Math.round(settledSingles.reduce((a, l) => a + l.ours, 0) * 100) / 100,
   units: Math.round(settledSingles.reduce((a, l) => a + (l.result === 'hit' ? decimal(l.price!) - 1 : -1), 0) * 100) / 100,
 };
+// Each singles card on its own (e.g. best bets vs all confirmed plays).
+const singlesCards = graded.filter((s) => slips.find((x) => x.id === s.id)!.payout.type === 'singles').map((s) => {
+  const ls = (s.legs as Array<{ result: string; price?: number; ours: number }>).filter((l) => l.result !== 'pending' && l.price != null);
+  return { id: s.id, picks: s.legs.length, settled: ls.length, hit: ls.filter((l) => l.result === 'hit').length, expectedHits: Math.round(ls.reduce((a, l) => a + l.ours, 0) * 100) / 100, units: Math.round(ls.reduce((a, l) => a + (l.result === 'hit' ? decimal(l.price!) - 1 : -1), 0) * 100) / 100 };
+});
 const parlays = graded.filter((s) => slips.find((x) => x.id === s.id)!.payout.type !== 'singles');
 const done = parlays.filter((s) => s.result !== 'pending');
 const won = done.filter((s) => s.result === 'won');
 const summary = {
   updatedAt: new Date().toISOString(),
   singles,
+  singlesCards,
   slips: parlays.length,
   settled: done.length,
   won: won.length,
@@ -123,3 +129,4 @@ const summary = {
 writeFileSync(`${DIR}/track.json`, JSON.stringify(summary, null, 1));
 console.log(`\n${summary.won}/${summary.settled} slips won · ${summary.units} units · expected wins ${summary.expectedWins}`);
 console.log(`singles: ${singles.hit}/${singles.settled} hit (expected ${singles.expectedHits}) · ${singles.units} units`);
+for (const c of singlesCards) console.log(`  ${c.id}: ${c.hit}/${c.settled} hit (expected ${c.expectedHits}) · ${c.units} units${c.picks > c.settled ? ` · ${c.picks - c.settled} pending` : ''}`);

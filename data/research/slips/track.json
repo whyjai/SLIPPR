@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-26T18:12:24.655Z",
+ "updatedAt": "2026-10-26T22:04:52.602Z",
  "singles": {
   "picks": 21,
   "settled": 20,
@@ -7,6 +7,24 @@
   "expectedHits": 10.8,
   "units": 6.75
  },
+ "singlesCards": [
+  {
+   "id": "2026-10-25-nfl-confirmed",
+   "picks": 10,
+   "settled": 10,
+   "hit": 6,
+   "expectedHits": 5.37,
+   "units": 1.42
+  },
+  {
+   "id": "2026-10-25-nfl-singles",
+   "picks": 11,
+   "settled": 10,
+   "hit": 8,
+   "expectedHits": 5.43,
+   "units": 5.33
+  }
+ ],
  "slips": 5,
  "settled": 5,
  "won": 1,
