@@ -1,0 +1,14 @@
+{
+  "id": "2026-10-18-4pick",
+  "createdAt": "2026-10-18T23:20:00Z",
+  "title": "Sunday night 4-pick",
+  "payout": { "type": "power", "multiplier": 10 },
+  "method": "Standard lines (Pinnacle's posted lines). Legs where our calibrated model and Pinnacle's no-vig price both put the side at 55%+.",
+  "combined": { "ours": 0.128, "pinnacle": 0.128 },
+  "legs": [
+    { "sport": "NFL", "game": "DAL @ GB", "gameDate": "2026-10-18", "player": "Ryan Flournoy", "team": "DAL", "stat": "receptions", "label": "Receptions", "side": "under", "line": 3.5, "ours": 0.609, "pinnacle": 0.603 },
+    { "sport": "NFL", "game": "DAL @ GB", "gameDate": "2026-10-18", "player": "Jake Ferguson", "team": "DAL", "stat": "receptions", "label": "Receptions", "side": "under", "line": 3.5, "ours": 0.636, "pinnacle": 0.56 },
+    { "sport": "NHL", "game": "CAR @ CGY", "gameDate": "2026-10-18", "player": "Matt Coronato", "team": "CGY", "stat": "shots", "label": "Shots on goal", "side": "under", "line": 2.5, "ours": 0.57, "pinnacle": 0.621 },
+    { "sport": "NHL", "game": "CAR @ CGY", "gameDate": "2026-10-18", "player": "Mikael Backlund", "team": "CGY", "stat": "shots", "label": "Shots on goal", "side": "under", "line": 2.5, "ours": 0.579, "pinnacle": 0.611 }
+  ]
+}

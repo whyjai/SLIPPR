@@ -33,6 +33,13 @@ export type Game = {
   home: string;
   awayScore: number | null;
   homeScore: number | null;
+  /** Closing (or current) spread, home perspective: positive = home favored by that many points. */
+  spreadLine: number | null;
+  totalLine: number | null;
+  /** Played at a neutral site (international games, Super Bowl). */
+  neutral: boolean;
+  awayQb: string;
+  homeQb: string;
 };
 
 /** Minimal RFC 4180 parser: quoted fields, escaped quotes, commas inside quotes. */
@@ -122,6 +129,11 @@ export function schedule(season: number): Promise<Game[]> {
         home: r.home_team,
         awayScore: r.away_score === '' || r.away_score === 'NA' ? null : Number(r.away_score),
         homeScore: r.home_score === '' || r.home_score === 'NA' ? null : Number(r.home_score),
+        spreadLine: r.spread_line === '' || r.spread_line === 'NA' ? null : Number(r.spread_line),
+        totalLine: r.total_line === '' || r.total_line === 'NA' ? null : Number(r.total_line),
+        neutral: r.location === 'Neutral',
+        awayQb: r.away_qb_name === 'NA' ? '' : r.away_qb_name,
+        homeQb: r.home_qb_name === 'NA' ? '' : r.home_qb_name,
       }));
   });
 }

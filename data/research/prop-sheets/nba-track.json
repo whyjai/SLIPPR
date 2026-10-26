@@ -1,0 +1,107 @@
+{
+ "league": "nba",
+ "updatedAt": "2026-10-25T02:36:41.380Z",
+ "overall": {
+  "props": 185,
+  "lines": 535,
+  "overMedian": 0.357,
+  "underAverage": 0.714,
+  "insideMiddle50": 0.546,
+  "brier": {
+   "sheet": 0.231,
+   "ownHitRate": 0.249,
+   "coinFlip": 0.25
+  },
+  "calibration": [
+   {
+    "from": 0,
+    "to": 30,
+    "said": 28,
+    "happened": 0.286,
+    "n": 7
+   },
+   {
+    "from": 30,
+    "to": 45,
+    "said": 40,
+    "happened": 0.22,
+    "n": 150
+   },
+   {
+    "from": 45,
+    "to": 55,
+    "said": 51,
+    "happened": 0.398,
+    "n": 118
+   },
+   {
+    "from": 55,
+    "to": 70,
+    "said": 63,
+    "happened": 0.494,
+    "n": 176
+   },
+   {
+    "from": 70,
+    "to": 100,
+    "said": 77,
+    "happened": 0.762,
+    "n": 84
+   }
+  ]
+ },
+ "days": [
+  {
+   "date": "2026-10-20",
+   "pending": 0,
+   "dnp": 13,
+   "props": 185,
+   "lines": 535,
+   "overMedian": 0.357,
+   "underAverage": 0.714,
+   "insideMiddle50": 0.546,
+   "brier": {
+    "sheet": 0.231,
+    "ownHitRate": 0.249,
+    "coinFlip": 0.25
+   },
+   "calibration": [
+    {
+     "from": 0,
+     "to": 30,
+     "said": 28,
+     "happened": 0.286,
+     "n": 7
+    },
+    {
+     "from": 30,
+     "to": 45,
+     "said": 40,
+     "happened": 0.22,
+     "n": 150
+    },
+    {
+     "from": 45,
+     "to": 55,
+     "said": 51,
+     "happened": 0.398,
+     "n": 118
+    },
+    {
+     "from": 55,
+     "to": 70,
+     "said": 63,
+     "happened": 0.494,
+     "n": 176
+    },
+    {
+     "from": 70,
+     "to": 100,
+     "said": 77,
+     "happened": 0.762,
+     "n": 84
+    }
+   ]
+  }
+ ]
+}

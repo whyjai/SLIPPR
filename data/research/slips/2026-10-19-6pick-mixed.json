@@ -1,0 +1,18 @@
+{
+  "id": "2026-10-19-6pick-mixed",
+  "createdAt": "2026-10-19T22:45:00Z",
+  "title": "Monday night 6-pick, NFL + MLB + WNBA",
+  "dateLabel": "MON OCT 19",
+  "payout": { "type": "power", "multiplier": 37.5 },
+  "method": "Standard lines (Pinnacle's posted lines). Best legs across tonight's NFL, MLB and WNBA games where our calibrated model is 65%+ and Pinnacle's no-vig price is 55%+. MLB: 1+ total base, rate shrunk toward league (walk-forward 2025: 63->63, 67->66). WNBA: calibrated 2022-25, held-out 2026: 62->64, 78->79. Skipped: big model-vs-market gaps (playoff role changes).",
+  "note": "Every leg is 65%+ in our calibrated model and 55%+ in the sharpest market.",
+  "combined": { "ours": 0.117, "pinnacle": 0.049 },
+  "legs": [
+    { "sport": "WNBA", "game": "ATL @ GS", "gameDate": "2026-10-19", "player": "Gabby Williams", "team": "GS", "stat": "ast", "label": "Assists", "side": "under", "line": 3.5, "ours": 0.73, "pinnacle": 0.60 },
+    { "sport": "WNBA", "game": "ATL @ GS", "gameDate": "2026-10-19", "player": "Kiah Stokes", "team": "GS", "stat": "reb", "label": "Rebounds", "side": "under", "line": 7.5, "ours": 0.73, "pinnacle": 0.56 },
+    { "sport": "WNBA", "game": "ATL @ GS", "gameDate": "2026-10-19", "player": "Allisha Gray", "team": "ATL", "stat": "reb", "label": "Rebounds", "side": "over", "line": 2.5, "ours": 0.71, "pinnacle": 0.61 },
+    { "sport": "NFL", "game": "WAS @ SF", "gameDate": "2026-10-19", "player": "Mike Evans", "team": "SF", "stat": "receptions", "label": "Receptions", "side": "under", "line": 5.5, "ours": 0.71, "pinnacle": 0.60 },
+    { "sport": "MLB", "game": "CLE @ TB", "gameDate": "2026-10-19", "player": "Chase DeLauter", "team": "CLE", "stat": "tb", "label": "Total Bases", "side": "over", "line": 0.5, "ours": 0.67, "pinnacle": 0.62 },
+    { "sport": "MLB", "game": "CLE @ TB", "gameDate": "2026-10-19", "player": "Steven Kwan", "team": "CLE", "stat": "tb", "label": "Total Bases", "side": "over", "line": 0.5, "ours": 0.65, "pinnacle": 0.64 }
+  ]
+}

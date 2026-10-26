@@ -1,0 +1,5998 @@
+{
+ "model": "hoops-1: baseline last 10 @0.5 + last season as 6 games; spread pooled 2022-26 by volume, early-season spread",
+ "league": "nba",
+ "season": 2027,
+ "date": "2026-10-20",
+ "generatedAt": "2026-10-18T22:45:56.018Z",
+ "games": [
+  {
+   "id": "401909088",
+   "tipoff": "2026-10-20T19:00Z",
+   "away": "BOS",
+   "home": "DET",
+   "sides": [
+    {
+     "team": "BOS",
+     "opp": "DET",
+     "players": [
+      {
+       "id": "3078576",
+       "name": "Derrick White",
+       "pos": "G",
+       "minutes": 34.1,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 16.5,
+         "median": 15.8,
+         "low": 12,
+         "high": 19.9,
+         "lines": [
+          {
+           "line": 13.5,
+           "chance": 66,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 52,
+           "hits": 1,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 39,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4.4,
+         "median": 4,
+         "low": 2.2,
+         "high": 5.7,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 40,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 5.4,
+         "median": 4.9,
+         "low": 3.4,
+         "high": 6.6,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 73,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 41,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.7,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 64,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 47,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 26.2,
+         "median": 25.6,
+         "low": 20.5,
+         "high": 30.5,
+         "lines": [
+          {
+           "line": 22.5,
+           "chance": 66,
+           "hits": 1,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 51,
+           "hits": 0,
+           "games": 10
+          },
+          {
+           "line": 28.5,
+           "chance": 35,
+           "hits": 0,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4065648",
+       "name": "Jayson Tatum",
+       "pos": "F",
+       "minutes": 32.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 21.8,
+         "median": 20.9,
+         "low": 15.9,
+         "high": 26.3,
+         "lines": [
+          {
+           "line": 18.5,
+           "chance": 63,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 52,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 42,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 10,
+         "median": 9.3,
+         "low": 6.5,
+         "high": 12.3,
+         "lines": [
+          {
+           "line": 7.5,
+           "chance": 67,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 58,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 48,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 5.3,
+         "median": 4.8,
+         "low": 3.3,
+         "high": 6.6,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 56,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 40,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.9,
+         "median": 2.6,
+         "low": 1.3,
+         "high": 4,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 66,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 51,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 31,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 37.1,
+         "median": 36.2,
+         "low": 28.9,
+         "high": 43.1,
+         "lines": [
+          {
+           "line": 32.5,
+           "chance": 64,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 35.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 38.5,
+           "chance": 41,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4066354",
+       "name": "Payton Pritchard",
+       "pos": "G",
+       "minutes": 32.4,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 17,
+         "median": 16.4,
+         "low": 12.5,
+         "high": 20.6,
+         "lines": [
+          {
+           "line": 13.5,
+           "chance": 69,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 56,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.9,
+         "median": 3.5,
+         "low": 2.1,
+         "high": 5.4,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 79,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 50,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 5.2,
+         "median": 4.7,
+         "low": 3.2,
+         "high": 6.4,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 70,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 54,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 38,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.7,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 64,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 46,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 26.1,
+         "median": 25.5,
+         "low": 20.4,
+         "high": 30.4,
+         "lines": [
+          {
+           "line": 22.5,
+           "chance": 66,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 50,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 28.5,
+           "chance": 34,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4251",
+       "name": "Paul George",
+       "pos": "F",
+       "minutes": 30.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 17.3,
+         "median": 16.7,
+         "low": 12.7,
+         "high": 20.9,
+         "lines": [
+          {
+           "line": 14.5,
+           "chance": 64,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 16.5,
+           "chance": 51,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 18.5,
+           "chance": 39,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.3,
+         "median": 4.8,
+         "low": 2.6,
+         "high": 6.9,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 66,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 39,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.6,
+         "median": 3.3,
+         "low": 1.9,
+         "high": 4.8,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 60,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 45,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.7,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 64,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 47,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 26.2,
+         "median": 25.6,
+         "low": 20.5,
+         "high": 30.5,
+         "lines": [
+          {
+           "line": 22.5,
+           "chance": 66,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 51,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 28.5,
+           "chance": 35,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4397424",
+       "name": "Neemias Queta",
+       "pos": "C",
+       "minutes": 25.4,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 10.2,
+         "median": 8.9,
+         "low": 4.8,
+         "high": 13.6,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 66,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 52,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 40,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 8.4,
+         "median": 7.8,
+         "low": 5.5,
+         "high": 10.3,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 65,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 42,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 20.2,
+         "median": 19.4,
+         "low": 14.2,
+         "high": 24.9,
+         "lines": [
+          {
+           "line": 15.5,
+           "chance": 70,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 18.5,
+           "chance": 54,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 21.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4065804",
+       "name": "Sam Hauser",
+       "pos": "F",
+       "minutes": 24.8,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 9.2,
+         "median": 8,
+         "low": 4.4,
+         "high": 12.3,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 68,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 54,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 40,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.8,
+         "median": 3.4,
+         "low": 2,
+         "high": 5.2,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 62,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 48,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.5,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 14.5,
+         "median": 13,
+         "low": 8.3,
+         "high": 18.4,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 69,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 53,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 38,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4351852",
+       "name": "Mitchell Robinson",
+       "pos": "C",
+       "minutes": 19.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 8.9,
+         "median": 8.2,
+         "low": 5.8,
+         "high": 10.9,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 68,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 58,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 47,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 15.4,
+         "median": 13.8,
+         "low": 8.7,
+         "high": 19.4,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 66,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 13.5,
+           "chance": 52,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 16.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4593841",
+       "name": "Baylor Scheierman",
+       "pos": "G",
+       "minutes": 18.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.5,
+         "median": 3.1,
+         "low": 1.8,
+         "high": 4.8,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 77,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 58,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.3,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 71,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 36,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": [
+      {
+       "name": "Devin Carter",
+       "status": "Out",
+       "note": "Carter has been diagnosed with mononucleosis and is without a timetable for a return, Gary Washburn of The Boston Globe reports."
+      }
+     ]
+    },
+    {
+     "team": "DET",
+     "opp": "BOS",
+     "players": [
+      {
+       "id": "4432166",
+       "name": "Cade Cunningham",
+       "pos": "G",
+       "minutes": 33.9,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 23.9,
+         "median": 23,
+         "low": 17.5,
+         "high": 28.9,
+         "lines": [
+          {
+           "line": 20.5,
+           "chance": 62,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 53,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 24.5,
+           "chance": 43,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.5,
+         "median": 5.1,
+         "low": 3.6,
+         "high": 6.8,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 77,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 62,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 44,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 9.9,
+         "median": 9,
+         "low": 6.2,
+         "high": 12.2,
+         "lines": [
+          {
+           "line": 7.5,
+           "chance": 64,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 55,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 46,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2,
+         "median": 1.7,
+         "low": 0.9,
+         "high": 2.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 86,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 56,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 28,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 39.4,
+         "median": 38.5,
+         "low": 30.8,
+         "high": 45.8,
+         "lines": [
+          {
+           "line": 34.5,
+           "chance": 64,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 37.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 40.5,
+           "chance": 42,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4433621",
+       "name": "Jalen Duren",
+       "pos": "C",
+       "minutes": 28.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 19.5,
+         "median": 18.8,
+         "low": 14.3,
+         "high": 23.6,
+         "lines": [
+          {
+           "line": 16.5,
+           "chance": 63,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 18.5,
+           "chance": 52,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 10.5,
+         "median": 9.8,
+         "low": 6.9,
+         "high": 13,
+         "lines": [
+          {
+           "line": 8.5,
+           "chance": 62,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 52,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 44,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 32,
+         "median": 31.3,
+         "low": 25,
+         "high": 37.2,
+         "lines": [
+          {
+           "line": 27.5,
+           "chance": 66,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 30.5,
+           "chance": 53,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 33.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3157465",
+       "name": "Duncan Robinson",
+       "pos": "F",
+       "minutes": 27.4,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 12.2,
+         "median": 11.4,
+         "low": 7.6,
+         "high": 15.5,
+         "lines": [
+          {
+           "line": 8.5,
+           "chance": 69,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 56,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 43,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.1,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 60,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 33,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.9,
+         "median": 2.5,
+         "low": 1.3,
+         "high": 3.8,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 65,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 50,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 30,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 16.9,
+         "median": 15.2,
+         "low": 9.6,
+         "high": 21.4,
+         "lines": [
+          {
+           "line": 11.5,
+           "chance": 67,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 53,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3908845",
+       "name": "John Collins",
+       "pos": "F",
+       "minutes": 27.1,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 13.6,
+         "median": 12.6,
+         "low": 8.4,
+         "high": 17.3,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 51,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.3,
+         "median": 4.8,
+         "low": 2.6,
+         "high": 6.9,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 66,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 39,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.3,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 71,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 37,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 19.9,
+         "median": 19.1,
+         "low": 13.9,
+         "high": 24.4,
+         "lines": [
+          {
+           "line": 15.5,
+           "chance": 68,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 18.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 21.5,
+           "chance": 39,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4684742",
+       "name": "Ausar Thompson",
+       "pos": "G",
+       "minutes": 26,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 9.9,
+         "median": 8.6,
+         "low": 4.7,
+         "high": 13.2,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 64,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 51,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 38,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.7,
+         "median": 5.3,
+         "low": 3.7,
+         "high": 7,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 78,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 64,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 47,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.1,
+         "median": 2.8,
+         "low": 1.6,
+         "high": 4.2,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 76,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 55,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 36,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 18.7,
+         "median": 18,
+         "low": 13.1,
+         "high": 23,
+         "lines": [
+          {
+           "line": 14.5,
+           "chance": 69,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 52,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 37,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "2990962",
+       "name": "Taurean Prince",
+       "pos": "F",
+       "minutes": 23.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 9.2,
+         "median": 8,
+         "low": 4.3,
+         "high": 12.2,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 68,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 53,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 40,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.1,
+         "median": 2.8,
+         "low": 1.6,
+         "high": 4.2,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 76,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 55,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 36,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.3,
+         "median": 2.1,
+         "low": 1,
+         "high": 3.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 61,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 36,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 14.1,
+         "median": 12.6,
+         "low": 8,
+         "high": 17.8,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 67,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 51,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 35,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4066372",
+       "name": "Kevin Huerter",
+       "pos": "G",
+       "minutes": 22.5,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 10,
+         "median": 8.8,
+         "low": 4.8,
+         "high": 13.4,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 65,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 52,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 39,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.5,
+         "median": 3.1,
+         "low": 1.8,
+         "high": 4.7,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 77,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 58,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 43,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 44,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.4,
+         "median": 1.1,
+         "low": 0,
+         "high": 2.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 41,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 16.1,
+         "median": 14.5,
+         "low": 9.1,
+         "high": 20.4,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 69,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 13.5,
+           "chance": 55,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 16.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4395702",
+       "name": "Isaiah Joe",
+       "pos": "G",
+       "minutes": 21.2,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 11.1,
+         "median": 10.3,
+         "low": 6.9,
+         "high": 14.1,
+         "lines": [
+          {
+           "line": 7.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 56,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.5,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.4,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 42,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 14.9,
+         "median": 13.4,
+         "low": 8.5,
+         "high": 18.9,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 70,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 55,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 40,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": []
+    }
+   ]
+  },
+  {
+   "id": "401909089",
+   "tipoff": "2026-10-20T23:00Z",
+   "away": "PHI",
+   "home": "NY",
+   "sides": [
+    {
+     "team": "PHI",
+     "opp": "NY",
+     "players": [
+      {
+       "id": "4431678",
+       "name": "Tyrese Maxey",
+       "pos": "G",
+       "minutes": 38,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 28.3,
+         "median": 27.2,
+         "low": 20.7,
+         "high": 34.2,
+         "lines": [
+          {
+           "line": 24.5,
+           "chance": 61,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 26.5,
+           "chance": 53,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 28.5,
+           "chance": 45,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4.1,
+         "median": 3.8,
+         "low": 2,
+         "high": 5.4,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 70,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 37,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 6.6,
+         "median": 6,
+         "low": 4.1,
+         "high": 8.1,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 70,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 44,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 3.1,
+         "median": 2.8,
+         "low": 1.4,
+         "high": 4.2,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 71,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 55,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 34,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 39,
+         "median": 38.1,
+         "low": 30.5,
+         "high": 45.4,
+         "lines": [
+          {
+           "line": 34.5,
+           "chance": 63,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 37.5,
+           "chance": 52,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 40.5,
+           "chance": 41,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "5124612",
+       "name": "VJ Edgecombe",
+       "pos": "G",
+       "minutes": 35,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 16,
+         "median": 14.9,
+         "low": 9.9,
+         "high": 20.4,
+         "lines": [
+          {
+           "line": 12.5,
+           "chance": 62,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 52,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 16.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.6,
+         "median": 5.2,
+         "low": 3.7,
+         "high": 6.9,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 77,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 46,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 4.2,
+         "median": 3.8,
+         "low": 2.2,
+         "high": 5.7,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 69,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 53,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 38,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2,
+         "median": 1.7,
+         "low": 0.9,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 86,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 29,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 25.8,
+         "median": 25.2,
+         "low": 20.2,
+         "high": 30.1,
+         "lines": [
+          {
+           "line": 21.5,
+           "chance": 70,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 24.5,
+           "chance": 54,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 27.5,
+           "chance": 37,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3917376",
+       "name": "Jaylen Brown",
+       "pos": "G",
+       "minutes": 34.4,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 28.7,
+         "median": 27.6,
+         "low": 21,
+         "high": 34.7,
+         "lines": [
+          {
+           "line": 25.5,
+           "chance": 59,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 27.5,
+           "chance": 50,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 29.5,
+           "chance": 43,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 6.9,
+         "median": 6.4,
+         "low": 4.5,
+         "high": 8.5,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 75,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 49,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 5.1,
+         "median": 4.7,
+         "low": 3.2,
+         "high": 6.3,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 70,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 37,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2,
+         "median": 1.7,
+         "low": 0.9,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 86,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 56,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 28,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 40.8,
+         "median": 39.8,
+         "low": 31.8,
+         "high": 47.4,
+         "lines": [
+          {
+           "line": 36.5,
+           "chance": 61,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 39.5,
+           "chance": 51,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 42.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "1966",
+       "name": "LeBron James",
+       "pos": "F",
+       "minutes": 33.1,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 20.9,
+         "median": 20.1,
+         "low": 15.3,
+         "high": 25.3,
+         "lines": [
+          {
+           "line": 17.5,
+           "chance": 65,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 19.5,
+           "chance": 54,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 21.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 6.1,
+         "median": 5.6,
+         "low": 4,
+         "high": 7.5,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 67,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 52,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 7.2,
+         "median": 6.6,
+         "low": 4.5,
+         "high": 8.9,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 64,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 51,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 40,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.3,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 37,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 34.2,
+         "median": 33.4,
+         "low": 26.7,
+         "high": 39.8,
+         "lines": [
+          {
+           "line": 29.5,
+           "chance": 66,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 32.5,
+           "chance": 54,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 35.5,
+           "chance": 41,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3059318",
+       "name": "Joel Embiid",
+       "pos": "C",
+       "minutes": 31.5,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 26.9,
+         "median": 25.8,
+         "low": 19.7,
+         "high": 32.5,
+         "lines": [
+          {
+           "line": 23.5,
+           "chance": 61,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 52,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 27.5,
+           "chance": 43,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 7.7,
+         "median": 7.2,
+         "low": 5,
+         "high": 9.5,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 70,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 59,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 46,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.9,
+         "median": 3.6,
+         "low": 2,
+         "high": 5.3,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 66,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 51,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 35,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.4,
+         "median": 1,
+         "low": 0,
+         "high": 2.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 40,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 38.5,
+         "median": 37.6,
+         "low": 30.1,
+         "high": 44.8,
+         "lines": [
+          {
+           "line": 34.5,
+           "chance": 61,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 37.5,
+           "chance": 51,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 40.5,
+           "chance": 39,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4351851",
+       "name": "Anfernee Simons",
+       "pos": "G",
+       "minutes": 24.9,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Simons (hamstring) was a full participant in Sunday's practice, Ky Carlin of USA Today reports."
+       },
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 14.3,
+         "median": 13.3,
+         "low": 8.8,
+         "high": 18.2,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 66,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 55,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 44,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.4,
+         "median": 2.1,
+         "low": 1,
+         "high": 3.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 62,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 42,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.7,
+         "median": 2.3,
+         "low": 1.2,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 64,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 45,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 19.2,
+         "median": 18.4,
+         "low": 13.4,
+         "high": 23.6,
+         "lines": [
+          {
+           "line": 14.5,
+           "chance": 71,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 55,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4870562",
+       "name": "Dominick Barlow",
+       "pos": "F",
+       "minutes": 23.7,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Barlow (back) didn't participate in Sunday's practice, Adam Aaronson of PhillyVoice.com reports."
+       },
+       "props": [
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4.8,
+         "median": 4.4,
+         "low": 2.4,
+         "high": 6.2,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 74,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 60,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 47,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 13.7,
+         "median": 12.3,
+         "low": 7.8,
+         "high": 17.3,
+         "lines": [
+          {
+           "line": 8.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 54,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 38,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3912848",
+       "name": "Dean Wade",
+       "pos": "F",
+       "minutes": 22.4,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Wade (ankle) didn't participate in Sunday's practice, Adam Aaronson of PhillyVoice.com reports."
+       },
+       "props": [
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4.2,
+         "median": 3.8,
+         "low": 2.1,
+         "high": 5.4,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 70,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 54,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.2,
+         "median": 1.1,
+         "low": 0,
+         "high": 2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 29,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": []
+    },
+    {
+     "team": "NY",
+     "opp": "PHI",
+     "players": [
+      {
+       "id": "3934672",
+       "name": "Jalen Brunson",
+       "pos": "G",
+       "minutes": 35.2,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 26,
+         "median": 25,
+         "low": 19.1,
+         "high": 31.5,
+         "lines": [
+          {
+           "line": 22.5,
+           "chance": 62,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 24.5,
+           "chance": 52,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 26.5,
+           "chance": 44,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.3,
+         "median": 3,
+         "low": 1.7,
+         "high": 4.6,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 77,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 40,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 6.8,
+         "median": 6.2,
+         "low": 4.3,
+         "high": 8.4,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 60,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 47,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.6,
+         "median": 2.3,
+         "low": 1.2,
+         "high": 3.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 44,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 36.2,
+         "median": 35.4,
+         "low": 28.3,
+         "high": 42.1,
+         "lines": [
+          {
+           "line": 31.5,
+           "chance": 65,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 34.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 37.5,
+           "chance": 41,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3934719",
+       "name": "OG Anunoby",
+       "pos": "F",
+       "minutes": 33.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 16.9,
+         "median": 16.2,
+         "low": 12.3,
+         "high": 20.4,
+         "lines": [
+          {
+           "line": 13.5,
+           "chance": 68,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 55,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.3,
+         "median": 4.8,
+         "low": 2.6,
+         "high": 6.9,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 66,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 39,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.2,
+         "median": 1.9,
+         "low": 0.9,
+         "high": 3.1,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 61,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 36,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.4,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 62,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 37,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 24.3,
+         "median": 23.4,
+         "low": 17.1,
+         "high": 29.9,
+         "lines": [
+          {
+           "line": 19.5,
+           "chance": 66,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 41,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3147657",
+       "name": "Mikal Bridges",
+       "pos": "G",
+       "minutes": 33.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 14.5,
+         "median": 13.6,
+         "low": 9,
+         "high": 18.5,
+         "lines": [
+          {
+           "line": 11.5,
+           "chance": 62,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 13.5,
+           "chance": 50,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 40,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.9,
+         "median": 3.4,
+         "low": 2,
+         "high": 5.3,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 62,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 49,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.8,
+         "median": 3.4,
+         "low": 2,
+         "high": 5.1,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 79,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 64,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 48,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.9,
+         "median": 1.4,
+         "low": 0,
+         "high": 2.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 73,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 45,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 22.2,
+         "median": 21.3,
+         "low": 15.5,
+         "high": 27.2,
+         "lines": [
+          {
+           "line": 17.5,
+           "chance": 67,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 53,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 23.5,
+           "chance": 40,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3136195",
+       "name": "Karl-Anthony Towns",
+       "pos": "C",
+       "minutes": 30.9,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 20,
+         "median": 19.2,
+         "low": 14.6,
+         "high": 24.2,
+         "lines": [
+          {
+           "line": 16.5,
+           "chance": 66,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 18.5,
+           "chance": 54,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 43,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 11.8,
+         "median": 11,
+         "low": 7.7,
+         "high": 14.6,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 63,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 54,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 46,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3,
+         "median": 2.7,
+         "low": 1.5,
+         "high": 4,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 75,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 53,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 33,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.5,
+         "median": 1.1,
+         "low": 0,
+         "high": 2.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 42,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 34.8,
+         "median": 34,
+         "low": 27.2,
+         "high": 40.5,
+         "lines": [
+          {
+           "line": 30.5,
+           "chance": 64,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 33.5,
+           "chance": 52,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 36.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3062679",
+       "name": "Josh Hart",
+       "pos": "G",
+       "minutes": 30.2,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Coach Mike Brown isn't concerned about Hart missing Tuesday's regular-season opener Tuesday against Philadelphia, Kristian Winfield of the New York Daily News reports."
+       },
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 12,
+         "median": 11.2,
+         "low": 7.4,
+         "high": 15.3,
+         "lines": [
+          {
+           "line": 8.5,
+           "chance": 68,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 55,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 42,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 7.4,
+         "median": 6.8,
+         "low": 4.8,
+         "high": 9.1,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 67,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 54,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 42,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 4.8,
+         "median": 4.4,
+         "low": 3,
+         "high": 5.9,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 82,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 66,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 48,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.5,
+         "median": 1.1,
+         "low": 0,
+         "high": 2.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 24.1,
+         "median": 23.2,
+         "low": 16.9,
+         "high": 29.7,
+         "lines": [
+          {
+           "line": 19.5,
+           "chance": 65,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 41,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4431823",
+       "name": "Miles McBride",
+       "pos": "G",
+       "minutes": 26.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 12,
+         "median": 11.2,
+         "low": 7.4,
+         "high": 15.3,
+         "lines": [
+          {
+           "line": 8.5,
+           "chance": 68,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 55,
+           "hits": 2,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 42,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 44,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.7,
+         "median": 2.4,
+         "low": 1.2,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 64,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 47,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 17,
+         "median": 15.3,
+         "low": 9.7,
+         "high": 21.5,
+         "lines": [
+          {
+           "line": 11.5,
+           "chance": 67,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 53,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 40,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "3914044",
+       "name": "Landry Shamet",
+       "pos": "G",
+       "minutes": 23,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 9.3,
+         "median": 8.1,
+         "low": 4.4,
+         "high": 12.4,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 68,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 54,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 41,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2,
+         "median": 1.8,
+         "low": 0.9,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 86,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 30,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4277869",
+       "name": "Jose Alvarado",
+       "pos": "G",
+       "minutes": 19.9,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.4,
+         "median": 3.1,
+         "low": 1.8,
+         "high": 4.6,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 77,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 58,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.5,
+         "median": 1.1,
+         "low": 0,
+         "high": 2.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 41,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 13.3,
+         "median": 11.9,
+         "low": 7.5,
+         "high": 16.8,
+         "lines": [
+          {
+           "line": 8.5,
+           "chance": 70,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 52,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 36,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": []
+    }
+   ]
+  },
+  {
+   "id": "401909090",
+   "tipoff": "2026-10-21T01:30Z",
+   "away": "OKC",
+   "home": "SA",
+   "sides": [
+    {
+     "team": "OKC",
+     "opp": "SA",
+     "players": [
+      {
+       "id": "4278073",
+       "name": "Shai Gilgeous-Alexander",
+       "pos": "G",
+       "minutes": 33.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 31.1,
+         "median": 29.9,
+         "low": 22.8,
+         "high": 37.6,
+         "lines": [
+          {
+           "line": 27.5,
+           "chance": 60,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 29.5,
+           "chance": 52,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 31.5,
+           "chance": 45,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4.3,
+         "median": 3.9,
+         "low": 2.1,
+         "high": 5.6,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 71,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 55,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 38,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 6.6,
+         "median": 6,
+         "low": 4.1,
+         "high": 8.1,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 70,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 58,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 44,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.7,
+         "median": 1.2,
+         "low": 0,
+         "high": 2.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 43,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 42,
+         "median": 41,
+         "low": 32.8,
+         "high": 48.9,
+         "lines": [
+          {
+           "line": 37.5,
+           "chance": 62,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 40.5,
+           "chance": 52,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 43.5,
+           "chance": 41,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4433255",
+       "name": "Chet Holmgren",
+       "pos": "C",
+       "minutes": 29,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Holmgren (quadriceps) has been ruled out for Thursday's preseason game against the Rockets, Justin Martinez of The Oklahoman reports."
+       },
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 17.1,
+         "median": 16.5,
+         "low": 12.5,
+         "high": 20.7,
+         "lines": [
+          {
+           "line": 13.5,
+           "chance": 69,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 44,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 8.9,
+         "median": 8.3,
+         "low": 5.8,
+         "high": 11,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 68,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 59,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 47,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.3,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 71,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 36,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 27.7,
+         "median": 27,
+         "low": 21.6,
+         "high": 32.2,
+         "lines": [
+          {
+           "line": 23.5,
+           "chance": 68,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 26.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 29.5,
+           "chance": 37,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4593803",
+       "name": "Jalen Williams",
+       "pos": "G",
+       "minutes": 28.4,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 17.1,
+         "median": 16.4,
+         "low": 12.5,
+         "high": 20.6,
+         "lines": [
+          {
+           "line": 13.5,
+           "chance": 69,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 56,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 43,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4.6,
+         "median": 4.2,
+         "low": 2.3,
+         "high": 6,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 73,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 59,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 44,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 5.5,
+         "median": 5,
+         "low": 3.4,
+         "high": 6.8,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 74,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 59,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 43,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 27.2,
+         "median": 26.6,
+         "low": 21.2,
+         "high": 31.6,
+         "lines": [
+          {
+           "line": 23.5,
+           "chance": 65,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 26.5,
+           "chance": 50,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 29.5,
+           "chance": 35,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4683692",
+       "name": "Cason Wallace",
+       "pos": "G",
+       "minutes": 26.6,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Wallace (undisclosed) has been ruled out for Thursday's preseason game against the Rockets, Justin Martinez of The Oklahoman reports."
+       },
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 8.6,
+         "median": 7.5,
+         "low": 4.1,
+         "high": 11.4,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 43,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.1,
+         "median": 2.7,
+         "low": 1.6,
+         "high": 4.2,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 76,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 55,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 36,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.6,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 44,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.3,
+         "median": 1,
+         "low": 0,
+         "high": 2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 71,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 38,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 14.3,
+         "median": 12.8,
+         "low": 8.1,
+         "high": 18,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 68,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 52,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 36,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4900671",
+       "name": "Ajay Mitchell",
+       "pos": "G",
+       "minutes": 25.8,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 13.6,
+         "median": 12.7,
+         "low": 8.4,
+         "high": 17.3,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 63,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 51,
+           "hits": 3,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 40,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.3,
+         "median": 3,
+         "low": 1.7,
+         "high": 4.5,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 77,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 57,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 40,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.6,
+         "median": 3.3,
+         "low": 1.9,
+         "high": 4.9,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 61,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 45,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.1,
+         "median": 1,
+         "low": 0,
+         "high": 1.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 27,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 20.5,
+         "median": 19.7,
+         "low": 14.4,
+         "high": 25.2,
+         "lines": [
+          {
+           "line": 16.5,
+           "chance": 66,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 19.5,
+           "chance": 51,
+           "hits": 1,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 37,
+           "hits": 1,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4222252",
+       "name": "Isaiah Hartenstein",
+       "pos": "C",
+       "minutes": 24.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 9.2,
+         "median": 8,
+         "low": 4.3,
+         "high": 12.2,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 68,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 40,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 9.4,
+         "median": 8.7,
+         "low": 6.2,
+         "high": 11.6,
+         "lines": [
+          {
+           "line": 7.5,
+           "chance": 63,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 52,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.5,
+         "median": 3.2,
+         "low": 1.8,
+         "high": 4.8,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 60,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 44,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 22.1,
+         "median": 21.3,
+         "low": 15.5,
+         "high": 27.2,
+         "lines": [
+          {
+           "line": 17.5,
+           "chance": 67,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 53,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 23.5,
+           "chance": 40,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4432823",
+       "name": "Jaylin Williams",
+       "pos": "F",
+       "minutes": 19.7,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Williams (heel) won't play in Thursday's preseason game against Houston, Justin Martinez of The Oklahoman reports."
+       },
+       "props": [
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.5,
+         "median": 5,
+         "low": 2.7,
+         "high": 7.1,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 68,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 55,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.4,
+         "median": 2.1,
+         "low": 1,
+         "high": 3.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 62,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.5,
+         "median": 1.1,
+         "low": 0,
+         "high": 2.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 42,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 15.2,
+         "median": 13.6,
+         "low": 8.6,
+         "high": 19.2,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 66,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 13.5,
+           "chance": 51,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 16.5,
+           "chance": 36,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "2991350",
+       "name": "Alex Caruso",
+       "pos": "G",
+       "minutes": 18.3,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 0.9,
+         "median": 0.8,
+         "low": 0,
+         "high": 1.5,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 26,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": []
+    },
+    {
+     "team": "SA",
+     "opp": "OKC",
+     "players": [
+      {
+       "id": "4066259",
+       "name": "De'Aaron Fox",
+       "pos": "G",
+       "minutes": 31,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 18.5,
+         "median": 17.8,
+         "low": 13.6,
+         "high": 22.4,
+         "lines": [
+          {
+           "line": 15.5,
+           "chance": 64,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 52,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 19.5,
+           "chance": 40,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 3.7,
+         "median": 3.3,
+         "low": 1.9,
+         "high": 5.1,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 78,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 60,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 47,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 6.2,
+         "median": 5.7,
+         "low": 3.9,
+         "high": 7.7,
+         "lines": [
+          {
+           "line": 4.5,
+           "chance": 67,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 40,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.8,
+         "median": 1.3,
+         "low": 0,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 44,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 28.5,
+         "median": 27.8,
+         "low": 22.2,
+         "high": 33.1,
+         "lines": [
+          {
+           "line": 24.5,
+           "chance": 66,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 27.5,
+           "chance": 52,
+           "hits": 4,
+           "games": 10
+          },
+          {
+           "line": 30.5,
+           "chance": 37,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4395630",
+       "name": "Devin Vassell",
+       "pos": "G",
+       "minutes": 30.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 13.9,
+         "median": 13,
+         "low": 8.6,
+         "high": 17.7,
+         "lines": [
+          {
+           "line": 10.5,
+           "chance": 64,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 53,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 14.5,
+           "chance": 42,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 4,
+         "median": 3.7,
+         "low": 2,
+         "high": 5.2,
+         "lines": [
+          {
+           "line": 2.5,
+           "chance": 69,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 52,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 35,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.5,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 43,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.5,
+         "median": 2.2,
+         "low": 1.1,
+         "high": 3.3,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 62,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 40,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 20.4,
+         "median": 19.6,
+         "low": 14.3,
+         "high": 25.1,
+         "lines": [
+          {
+           "line": 16.5,
+           "chance": 65,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 19.5,
+           "chance": 50,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4845367",
+       "name": "Stephon Castle",
+       "pos": "G",
+       "minutes": 30,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 16.6,
+         "median": 16,
+         "low": 12.2,
+         "high": 20.1,
+         "lines": [
+          {
+           "line": 13.5,
+           "chance": 67,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 54,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 40,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.3,
+         "median": 4.9,
+         "low": 2.6,
+         "high": 6.9,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 67,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 54,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 39,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 7.4,
+         "median": 6.8,
+         "low": 4.7,
+         "high": 9.2,
+         "lines": [
+          {
+           "line": 5.5,
+           "chance": 66,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 6.5,
+           "chance": 54,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 7.5,
+           "chance": 43,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.2,
+         "median": 1.1,
+         "low": 0,
+         "high": 1.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 29,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 29.4,
+         "median": 28.8,
+         "low": 23,
+         "high": 34.3,
+         "lines": [
+          {
+           "line": 25.5,
+           "chance": 65,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 28.5,
+           "chance": 51,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 31.5,
+           "chance": 37,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "5104157",
+       "name": "Victor Wembanyama",
+       "pos": "F",
+       "minutes": 29.1,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 24.9,
+         "median": 23.9,
+         "low": 18.2,
+         "high": 30.1,
+         "lines": [
+          {
+           "line": 21.5,
+           "chance": 62,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 23.5,
+           "chance": 52,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 25.5,
+           "chance": 43,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 11.4,
+         "median": 10.6,
+         "low": 7.5,
+         "high": 14.1,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 60,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 51,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 43,
+           "hits": 8,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 3.1,
+         "median": 2.8,
+         "low": 1.6,
+         "high": 4.1,
+         "lines": [
+          {
+           "line": 1.5,
+           "chance": 76,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 54,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 3.5,
+           "chance": 35,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.9,
+         "median": 1.4,
+         "low": 0,
+         "high": 2.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 73,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 45,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 39.4,
+         "median": 38.5,
+         "low": 30.8,
+         "high": 45.8,
+         "lines": [
+          {
+           "line": 34.5,
+           "chance": 64,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 37.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 40.5,
+           "chance": 42,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "6440",
+       "name": "Tobias Harris",
+       "pos": "F",
+       "minutes": 27.8,
+       "gamesThisSeason": 0,
+       "injury": {
+        "status": "Day-To-Day",
+        "note": "Spurs head coach Mitch Johnson said they will not rush Tobias Harris (calf) back to the court, Jared Weiss of The Athletic reports."
+       },
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 13.3,
+         "median": 12.4,
+         "low": 8.2,
+         "high": 16.9,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 68,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 56,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 13.5,
+           "chance": 44,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.1,
+         "median": 4.7,
+         "low": 2.5,
+         "high": 6.6,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 65,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 52,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 37,
+           "hits": 3,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "ast",
+         "label": "Assists",
+         "base": 2.5,
+         "median": 2.1,
+         "low": 1.1,
+         "high": 3.6,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 63,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 43,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.3,
+         "median": 0.9,
+         "low": 0,
+         "high": 1.9,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 71,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 38,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 20.9,
+         "median": 20.1,
+         "low": 14.6,
+         "high": 25.7,
+         "lines": [
+          {
+           "line": 16.5,
+           "chance": 67,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 19.5,
+           "chance": 53,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 22.5,
+           "chance": 39,
+           "hits": 7,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4592479",
+       "name": "Julian Champagnie",
+       "pos": "F",
+       "minutes": 27.6,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 11,
+         "median": 10.3,
+         "low": 6.8,
+         "high": 14,
+         "lines": [
+          {
+           "line": 7.5,
+           "chance": 70,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 9.5,
+           "chance": 56,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 42,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.7,
+         "median": 5.3,
+         "low": 3.7,
+         "high": 7,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 78,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 64,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 47,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 2.4,
+         "median": 2.1,
+         "low": 1,
+         "high": 3.2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 87,
+           "hits": 9,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 61,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 2.5,
+           "chance": 37,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 18.3,
+         "median": 17.5,
+         "low": 12.8,
+         "high": 22.5,
+         "lines": [
+          {
+           "line": 14.5,
+           "chance": 67,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 17.5,
+           "chance": 50,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 20.5,
+           "chance": 35,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "6578",
+       "name": "Harrison Barnes",
+       "pos": "F",
+       "minutes": 25.8,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 9.9,
+         "median": 8.7,
+         "low": 4.7,
+         "high": 13.3,
+         "lines": [
+          {
+           "line": 6.5,
+           "chance": 64,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 8.5,
+           "chance": 51,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 10.5,
+           "chance": 39,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.8,
+         "median": 1.3,
+         "low": 0,
+         "high": 2.7,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 72,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 44,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 14.6,
+         "median": 13.1,
+         "low": 8.3,
+         "high": 18.5,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 69,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 12.5,
+           "chance": 53,
+           "hits": 5,
+           "games": 10
+          },
+          {
+           "line": 15.5,
+           "chance": 38,
+           "hits": 2,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "4395723",
+       "name": "Keldon Johnson",
+       "pos": "F",
+       "minutes": 23.2,
+       "gamesThisSeason": 0,
+       "injury": null,
+       "props": [
+        {
+         "stat": "pts",
+         "label": "Points",
+         "base": 13.1,
+         "median": 12.2,
+         "low": 8.1,
+         "high": 16.7,
+         "lines": [
+          {
+           "line": 9.5,
+           "chance": 67,
+           "hits": 10,
+           "games": 10
+          },
+          {
+           "line": 11.5,
+           "chance": 55,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 13.5,
+           "chance": 42,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "reb",
+         "label": "Rebounds",
+         "base": 5.3,
+         "median": 4.9,
+         "low": 2.6,
+         "high": 6.9,
+         "lines": [
+          {
+           "line": 3.5,
+           "chance": 67,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 4.5,
+           "chance": 54,
+           "hits": 6,
+           "games": 10
+          },
+          {
+           "line": 5.5,
+           "chance": 39,
+           "hits": 6,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "fg3m",
+         "label": "3-pointers",
+         "base": 1.2,
+         "median": 1.1,
+         "low": 0,
+         "high": 2,
+         "lines": [
+          {
+           "line": 0.5,
+           "chance": 57,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 1.5,
+           "chance": 29,
+           "hits": 4,
+           "games": 10
+          }
+         ]
+        },
+        {
+         "stat": "pra",
+         "label": "Pts+Reb+Ast",
+         "base": 19.7,
+         "median": 19,
+         "low": 13.8,
+         "high": 24.3,
+         "lines": [
+          {
+           "line": 15.5,
+           "chance": 68,
+           "hits": 8,
+           "games": 10
+          },
+          {
+           "line": 18.5,
+           "chance": 52,
+           "hits": 7,
+           "games": 10
+          },
+          {
+           "line": 21.5,
+           "chance": 38,
+           "hits": 5,
+           "games": 10
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "out": []
+    }
+   ]
+  }
+ ],
+ "snapshotAt": "2026-10-18T22:45:56.018Z"
+}

@@ -1,0 +1,274 @@
+{
+ "season": 2026,
+ "updatedAt": "2026-10-25T02:36:48.784Z",
+ "overall": {
+  "props": 420,
+  "lines": 1230,
+  "overMedian": 0.488,
+  "underAverage": 0.54,
+  "insideMiddle50": 0.581,
+  "brier": {
+   "sheet": 0.229,
+   "ownHitRate": 0.266,
+   "coinFlip": 0.25
+  },
+  "calibration": [
+   {
+    "from": 0,
+    "to": 30,
+    "said": 22,
+    "happened": 0.366,
+    "n": 41
+   },
+   {
+    "from": 30,
+    "to": 45,
+    "said": 39,
+    "happened": 0.4,
+    "n": 300
+   },
+   {
+    "from": 45,
+    "to": 55,
+    "said": 49,
+    "happened": 0.435,
+    "n": 313
+   },
+   {
+    "from": 55,
+    "to": 70,
+    "said": 61,
+    "happened": 0.628,
+    "n": 400
+   },
+   {
+    "from": 70,
+    "to": 100,
+    "said": 78,
+    "happened": 0.807,
+    "n": 176
+   }
+  ]
+ },
+ "weeks": [
+  {
+   "week": 6,
+   "snapshots": [
+    "2026-10-18"
+   ],
+   "pending": 0,
+   "dnp": 14,
+   "props": 420,
+   "lines": 1230,
+   "overMedian": 0.488,
+   "underAverage": 0.54,
+   "insideMiddle50": 0.581,
+   "brier": {
+    "sheet": 0.229,
+    "ownHitRate": 0.266,
+    "coinFlip": 0.25
+   },
+   "calibration": [
+    {
+     "from": 0,
+     "to": 30,
+     "said": 22,
+     "happened": 0.366,
+     "n": 41
+    },
+    {
+     "from": 30,
+     "to": 45,
+     "said": 39,
+     "happened": 0.4,
+     "n": 300
+    },
+    {
+     "from": 45,
+     "to": 55,
+     "said": 49,
+     "happened": 0.435,
+     "n": 313
+    },
+    {
+     "from": 55,
+     "to": 70,
+     "said": 61,
+     "happened": 0.628,
+     "n": 400
+    },
+    {
+     "from": 70,
+     "to": 100,
+     "said": 78,
+     "happened": 0.807,
+     "n": 176
+    }
+   ]
+  }
+ ],
+ "rebuilt": {
+  "note": "Weeks before tracking began, rebuilt from only earlier games (no injury report).",
+  "overall": {
+   "props": 955,
+   "lines": 2809,
+   "overMedian": 0.489,
+   "underAverage": 0.543,
+   "insideMiddle50": 0.509,
+   "brier": {
+    "sheet": 0.224,
+    "ownHitRate": 0.256,
+    "coinFlip": 0.25
+   },
+   "calibration": [
+    {
+     "from": 0,
+     "to": 30,
+     "said": 22,
+     "happened": 0.191,
+     "n": 68
+    },
+    {
+     "from": 30,
+     "to": 45,
+     "said": 39,
+     "happened": 0.394,
+     "n": 738
+    },
+    {
+     "from": 45,
+     "to": 55,
+     "said": 49,
+     "happened": 0.491,
+     "n": 641
+    },
+    {
+     "from": 55,
+     "to": 70,
+     "said": 62,
+     "happened": 0.627,
+     "n": 930
+    },
+    {
+     "from": 70,
+     "to": 100,
+     "said": 78,
+     "happened": 0.801,
+     "n": 432
+    }
+   ]
+  },
+  "weeks": [
+   {
+    "week": 4,
+    "snapshots": [
+     "rebuilt as of 2026-10-01"
+    ],
+    "pending": 0,
+    "dnp": 49,
+    "props": 478,
+    "lines": 1406,
+    "overMedian": 0.519,
+    "underAverage": 0.51,
+    "insideMiddle50": 0.51,
+    "brier": {
+     "sheet": 0.22,
+     "ownHitRate": 0.258,
+     "coinFlip": 0.25
+    },
+    "calibration": [
+     {
+      "from": 0,
+      "to": 30,
+      "said": 21,
+      "happened": 0.121,
+      "n": 33
+     },
+     {
+      "from": 30,
+      "to": 45,
+      "said": 39,
+      "happened": 0.425,
+      "n": 365
+     },
+     {
+      "from": 45,
+      "to": 55,
+      "said": 49,
+      "happened": 0.517,
+      "n": 323
+     },
+     {
+      "from": 55,
+      "to": 70,
+      "said": 62,
+      "happened": 0.662,
+      "n": 467
+     },
+     {
+      "from": 70,
+      "to": 100,
+      "said": 78,
+      "happened": 0.817,
+      "n": 218
+     }
+    ]
+   },
+   {
+    "week": 5,
+    "snapshots": [
+     "rebuilt as of 2026-10-08"
+    ],
+    "pending": 0,
+    "dnp": 59,
+    "props": 477,
+    "lines": 1403,
+    "overMedian": 0.459,
+    "underAverage": 0.577,
+    "insideMiddle50": 0.507,
+    "brier": {
+     "sheet": 0.228,
+     "ownHitRate": 0.254,
+     "coinFlip": 0.25
+    },
+    "calibration": [
+     {
+      "from": 0,
+      "to": 30,
+      "said": 22,
+      "happened": 0.257,
+      "n": 35
+     },
+     {
+      "from": 30,
+      "to": 45,
+      "said": 39,
+      "happened": 0.365,
+      "n": 373
+     },
+     {
+      "from": 45,
+      "to": 55,
+      "said": 49,
+      "happened": 0.465,
+      "n": 318
+     },
+     {
+      "from": 55,
+      "to": 70,
+      "said": 62,
+      "happened": 0.592,
+      "n": 463
+     },
+     {
+      "from": 70,
+      "to": 100,
+      "said": 77,
+      "happened": 0.785,
+      "n": 214
+     }
+    ]
+   }
+  ]
+ }
+}
